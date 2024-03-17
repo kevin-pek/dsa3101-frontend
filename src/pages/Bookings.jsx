@@ -1,3 +1,3 @@
 export function Bookings() {
-  return <p>Booking page</p>
+  return <p>Booking management</p>
 }

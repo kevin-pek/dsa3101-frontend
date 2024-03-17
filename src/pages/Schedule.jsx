@@ -1,3 +1,3 @@
-export function Planner() {
+export function Schedule() {
   return <p>Employee Schedule</p>
 }
