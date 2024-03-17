@@ -57,7 +57,7 @@ export function Login() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        maxWidth: "480px",
+        maxWidth: "360px",
       }}
     >
       <Text style={{ textAlign: "center" }} size="xl" fw={500}>
@@ -84,7 +84,7 @@ export function Login() {
         </Stack>
 
         <Group justify="space-around" mt="xl">
-          <Button type="submit" radius="md">
+          <Button fullWidth type="submit" radius="md">
             Login
           </Button>
         </Group>
