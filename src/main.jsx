@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { AuthProvider, useAuth } from "./hooks/auth"
 import "@mantine/core/styles.css"
+import "@mantine/notifications/styles.css"
 import { MantineProvider } from "@mantine/core"
 import { Dashboard } from "./pages/Dashboard"
 import { Login } from "./pages/Login"
@@ -11,6 +12,7 @@ import { Employees } from "./pages/Employees"
 import { Bookings } from "./pages/Bookings"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
+import { Notifications } from "@mantine/notifications"
 
 function InnerApp() {
   const auth = useAuth()
@@ -64,6 +66,7 @@ function App() {
     <MantineProvider>
       <AuthProvider>
         <InnerApp />
+        <Notifications />
       </AuthProvider>
     </MantineProvider>
   )

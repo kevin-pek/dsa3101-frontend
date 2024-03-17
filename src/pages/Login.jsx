@@ -40,10 +40,8 @@ export function Login() {
   }
 
   function handleErrors(errors) {
-    if (errors.username) {
-      notifications.show({ message: "Invalid username!", color: "red" })
-    } else if (errors.password) {
-      notifications.show({ message: "Invalid password!", color: "red" })
+    if (errors.username || errors.password) {
+      notifications.show({ message: "Login failed, please try again.", color: "red" })
     }
   }
 
