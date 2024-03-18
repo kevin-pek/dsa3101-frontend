@@ -1,6 +1,6 @@
 import React from "react"
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table"
-import { ActionIcon, Button, Container, Tooltip } from "@mantine/core"
+import { ActionIcon, Button, Tooltip } from "@mantine/core"
 import { IconTrash } from "@tabler/icons-react"
 import { fakeEmployees } from "../sampleEmployees"
 
@@ -102,8 +102,6 @@ export function Employees() {
   })
 
   return (
-    <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table} />
-    </div>
+    <MantineReactTable table={table} />
   )
 }

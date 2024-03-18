@@ -37,6 +37,7 @@ function InnerApp() {
   return (
     <BrowserRouter>
       <AppShell
+        disabled={!auth.user}
         header={{ height: 60 }}
         navbar={
           auth.user && {
@@ -48,14 +49,12 @@ function InnerApp() {
       >
         <AppShellHeader>
           <Group justify="space-between" px="md" h="100%">
-            {auth.user ? (
-              <Burger
-                opened={opened}
-                onClick={toggle}
-                hiddenFrom="sm"
-                size="sm"
-              />
-            ) : null}
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
             Staff Scheduler
             <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
               {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
