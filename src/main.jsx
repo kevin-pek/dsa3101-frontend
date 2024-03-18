@@ -13,6 +13,8 @@ import { Bookings } from "./pages/Bookings"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
 import { Notifications } from "@mantine/notifications"
+import 'mantine-react-table/styles.css'
+
 
 function InnerApp() {
   const auth = useAuth()
