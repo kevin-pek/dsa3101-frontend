@@ -4,11 +4,7 @@ import {
   IconCalendarWeek,
   IconCalendarEvent,
   IconLogout,
-  IconSun,
-  IconMoon,
 } from "@tabler/icons-react"
-import { useState } from "react"
-import { ActionIcon, Group, useMantineColorScheme } from "@mantine/core"
 import classes from "./navbar.module.css"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "../hooks/auth"
@@ -21,7 +17,6 @@ const data = [
 ]
 
 export function Navbar() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
   const navigate = useNavigate()
   const location = useLocation()
   const auth = useAuth()
@@ -44,15 +39,7 @@ export function Navbar() {
 
   return (
     <nav className={classes.navbar}>
-      <div className={classes.navbarMain}>
-        <Group className={classes.header} justify="space-between">
-          Staff Scheduler
-          <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
-            {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
-          </ActionIcon>
-        </Group>
-        {links}
-      </div>
+      <div className={classes.navbarMain}>{links}</div>
 
       <div className={classes.footer}>
         <a
