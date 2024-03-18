@@ -8,7 +8,7 @@ import {
   Button,
   Stack,
 } from "@mantine/core"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/auth"
 import { notifications } from "@mantine/notifications"
 
@@ -28,22 +28,20 @@ export function Login() {
     },
   })
   const navigate = useNavigate()
+  const location = useLocation()
   const auth = useAuth()
 
   function handleSubmit(values) {
     // TODO: send login request, redirect to / route if successful, otherwise show error
     if (form.isValid()) {
       auth.setUser("manager")
-      auth.isAuthenticated = true
-      navigate("/")
+      navigate(location.state?.from?.pathname || "/", { replace: true })
     }
   }
 
   function handleErrors(errors) {
-    if (errors.username) {
-      notifications.show({ message: "Invalid username!", color: "red" })
-    } else if (errors.password) {
-      notifications.show({ message: "Invalid password!", color: "red" })
+    if (errors.username || errors.password) {
+      notifications.show({ message: "Login failed, please try again.", color: "red" })
     }
   }
 
@@ -57,7 +55,7 @@ export function Login() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        maxWidth: "480px",
+        maxWidth: "360px",
       }}
     >
       <Text style={{ textAlign: "center" }} size="xl" fw={500}>
@@ -84,7 +82,7 @@ export function Login() {
         </Stack>
 
         <Group justify="space-around" mt="xl">
-          <Button type="submit" radius="md">
+          <Button fullWidth type="submit" radius="md">
             Login
           </Button>
         </Group>

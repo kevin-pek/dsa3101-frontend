@@ -8,7 +8,7 @@ export function RequireAuth({ children }) {
   const auth = useAuth()
   const location = useLocation()
 
-  if (!auth.isAuthenticated) {
+  if (!auth.user) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
