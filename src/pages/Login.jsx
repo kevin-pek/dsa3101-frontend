@@ -41,7 +41,7 @@ export function Login() {
 
   function handleErrors(errors) {
     if (errors.username || errors.password) {
-      notifications.show({ message: "Login failed, please try again.", color: "red" })
+      notifications.show({ message: "Login failed, please try again.", color: "red", withBorder: true })
     }
   }
 
@@ -70,6 +70,7 @@ export function Login() {
             placeholder="Your username"
             {...form.getInputProps("username")}
             radius="md"
+            size="md"
           />
 
           <PasswordInput
@@ -78,11 +79,12 @@ export function Login() {
             placeholder="Your password"
             {...form.getInputProps("password")}
             radius="md"
+            size="md"
           />
         </Stack>
 
         <Group justify="space-around" mt="xl">
-          <Button fullWidth type="submit" radius="md">
+          <Button fullWidth type="submit" radius="md" size="md">
             Login
           </Button>
         </Group>

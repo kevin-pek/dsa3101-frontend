@@ -63,7 +63,38 @@ function InnerApp() {
 
 function App() {
   return (
-    <MantineProvider>
+    <MantineProvider
+      theme={{
+        colors: {
+          'green': [
+            "#f0faf2",
+            "#dff2e4",
+            "#bbe5c4",
+            "#92d8a2",
+            "#71cc86",
+            "#5dc573",
+            "#52c26a",
+            "#42ab58",
+            "#38984d",
+            "#2a8340"
+          ],
+          'orange': [
+            "#fff6e1",
+            "#ffeccc",
+            "#fed79c",
+            "#fcc067",
+            "#fcad3b",
+            "#fba11f",
+            "#fb9b0d",
+            "#df8700",
+            "#c77700",
+            "#ae6600"
+          ]
+        },
+        primaryColor: 'green',
+        primaryShade: 9
+      }}
+    >
       <AuthProvider>
         <InnerApp />
         <Notifications />
