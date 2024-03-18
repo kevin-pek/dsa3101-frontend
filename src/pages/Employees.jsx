@@ -7,16 +7,8 @@ import { fakeEmployees } from "../sampleEmployees"
 export function Employees() {
   const columns = [
     {
-      accessorKey: "firstName",
-      header: "First Name",
-      mantineEditTextInputProps: ({ cell, row }) => ({
-        type: "email",
-        required: true,
-      }),
-    },
-    {
-      accessorKey: "lastName",
-      header: "Last Name",
+      accessorKey: "name",
+      header: "Full Name",
       mantineEditTextInputProps: ({ cell, row }) => ({
         type: "email",
         required: true,
@@ -89,6 +81,17 @@ export function Employees() {
     enableRowActions: true,
     positionActionsColumn: "last",
     enableBottomToolbar: false,
+    enableColumnResizing: true,
+    defaultColumn: {
+      minSize: 20, 
+      maxSize: 9001, 
+      size: 145, 
+    },
+    mantineTableProps: {
+      sx: {
+        tableLayout: "fixed",
+      },
+    },
     renderRowActions: ({ row }) => (
       <Tooltip label="Delete">
         <ActionIcon color="red">

@@ -41,7 +41,7 @@ function InnerApp() {
         header={{ height: 60 }}
         navbar={
           auth.user && {
-            width: 300,
+            width: 220,
             breakpoint: "sm",
             collapsed: { mobile: !opened },
           }
