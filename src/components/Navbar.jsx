@@ -16,7 +16,7 @@ const data = [
   { link: "/bookings", label: "Bookings", icon: IconCalendarEvent },
 ]
 
-export function Navbar() {
+export function Navbar({ onLinkClick }) {
   const navigate = useNavigate()
   const location = useLocation()
   const auth = useAuth()
@@ -29,6 +29,7 @@ export function Navbar() {
       key={item.label}
       onClick={(event) => {
         event.preventDefault()
+        onLinkClick()
         navigate(item.link)
       }}
     >

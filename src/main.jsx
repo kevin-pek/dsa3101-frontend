@@ -31,7 +31,7 @@ import { NavigationProgress } from "@mantine/nprogress"
 
 function InnerApp() {
   const auth = useAuth()
-  const [opened, { toggle }] = useDisclosure()
+  const [opened, { toggle, close }] = useDisclosure(false)
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (
@@ -61,11 +61,11 @@ function InnerApp() {
             </ActionIcon>
           </Group>
         </AppShellHeader>
-        {auth.user && (
-          <AppShellNavbar>
-            <Navbar />
-          </AppShellNavbar>
-        )}
+
+        <AppShellNavbar>
+          <Navbar onLinkClick={close} />
+        </AppShellNavbar>
+
         <AppShellMain>
           <Routes>
             <Route path="/login" element={<Login />} />
