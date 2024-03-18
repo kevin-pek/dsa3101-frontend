@@ -4,7 +4,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { AuthProvider, useAuth } from "./hooks/auth"
 import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
-import { MantineProvider } from "@mantine/core"
+import "@mantine/nprogress/styles.css"
+import {
+  AppShell,
+  AppShellNavbar,
+  AppShellMain,
+  MantineProvider,
+  AppShellHeader,
+  Group,
+  Burger,
+  useMantineColorScheme,
+} from "@mantine/core"
 import { Dashboard } from "./pages/Dashboard"
 import { Login } from "./pages/Login"
 import { Schedule } from "./pages/Schedule"
@@ -13,52 +23,87 @@ import { Bookings } from "./pages/Bookings"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
 import { Notifications } from "@mantine/notifications"
-import 'mantine-react-table/styles.css'
-
+import "mantine-react-table/styles.css"
+import { useDisclosure } from "@mantine/hooks"
+import { ActionIcon } from "@mantine/core"
+import { IconSun, IconMoon } from "@tabler/icons-react"
+import { NavigationProgress } from "@mantine/nprogress"
 
 function InnerApp() {
   const auth = useAuth()
+  const [opened, { toggle, close }] = useDisclosure(false)
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (
     <BrowserRouter>
-      <div style={auth.user && { display: "flex", flexDirection: "row" }}>
-        {auth.user && <Navbar />}
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/"
-            element={
-              <RequireAuth>
-                <Dashboard />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/schedule"
-            element={
-              <RequireAuth>
-                <Schedule />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/employees"
-            element={
-              <RequireAuth>
-                <Employees />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/bookings"
-            element={
-              <RequireAuth>
-                <Bookings />
-              </RequireAuth>
-            }
-          />
-        </Routes>
-      </div>
+      <AppShell
+        disabled={!auth.user}
+        header={{ height: 60 }}
+        navbar={
+          auth.user && {
+            width: 300,
+            breakpoint: "sm",
+            collapsed: { mobile: !opened },
+          }
+        }
+      >
+        <AppShellHeader>
+          <Group justify="space-between" px="md" h="100%">
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            Staff Scheduler
+            <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
+              {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
+            </ActionIcon>
+          </Group>
+        </AppShellHeader>
+
+        <AppShellNavbar>
+          <Navbar onLinkClick={close} />
+        </AppShellNavbar>
+
+        <AppShellMain>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <RequireAuth>
+                  <Dashboard />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/schedule"
+              element={
+                <RequireAuth>
+                  <Schedule />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/employees"
+              element={
+                <RequireAuth>
+                  <Employees />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/bookings"
+              element={
+                <RequireAuth>
+                  <Bookings />
+                </RequireAuth>
+              }
+            />
+          </Routes>
+        </AppShellMain>
+      </AppShell>
     </BrowserRouter>
   )
 }
@@ -68,7 +113,7 @@ function App() {
     <MantineProvider
       theme={{
         colors: {
-          'green': [
+          green: [
             "#f0faf2",
             "#dff2e4",
             "#bbe5c4",
@@ -78,9 +123,9 @@ function App() {
             "#52c26a",
             "#42ab58",
             "#38984d",
-            "#2a8340"
+            "#2a8340",
           ],
-          'orange': [
+          orange: [
             "#fff6e1",
             "#ffeccc",
             "#fed79c",
@@ -90,16 +135,17 @@ function App() {
             "#fb9b0d",
             "#df8700",
             "#c77700",
-            "#ae6600"
-          ]
+            "#ae6600",
+          ],
         },
-        primaryColor: 'green',
-        primaryShade: 9
+        primaryColor: "green",
+        primaryShade: 9,
       }}
     >
       <AuthProvider>
         <InnerApp />
         <Notifications />
+        <NavigationProgress />
       </AuthProvider>
     </MantineProvider>
   )
