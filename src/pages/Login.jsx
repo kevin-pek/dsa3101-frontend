@@ -7,6 +7,9 @@ import {
   Group,
   Button,
   Stack,
+  Center,
+  Container,
+  Space,
 } from "@mantine/core"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/auth"
@@ -41,27 +44,28 @@ export function Login() {
 
   function handleErrors(errors) {
     if (errors.username || errors.password) {
-      notifications.show({ message: "Login failed, please try again.", color: "red", withBorder: true })
+      notifications.show({
+        message: "Login failed, please try again.",
+        color: "red",
+        withBorder: true,
+      })
     }
   }
 
   return (
-    <Paper
-      radius="md"
-      p="xl"
-      m="auto"
-      h="100vh"
+    <Container
       style={{
+        maxWidth: "360px",
+        height: "80vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        maxWidth: "360px",
       }}
     >
       <Text style={{ textAlign: "center" }} size="xl" fw={500}>
         Login
       </Text>
-      <br />
+      <Space h="md" />
       <form onSubmit={form.onSubmit(handleSubmit, handleErrors)}>
         <Stack>
           <TextInput
@@ -89,6 +93,6 @@ export function Login() {
           </Button>
         </Group>
       </form>
-    </Paper>
+    </Container>
   )
 }
