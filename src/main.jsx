@@ -14,6 +14,7 @@ import {
   Group,
   Burger,
   useMantineColorScheme,
+  Title,
 } from "@mantine/core"
 import { Dashboard } from "./pages/Dashboard"
 import { Login } from "./pages/Login"
@@ -28,6 +29,7 @@ import { useDisclosure } from "@mantine/hooks"
 import { ActionIcon } from "@mantine/core"
 import { IconSun, IconMoon } from "@tabler/icons-react"
 import { NavigationProgress } from "@mantine/nprogress"
+import { DatesProvider } from "@mantine/dates"
 
 function InnerApp() {
   const auth = useAuth()
@@ -41,7 +43,7 @@ function InnerApp() {
         header={{ height: 60 }}
         navbar={
           auth.user && {
-            width: 220,
+            width: 180,
             breakpoint: "sm",
             collapsed: { mobile: !opened },
           }
@@ -55,7 +57,7 @@ function InnerApp() {
               hiddenFrom="sm"
               size="sm"
             />
-            Staff Scheduler
+            <Title order={2}>Staff Scheduler</Title>
             <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
               {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
             </ActionIcon>
@@ -143,9 +145,11 @@ function App() {
       }}
     >
       <AuthProvider>
-        <InnerApp />
-        <Notifications />
-        <NavigationProgress />
+        <DatesProvider>
+          <InnerApp />
+          <Notifications />
+          <NavigationProgress />
+        </DatesProvider>
       </AuthProvider>
     </MantineProvider>
   )
