@@ -12,7 +12,7 @@ import {
   Space,
 } from "@mantine/core"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useAuth } from "../hooks/auth"
+import { useAuth } from "../hooks/use-auth"
 import { notifications } from "@mantine/notifications"
 
 /**

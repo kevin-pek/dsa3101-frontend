@@ -3,6 +3,7 @@
   text-align: center;
   background: transparent;
   cursor: default;
+  pointer-events: none;
 }
 
 .range-slider .range-slider__thumb {
@@ -12,6 +13,7 @@
   background: transparent;
   background-repeat: no-repeat;
   background-position: center;
+  pointer-events: auto;
 }
 
 .range-slider .range-slider__thumb:hover {
@@ -27,8 +29,8 @@
   border-radius: 8px;
   opacity: 50%;
   background: grey;
-  border: 2px solid
-    light-dark(var(--mantine-color-dark-6), var(--mantine-color-white));
+  border: 2px solid light-dark(var(--mantine-color-dark-6), var(--mantine-color-white));
+  pointer-events: auto;
 }
 
 .range-slider .range-slider__range:hover {

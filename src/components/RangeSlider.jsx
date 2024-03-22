@@ -185,26 +185,16 @@ class RangeSlider extends PureComponent {
 
   addNodeEventListener(node, event, fn, isPointerEvent = true) {
     // with options for pointer events
-    node.addEventListener(
-      event,
-      fn,
-      isPointerEvent ? { passive: false, capture: true } : {},
-    )
+    node.addEventListener(event, fn, isPointerEvent ? { passive: false, capture: true } : {})
   }
 
   removeNodeEventListener(node, event, fn, isPointerEvent = true) {
     // with options for pointer events
-    node.removeEventListener(
-      event,
-      fn,
-      isPointerEvent ? { passive: false, capture: true } : {},
-    )
+    node.removeEventListener(event, fn, isPointerEvent ? { passive: false, capture: true } : {})
   }
 
   fallbackToDefault(property, defaultValue) {
-    this.options[property] = this.props[property]
-      ? this.props[property]
-      : defaultValue
+    this.options[property] = this.props[property] ? this.props[property] : defaultValue
   }
 
   ifVerticalElse(vertical, horizontal) {
@@ -238,17 +228,11 @@ class RangeSlider extends PureComponent {
       if (this.options.thumbsDisabled.length === 1) {
         this.options.thumbsDisabled.push(false)
       }
-      if (
-        this.options.thumbsDisabled.length !== 1 &&
-        this.options.thumbsDisabled.length !== 2
-      ) {
+      if (this.options.thumbsDisabled.length !== 1 && this.options.thumbsDisabled.length !== 2) {
         this.options.thumbsDisabled = [false, false]
       }
     } else {
-      this.options.thumbsDisabled = [
-        this.options.thumbsDisabled,
-        this.options.thumbsDisabled,
-      ]
+      this.options.thumbsDisabled = [this.options.thumbsDisabled, this.options.thumbsDisabled]
     }
 
     // Boolean Values
@@ -338,9 +322,8 @@ class RangeSlider extends PureComponent {
   // -> window is resized
   updateThumbs() {
     this.iterateMinMaxProps((_) => {
-      this.thumb[this.index[_]].current.style[
-        this.ifVerticalElse("top", "left")
-      ] = `${((this.value[_] - this.options.min) / this.maxRangeWidth) * 100}%`
+      this.thumb[this.index[_]].current.style[this.ifVerticalElse("top", "left")] =
+        `${((this.value[_] - this.options.min) / this.maxRangeWidth) * 100}%`
     })
   }
 
@@ -350,22 +333,16 @@ class RangeSlider extends PureComponent {
   updateRange() {
     const elementBounds = this.element.current.getBoundingClientRect()
     // Calculate the start position and width of the range based on thumb positions
-    const startPos =
-      ((this.value.min - this.options.min) / this.maxRangeWidth) * 100
-    const endPos =
-      ((this.value.max - this.options.min) / this.maxRangeWidth) * 100
+    const startPos = ((this.value.min - this.options.min) / this.maxRangeWidth) * 100
+    const endPos = ((this.value.max - this.options.min) / this.maxRangeWidth) * 100
 
-    this.range.current.style[this.ifVerticalElse("top", "left")] =
-      `${startPos}%`
-    this.range.current.style[this.ifVerticalElse("height", "width")] =
-      `${endPos - startPos}%`
+    this.range.current.style[this.ifVerticalElse("top", "left")] = `${startPos}%`
+    this.range.current.style[this.ifVerticalElse("height", "width")] = `${endPos - startPos}%`
   }
 
   updateRangeLimits() {
     this.iterateMinMaxProps((_, i) => {
-      this.rangeLimits[_] = this.options.thumbsDisabled[i]
-        ? this.value[_]
-        : this.options[_]
+      this.rangeLimits[_] = this.options.thumbsDisabled[i] ? this.value[_] : this.options[_]
     })
   }
 
@@ -375,16 +352,9 @@ class RangeSlider extends PureComponent {
   updateTabIndexes() {
     this.iterateMinMaxProps((_, i) => {
       if (!this.options.disabled && !this.options.thumbsDisabled[i]) {
-        this.setNodeAttribute(
-          this.thumb[this.currentIndex(i)].current,
-          TABINDEX,
-          0,
-        )
+        this.setNodeAttribute(this.thumb[this.currentIndex(i)].current, TABINDEX, 0)
       } else {
-        this.removeNodeAttribute(
-          this.thumb[this.currentIndex(i)].current,
-          TABINDEX,
-        )
+        this.removeNodeAttribute(this.thumb[this.currentIndex(i)].current, TABINDEX)
       }
     })
   }
@@ -393,26 +363,10 @@ class RangeSlider extends PureComponent {
   // -> setValue is called and a value is set
   updateAriaValueAttributes() {
     this.iterateMinMaxProps((_) => {
-      this.setNodeAttribute(
-        this.thumb[this.index[_]].current,
-        "aria-valuemin",
-        this.options.min,
-      )
-      this.setNodeAttribute(
-        this.thumb[this.index[_]].current,
-        "aria-valuemax",
-        this.options.max,
-      )
-      this.setNodeAttribute(
-        this.thumb[this.index[_]].current,
-        "aria-valuenow",
-        this.value[_],
-      )
-      this.setNodeAttribute(
-        this.thumb[this.index[_]].current,
-        "aria-valuetext",
-        this.value[_],
-      )
+      this.setNodeAttribute(this.thumb[this.index[_]].current, "aria-valuemin", this.options.min)
+      this.setNodeAttribute(this.thumb[this.index[_]].current, "aria-valuemax", this.options.max)
+      this.setNodeAttribute(this.thumb[this.index[_]].current, "aria-valuenow", this.value[_])
+      this.setNodeAttribute(this.thumb[this.index[_]].current, "aria-valuetext", this.value[_])
     })
   }
 
@@ -433,18 +387,10 @@ class RangeSlider extends PureComponent {
       const currIndex = this.currentIndex(i)
       if (d) {
         this.setNodeAttribute(this.thumb[currIndex].current, DATA_DISABLED)
-        this.setNodeAttribute(
-          this.thumb[currIndex].current,
-          "aria-disabled",
-          true,
-        )
+        this.setNodeAttribute(this.thumb[currIndex].current, "aria-disabled", true)
       } else {
         this.removeNodeAttribute(this.thumb[currIndex].current, DATA_DISABLED)
-        this.setNodeAttribute(
-          this.thumb[currIndex].current,
-          "aria-disabled",
-          false,
-        )
+        this.setNodeAttribute(this.thumb[currIndex].current, "aria-disabled", false)
       }
     })
   }
@@ -486,12 +432,8 @@ class RangeSlider extends PureComponent {
   // -> window is resized
   syncThumbDimensions() {
     this.iterateMinMaxProps((_) => {
-      this.thumbWidth[_] = float(
-        window.getComputedStyle(this.thumb[this.index[_]].current).width,
-      )
-      this.thumbHeight[_] = float(
-        window.getComputedStyle(this.thumb[this.index[_]].current).height,
-      )
+      this.thumbWidth[_] = float(window.getComputedStyle(this.thumb[this.index[_]].current).width)
+      this.thumbHeight[_] = float(window.getComputedStyle(this.thumb[this.index[_]].current).height)
     })
   }
 
@@ -507,12 +449,8 @@ class RangeSlider extends PureComponent {
         (e[`client${this.ifVerticalElse("Y", "X")}`] -
           node.getBoundingClientRect()[this.ifVerticalElse("top", "left")]) -
         (this.thumbDrag
-          ? (0.5 -
-              (this.value[this.thumbDrag] - this.options.min) /
-                this.maxRangeWidth) *
-            this.ifVerticalElse(this.thumbHeight, this.thumbWidth)[
-              this.thumbDrag
-            ]
+          ? (0.5 - (this.value[this.thumbDrag] - this.options.min) / this.maxRangeWidth) *
+            this.ifVerticalElse(this.thumbHeight, this.thumbWidth)[this.thumbDrag]
           : 0)) /
         this.ifVerticalElse(
           elementBounds.bottom - elementBounds.top,
@@ -627,10 +565,7 @@ class RangeSlider extends PureComponent {
   }
 
   initiateThumbDrag(e, i, node, callback = true) {
-    if (
-      !this.options.disabled &&
-      !this.options.thumbsDisabled[this.currentIndex(i)]
-    ) {
+    if (!this.options.disabled && !this.options.thumbsDisabled[this.currentIndex(i)]) {
       this.initiateDrag(e, node)
       this.thumbDrag = this.index.min === i ? MIN : MAX
       if (callback && this.options.onThumbDragStart) {
@@ -684,12 +619,7 @@ class RangeSlider extends PureComponent {
         // When range / min thumb reaches lower limit
         if (min < lower) {
           if (!this.thumbDrag) {
-            this.setValue(
-              this.setMinMaxProps(
-                lower,
-                this.value.max - this.value.min + lower,
-              ),
-            )
+            this.setValue(this.setMinMaxProps(lower, this.value.max - this.value.min + lower))
           } else {
             this.setValue(this.setMinMaxProps(lower, this.value.max))
           }
@@ -698,12 +628,7 @@ class RangeSlider extends PureComponent {
         // When range / max thumb reaches upper limit
         if (max > upper) {
           if (!this.thumbDrag) {
-            this.setValue(
-              this.setMinMaxProps(
-                this.value.min - this.value.max + upper,
-                upper,
-              ),
-            )
+            this.setValue(this.setMinMaxProps(this.value.min - this.value.max + upper, upper))
           } else {
             this.setValue(this.setMinMaxProps(this.value.min, upper))
           }
@@ -718,22 +643,14 @@ class RangeSlider extends PureComponent {
 
   actualStepValue() {
     const step = float(this.input[0].current.step)
-    return this.input[0].current.step === ANY
-      ? ANY
-      : step === 0 || isNaN(step)
-        ? 1
-        : step
+    return this.input[0].current.step === ANY ? ANY : step === 0 || isNaN(step) ? 1 : step
   }
 
   // Step value (up or down) using arrow keys
   stepValue(i, key) {
-    const direction =
-      (key === 37 || key === 40 ? -1 : 1) * this.ifVerticalElse(-1, 1)
+    const direction = (key === 37 || key === 40 ? -1 : 1) * this.ifVerticalElse(-1, 1)
 
-    if (
-      !this.options.disabled &&
-      !this.options.thumbsDisabled[this.currentIndex(i)]
-    ) {
+    if (!this.options.disabled && !this.options.thumbsDisabled[this.currentIndex(i)]) {
       let step = this.actualStepValue()
       step = step === ANY ? 1 : step
 
@@ -815,18 +732,8 @@ class RangeSlider extends PureComponent {
           onChange={() => {}}
           disabled
         />
-        <div
-          ref={this.thumb[0]}
-          role="slider"
-          className="range-slider__thumb"
-          data-lower
-        />
-        <div
-          ref={this.thumb[1]}
-          role="slider"
-          className="range-slider__thumb"
-          data-upper
-        />
+        <div ref={this.thumb[0]} role="slider" className="range-slider__thumb" data-lower />
+        <div ref={this.thumb[1]} role="slider" className="range-slider__thumb" data-upper />
         <div
           ref={this.range}
           className="range-slider__range"

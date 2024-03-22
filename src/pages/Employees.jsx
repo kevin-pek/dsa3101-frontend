@@ -83,9 +83,9 @@ export function Employees() {
     enableBottomToolbar: false,
     enableColumnResizing: true,
     defaultColumn: {
-      minSize: 20, 
-      maxSize: 9001, 
-      size: 145, 
+      minSize: 20,
+      maxSize: 9001,
+      size: 145,
     },
     mantineTableProps: {
       sx: {
@@ -99,12 +99,8 @@ export function Employees() {
         </ActionIcon>
       </Tooltip>
     ),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Button>Create New User</Button>
-    ),
+    renderTopToolbarCustomActions: ({ table }) => <Button>Create New User</Button>,
   })
 
-  return (
-    <MantineReactTable table={table} />
-  )
+  return <MantineReactTable table={table} />
 }

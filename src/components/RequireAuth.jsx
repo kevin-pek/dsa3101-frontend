@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom"
-import { useAuth } from "../hooks/auth"
+import { useAuth } from "../hooks/use-auth"
 
 /**
  * Wrap this around pages that need the user to be logged in

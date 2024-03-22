@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { AuthProvider, useAuth } from "./hooks/auth"
+import { AuthProvider, useAuth } from "./hooks/use-auth"
 import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
 import "@mantine/nprogress/styles.css"
@@ -23,13 +23,15 @@ import { Employees } from "./pages/Employees"
 import { Bookings } from "./pages/Bookings"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
-import { Notifications } from "@mantine/notifications"
+import { Notifications, notifications } from "@mantine/notifications"
 import "mantine-react-table/styles.css"
 import { useDisclosure } from "@mantine/hooks"
 import { ActionIcon } from "@mantine/core"
 import { IconSun, IconMoon } from "@tabler/icons-react"
 import { NavigationProgress } from "@mantine/nprogress"
 import { DatesProvider } from "@mantine/dates"
+import { SWRConfig } from "swr"
+import { IconCheck } from "@tabler/icons-react"
 
 function InnerApp() {
   const auth = useAuth()
@@ -51,12 +53,7 @@ function InnerApp() {
       >
         <AppShellHeader>
           <Group justify="space-between" px="md" h="100%">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
-            />
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
             <Title order={2}>Staff Scheduler</Title>
             <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
               {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
@@ -146,9 +143,58 @@ function App() {
     >
       <AuthProvider>
         <DatesProvider>
-          <InnerApp />
-          <Notifications />
-          <NavigationProgress />
+          <SWRConfig
+            value={{
+              refreshInterval: 0, // disable automatic refetching
+              revalidateIfStale: false,
+              revalidateOnFocus: false,
+              revalidateOnReconnect: false,
+              onError: (error, key) => {
+                notifications.show({
+                  id: key,
+                  title: "Error",
+                  message: error.message || "Failed to fetch data.",
+                  color: "red",
+                  withBorder: true,
+                  autoClose: false,
+                  withCloseButton: false,
+                })
+              },
+              onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+                notifications.update({
+                  id: key,
+                  title: "Error",
+                  message: `${error.message || "Failed to fetch data"}. Retrying fetch ${key} data... Attempt ${retryCount + 1}`,
+                  color: "red",
+                  withBorder: true,
+                  loading: true,
+                  autoClose: false,
+                  withCloseButton: false,
+                })
+                if (error.status === 404) return // dont retry on not found
+                if (retryCount >= 5) return // only retry up to 5 times
+                // Retry with exponential backoff
+                const backoff = Math.min(1000 * 2 ** retryCount, 30000)
+                setTimeout(() => revalidate({ retryCount }), backoff)
+              },
+              onSuccess: (data, key) => {
+                notifications.show({
+                  id: key,
+                  color: "teal",
+                  title: "Success",
+                  message: `${key} data fetched successfully.`,
+                  icon: <IconCheck />,
+                  loading: false,
+                  autoClose: 2000,
+                  withCloseButton: true,
+                })
+              },
+            }}
+          >
+            <InnerApp />
+            <Notifications />
+            <NavigationProgress />
+          </SWRConfig>
         </DatesProvider>
       </AuthProvider>
     </MantineProvider>

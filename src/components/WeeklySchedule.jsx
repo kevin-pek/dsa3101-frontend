@@ -10,76 +10,90 @@ import {
   HoverCard,
   HoverCardDropdown,
   HoverCardTarget,
-  Popover,
-  PopoverDropdown,
-  PopoverTarget,
   Select,
   Button,
   useMantineColorScheme,
+  Modal,
+  ModalBody,
 } from "@mantine/core"
 import { IconSwitch } from "@tabler/icons-react"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react"
 import RangeSlider from "./RangeSlider"
 import "react-range-slider-input/dist/style.css"
 import "./rangeslider.css"
 import "./schedule.css"
+import { useEmployees } from "../hooks/use-employees"
+import { useSchedule } from "../hooks/use-schedule"
+import { useSWRConfig } from "swr"
+import { roles, hours, daysOfWeek } from "../utils/constants"
+import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 
-const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+const SwapEmployeeModal = ({ onSubmit }) => {
+  const { employees } = useEmployees()
+  const { schedule } = useSchedule()
+  const { mutate } = useSWRConfig()
+  const [selectedEmployee, setSelectedEmployee] = useState()
+  const [employeeError, setEmployeeError] = useState("")
+  const [role, setRole] = useState()
+  const [roleError, setRoleError] = useState("")
 
-const hours = [
-  "10am",
-  "11am",
-  "12pm",
-  "1pm",
-  "2pm",
-  "3pm",
-  "4pm",
-  "5pm",
-  "6pm",
-  "7pm",
-  "8pm",
-  "9pm",
-  "10pm",
-]
-
-const schedules = [{ name: "Employee", start: "1230", end: "1900" }]
-
-const employees = ["John", "Madden"]
-
-const SwapEmployeePopover = ({ open }) => {
-  const handleSwap = () => {
+  const handleSwap = useCallback(() => {
     console.log("Swap!")
-  }
+    let valid = true
+    const employee = employees.find((e) => e.name === selectedEmployee)?.id
+    if (!employee) {
+      setEmployeeError("Invalid employee selected!")
+      valid = false
+    } else setEmployeeError("")
+    if (!role || !roles.includes(role)) {
+      setRoleError("Invalid role selected!")
+      valid = false
+    } else setRoleError("")
+    if (valid) {
+      // mutate("Schedule", [...schedule])
+      onSubmit()
+    }
+  }, [selectedEmployee, employees, role, schedule])
+
+  const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
   return (
-    <Popover trapFocus shadow="md" position="bottom" offset={-50} opened={open}>
-      <PopoverTarget>
-        <Group p={0}>
-          <ActionIcon variant="subtle" w="fit-content">
-            <IconSwitch />
-            Swap
-          </ActionIcon>
-        </Group>
-      </PopoverTarget>
-      <PopoverDropdown>
-        <Stack>
-          <Select
-            label="Swap with:"
-            placeholder="Select another employee..."
-            data={employees}
-            comboboxProps={{ withinPortal: false }}
-          />
-          <Button onClick={handleSwap}>Save</Button>
-        </Stack>
-      </PopoverDropdown>
-    </Popover>
+    <Stack>
+      <Select
+        required
+        label="Swap with:"
+        placeholder="Select another employee..."
+        data={employeeData}
+        value={selectedEmployee}
+        onChange={setSelectedEmployee}
+        comboboxProps={{ withinPortal: false }}
+        searchable
+        nothingFoundMessage="No employees found..."
+        error={employeeError}
+      />
+      <Select
+        required
+        label="Role:"
+        placeholder="Change role..."
+        data={roles}
+        value={role}
+        onChange={setRole}
+        comboboxProps={{ withinPortal: false }}
+        error={roleError}
+      />
+      <Button type="submit" onClick={handleSwap}>
+        Swap
+      </Button>
+    </Stack>
   )
 }
 
-const TimeRangeSlider = (props) => {
+const TimeRangeSlider = () => {
   const [value, setValue] = useState([0, hours.length * 2]) // upper and lower bound of the range
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
+  const [opened, { open, close }] = useDisclosure(false) // popover open
+  const isMobile = useMediaQuery("(max-width: 50em)")
 
   const handleMouseHover = (e) => {
     if (e.target.classList.contains("range-slider__range")) {
@@ -89,7 +103,7 @@ const TimeRangeSlider = (props) => {
         const xOffset = 44
         setHoverPos({
           x: e.clientX - xOffset,
-          y: rect.top - rect.height - yOffset,
+          y: window.scrollY + rect.top - rect.height - yOffset,
         })
       }
       setHovering(true)
@@ -98,54 +112,65 @@ const TimeRangeSlider = (props) => {
 
   const handleMouseEnter = (e) => {
     // show thumb adjustment slider icons when hovering the slider range
-    e.target.parentNode
-      .querySelectorAll(".range-slider__thumb")
-      .forEach((child) => {
-        child.style.background = "var(--mantine-color-gray-0)"
-      })
+    e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+      child.style.background = "var(--mantine-color-gray-0)"
+    })
   }
 
   const handleMouseLeave = (e) => {
     // remove thumb adjustment slider icons when no longer hovering the slider
-    e.target.parentNode
-      .querySelectorAll(".range-slider__thumb")
-      .forEach((child) => {
-        child.style.background = "transparent"
-      })
+    e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+      child.style.background = "transparent"
+    })
   }
 
   return (
-    <HoverCard position="top" withArrow onClose={() => setHovering(false)}>
-      <HoverCardTarget>
-        <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <RangeSlider
-            onMouseEnterRange={handleMouseHover}
-            step={1}
-            min={0}
-            max={hours.length * 2}
-            value={value}
-            onInput={(val, userInt) => setValue(val)}
-          >
-            Label
-          </RangeSlider>
-        </Box>
-      </HoverCardTarget>
-      <HoverCardDropdown
-        hidden={!hovering}
-        p={4}
-        left={hoverPos.x}
-        top={hoverPos.y}
-      >
-        <SwapEmployeePopover />
-      </HoverCardDropdown>
-    </HoverCard>
+    <>
+      <HoverCard position="top" withArrow onClose={() => setHovering(false)}>
+        <HoverCardTarget>
+          <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <RangeSlider
+              onMouseEnterRange={handleMouseHover}
+              step={1}
+              min={0}
+              max={hours.length * 2}
+              value={value}
+              onInput={(val, userInt) => setValue(val)}
+            >
+              Label
+            </RangeSlider>
+          </Box>
+        </HoverCardTarget>
+        <HoverCardDropdown hidden={!hovering} p={4} left={hoverPos.x} top={hoverPos.y}>
+          <Group p={0}>
+            <ActionIcon
+              onClick={() => {
+                open()
+                setHovering(false)
+              }}
+              variant="subtle"
+              w="fit-content"
+            >
+              <IconSwitch />
+              Swap
+            </ActionIcon>
+          </Group>
+        </HoverCardDropdown>
+      </HoverCard>
+      <Modal opened={opened} onClose={close} title="Swap Shift" centered fullScreen={isMobile}>
+        <ModalBody>
+          <SwapEmployeeModal onSubmit={close} />
+        </ModalBody>
+      </Modal>
+    </>
   )
 }
 
 /**
  * Displays a day entry in the schedule. Height grows with number of employees in schedule.
  */
-const DayTimeline = ({ schedules }) => {
+const DayTimeline = () => {
+  const { schedule } = useSchedule()
   const theme = useMantineColorScheme()
 
   // Generate alternating background color based on number of partitions
@@ -153,12 +178,8 @@ const DayTimeline = ({ schedules }) => {
     const rangeSliders = document.querySelectorAll(".day")
     const darkMode = theme.colorScheme === "dark"
     rangeSliders.forEach((slider) => {
-      const color1 = darkMode
-        ? "var(--mantine-color-dark-6)"
-        : "var(--mantine-color-gray-0)"
-      const color2 = darkMode
-        ? "var(--mantine-color-dark-7)"
-        : "var(--mantine-color-gray-2)"
+      const color1 = darkMode ? "var(--mantine-color-dark-6)" : "var(--mantine-color-gray-0)"
+      const color2 = darkMode ? "var(--mantine-color-dark-7)" : "var(--mantine-color-gray-2)"
       const partitions = hours.length
       const gradientParts = []
       for (let i = 0; i < partitions; i++) {
@@ -173,17 +194,16 @@ const DayTimeline = ({ schedules }) => {
   }, [theme])
 
   return (
-    // <Stack gap={4}>
     <Stack className="day" gap={2} py="8px">
-      {schedules.map((e, i) => (
+      {schedule.map((e, i) => (
         <TimeRangeSlider key={i} />
       ))}
     </Stack>
-    // </Stack>
   )
 }
 
-export const WeeklySchedule = ({ schedule }) => {
+export const WeeklySchedule = () => {
+  const { schedule } = useSchedule()
   const sidebarCols = 4
   const cols = sidebarCols + hours.length * 2
   const minColWidth = 64
@@ -208,12 +228,7 @@ export const WeeklySchedule = ({ schedule }) => {
       </GridCol>
 
       {hours.map((hr, i) => (
-        <GridCol
-          key={i}
-          span={2}
-          style={{ textAlign: "center" }}
-          className="hour-col"
-        >
+        <GridCol key={i} span={2} style={{ textAlign: "center" }} className="hour-col">
           {hr}
         </GridCol>
       ))}
@@ -238,7 +253,7 @@ export const WeeklySchedule = ({ schedule }) => {
           </GridCol>
 
           <GridCol span={hours.length * 2}>
-            <DayTimeline schedules={schedules} />
+            <DayTimeline schedule={schedule} />
           </GridCol>
 
           {i !== daysOfWeek.length - 1 && (

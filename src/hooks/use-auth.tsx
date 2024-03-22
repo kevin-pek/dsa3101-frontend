@@ -8,18 +8,14 @@ export interface AuthContext {
 const AuthContext = createContext<AuthContext | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<string | null>(sessionStorage.getItem('user'))
+  const [user, setUser] = useState<string | null>(sessionStorage.getItem("user"))
 
   useEffect(() => {
-    if (user) sessionStorage.setItem('user', user)
-    else sessionStorage.removeItem('user')
+    if (user) sessionStorage.setItem("user", user)
+    else sessionStorage.removeItem("user")
   }, [user])
 
-  return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
