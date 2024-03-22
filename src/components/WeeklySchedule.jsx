@@ -94,42 +94,90 @@ const TimeRangeSlider = () => {
   const [hovering, setHovering] = useState(false)
   const [opened, { open, close }] = useDisclosure(false) // popover open
   const isMobile = useMediaQuery("(max-width: 50em)")
+  const [active, setActive] = useState(true)
+  const rangeRef = useRef()
+  const hoverRef = useRef()
 
   const handleMouseHover = (e) => {
-    if (e.target.classList.contains("range-slider__range")) {
-      if (!hovering) {
-        const rect = e.target.getBoundingClientRect()
-        const yOffset = 4
-        const xOffset = 44
-        setHoverPos({
-          x: e.clientX - xOffset,
-          y: window.scrollY + rect.top - rect.height - yOffset,
-        })
+    if ((isMobile && active) || !isMobile) {
+      // mobile devices need to click on the range first
+      if (e.target.classList.contains("range-slider__range")) {
+        // show switch over mouse position in time range
+        if (!hovering) {
+          const rect = e.target.getBoundingClientRect()
+          const yOffset = 4
+          const xOffset = 44
+          setHoverPos({
+            x: e.clientX - xOffset,
+            y: window.scrollY + rect.top - rect.height - yOffset,
+          })
+        }
+        setHovering(true)
       }
-      setHovering(true)
     }
   }
 
   const handleMouseEnter = (e) => {
-    // show thumb adjustment slider icons when hovering the slider range
-    e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
-      child.style.background = "var(--mantine-color-gray-0)"
-    })
+    if ((isMobile && active) || !isMobile) {
+      // mobile devices need to click on the range first
+      // show thumb adjustment slider icons when hovering the slider range
+      e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+        child.style.background = "var(--mantine-color-gray-0)"
+      })
+    }
   }
 
   const handleMouseLeave = (e) => {
-    // remove thumb adjustment slider icons when no longer hovering the slider
-    e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
-      child.style.background = "transparent"
-    })
+    if ((isMobile && active) || !isMobile) {
+      // mobile devices need to click on the range first
+      // remove thumb adjustment slider icons when no longer hovering the slider
+      e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+        child.style.background = "transparent"
+      })
+    }
   }
+
+  useEffect(() => {
+    // click handlers for mobile devices
+    if (isMobile) {
+      const handleClick = (e) => {
+        if (rangeRef.current) {
+          if (!rangeRef.current.contains(e.target) && !hoverRef.current.contains(e.target)) {
+            setActive(false)
+          } else {
+            setActive(true)
+          }
+        }
+      }
+      document.addEventListener("mousedown", handleClick)
+      setActive(false) // trigger active useEffect handler
+      return () => document.removeEventListener("mousedown", handleClick)
+    }
+  }, [isMobile])
+
+  useEffect(() => {
+    if (isMobile) {
+      rangeRef.current.querySelectorAll(".range-slider__thumb").forEach((c) => {
+        c.style.pointerEvents = active ? "auto" : "none"
+      })
+      rangeRef.current.querySelector(".range-slider__range").style.pointerEvents = active
+        ? "auto"
+        : "none"
+    }
+  }, [active])
 
   return (
     <>
-      <HoverCard position="top" withArrow onClose={() => setHovering(false)}>
+      <HoverCard
+        position="top"
+        withArrow
+        disabled={isMobile && !active}
+        onClose={() => setHovering(false)}
+      >
         <HoverCardTarget>
-          <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Box ref={rangeRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <RangeSlider
+              disabled={isMobile && !active}
               onMouseEnterRange={handleMouseHover}
               step={1}
               min={0}
@@ -142,7 +190,7 @@ const TimeRangeSlider = () => {
           </Box>
         </HoverCardTarget>
         <HoverCardDropdown hidden={!hovering} p={4} left={hoverPos.x} top={hoverPos.y}>
-          <Group p={0}>
+          <Group ref={hoverRef} p={0}>
             <ActionIcon
               onClick={() => {
                 open()
