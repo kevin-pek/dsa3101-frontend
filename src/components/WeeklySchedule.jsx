@@ -142,10 +142,10 @@ const TimeRangeSlider = () => {
     if (isMobile) {
       const handleClick = (e) => {
         if (rangeRef.current) {
-          if (!rangeRef.current.contains(e.target) && !hoverRef.current.contains(e.target)) {
-            setActive(false)
-          } else {
+          if (rangeRef.current.contains(e.target) || (hoverRef.current && hoverRef.current.contains(e.target))) {
             setActive(true)
+          } else {
+            setActive(false)
           }
         }
       }
