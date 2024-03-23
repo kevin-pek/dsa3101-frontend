@@ -1,10 +1,19 @@
 import React from "react"
+import { useState } from "react"
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table"
-import { ActionIcon, Button, Tooltip } from "@mantine/core"
-import { IconTrash } from "@tabler/icons-react"
+import {
+  ActionIcon,
+  Button,
+  Tooltip,
+  FileButton,
+  Text,
+  Group,
+} from "@mantine/core"
+import { IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
 import { fakeEmployees } from "../sampleEmployees"
 
 export function Employees() {
+  const [file, setFile] = useState(null)
   const columns = [
     {
       accessorKey: "name",
@@ -75,17 +84,15 @@ export function Employees() {
   const table = useMantineReactTable({
     columns,
     data: fakeEmployees,
-    createDisplayMode: "row", // ('modal', and 'custom' are also available)
-    editDisplayMode: "table", // ('modal', 'row', 'cell', and 'custom' are also available)
+    createDisplayMode: "row",
+    editDisplayMode: "cell", // double click to edit cell
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: "last",
     enableBottomToolbar: false,
-    enableColumnResizing: true,
     defaultColumn: {
-      minSize: 20, 
-      maxSize: 9001, 
-      size: 145, 
+      minSize: 30,
+      maxSize: 9001,
     },
     mantineTableProps: {
       sx: {
@@ -100,11 +107,37 @@ export function Employees() {
       </Tooltip>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button>Create New User</Button>
+      <Button leftSection={<IconPlus size={20}/>}>Create New User</Button>
     ),
   })
 
   return (
-    <MantineReactTable table={table} />
+    <div style={{ overflowX: "auto" }}>
+      <MantineReactTable table={table} />
+      <div style={{ overflowX: "auto", padding: "25px" }}>
+        <Group justify="right">
+          <FileButton
+            onChange={setFile}
+            accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          >
+            {(props) => (
+              <Tooltip label="Employees CSV">
+                <Button
+                  {...props}
+                  rightSection={<IconUpload size={18} />}
+                >
+                  Upload CSV
+                </Button>
+              </Tooltip>
+            )}
+          </FileButton>
+        </Group>
+        {file && (
+          <Text ta="right" mt="2px">
+            Uploaded File: {file.name}
+          </Text>
+        )}
+      </div>
+    </div>
   )
 }
