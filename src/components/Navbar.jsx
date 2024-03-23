@@ -7,7 +7,7 @@ import {
 } from "@tabler/icons-react"
 import classes from "./navbar.module.css"
 import { useNavigate, useLocation } from "react-router-dom"
-import { useAuth } from "../hooks/auth"
+import { useAuth } from "../hooks/use-auth"
 
 const data = [
   { link: "/", label: "Dashboard", icon: IconDashboard },
