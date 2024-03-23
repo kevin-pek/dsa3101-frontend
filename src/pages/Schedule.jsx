@@ -58,7 +58,7 @@ const AddSchedulePopover = () => {
     } else setDayError("")
     if (valid) {
       const newSchedule = {
-        employeeId: employee.id,
+        employeeId: employee,
         start: "1000", // give new schedules default values
         end: "2200",
         day: selectedDay,
@@ -84,7 +84,7 @@ const AddSchedulePopover = () => {
         </ActionIcon>
       </PopoverTarget>
       <PopoverDropdown>
-        <Stack>
+        <Stack miw="16em">
           <Select
             required
             label="Employee:"
@@ -117,6 +117,7 @@ const AddSchedulePopover = () => {
             data={daysOfWeek}
             error={dayError}
           />
+          <Space />
           <Button type="submit" onClick={handleSubmit}>
             Add
           </Button>

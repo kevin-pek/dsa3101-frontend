@@ -8,3 +8,27 @@
   bottom: 0;
   width: 1px; /* Adjust the thickness of the tick mark here */
 }
+
+.Waiter .range-slider__range {
+  background-color: var(--mantine-color-green-light);
+  color: var(--mantine-color-green-light-color);
+  border: 2px solid var(--mantine-color-green-light-color);
+}
+
+.Manager .range-slider__range {
+  background-color: var(--mantine-color-green-light);
+  color: var(--mantine-color-green-light-color);
+  border: 2px solid var(--mantine-color-green-light-color);
+}
+
+.Dishwasher .range-slider__range {
+  background-color: var(--mantine-color-green-light);
+  color: var(--mantine-color-green-light-color);
+  border: 2px solid var(--mantine-color-green-light-color);
+}
+
+.Chef .range-slider__range {
+  background-color: var(--mantine-color-green-light);
+  color: var(--mantine-color-green-light-color);
+  border: 2px solid var(--mantine-color-green-light-color);
+}

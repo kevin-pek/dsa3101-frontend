@@ -27,9 +27,6 @@
 
 .range-slider .range-slider__range {
   border-radius: 8px;
-  opacity: 50%;
-  background: grey;
-  border: 2px solid light-dark(var(--mantine-color-dark-6), var(--mantine-color-white));
   pointer-events: auto;
 }
 

@@ -27,6 +27,7 @@ import { useSchedule } from "../hooks/use-schedule"
 import { useSWRConfig } from "swr"
 import { roles, hours, daysOfWeek } from "../utils/constants"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
+import { convertIndexToTime, convertTimeToIndex } from "../utils/time"
 
 const SwapEmployeeModal = ({ onSubmit }) => {
   const { employees } = useEmployees()
@@ -88,8 +89,8 @@ const SwapEmployeeModal = ({ onSubmit }) => {
   )
 }
 
-const TimeRangeSlider = () => {
-  const [value, setValue] = useState([0, hours.length * 2]) // upper and lower bound of the range
+const TimeRangeSlider = ({ value, setValue }) => {
+  const { employees } = useEmployees()
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
   const [opened, { open, close }] = useDisclosure(false) // popover open
@@ -97,6 +98,21 @@ const TimeRangeSlider = () => {
   const [active, setActive] = useState(true)
   const rangeRef = useRef()
   const hoverRef = useRef()
+
+  const timeIdxOffset = convertTimeToIndex(hours[0])
+  const [range, setRange] = useState([
+    convertTimeToIndex(value.start) - timeIdxOffset,
+    convertTimeToIndex(value.end) - timeIdxOffset,
+  ])
+  const name = useMemo(() => employees.find((e) => e.id === value.employeeId)?.name)
+
+  useEffect(() => {
+    setValue({
+      ...value,
+      start: convertIndexToTime(range[0] + timeIdxOffset - 2),
+      end: convertIndexToTime(range[1] + timeIdxOffset - 2),
+    })
+  }, [range])
 
   const handleMouseHover = (e) => {
     if ((isMobile && active) || !isMobile) {
@@ -142,7 +158,10 @@ const TimeRangeSlider = () => {
     if (isMobile) {
       const handleClick = (e) => {
         if (rangeRef.current) {
-          if (rangeRef.current.contains(e.target) || (hoverRef.current && hoverRef.current.contains(e.target))) {
+          if (
+            rangeRef.current.contains(e.target) ||
+            (hoverRef.current && hoverRef.current.contains(e.target))
+          ) {
             setActive(true)
           } else {
             setActive(false)
@@ -182,10 +201,11 @@ const TimeRangeSlider = () => {
               step={1}
               min={0}
               max={hours.length * 2}
-              value={value}
-              onInput={(val, userInt) => setValue(val)}
+              value={range}
+              onInput={(val, userInt) => setRange(val)}
+              className={value.role}
             >
-              Label
+              {name}
             </RangeSlider>
           </Box>
         </HoverCardTarget>
@@ -217,9 +237,15 @@ const TimeRangeSlider = () => {
 /**
  * Displays a day entry in the schedule. Height grows with number of employees in schedule.
  */
-const DayTimeline = () => {
-  const { schedule } = useSchedule()
+const DayTimeline = ({ schedule }) => {
   const theme = useMantineColorScheme()
+  const [rangeValues, setRangeValues] = useState(schedule) // TODO: Update the schedule using requests when this is changed
+
+  // function to update individual range value
+  const setRangeValue = (idx, val) => {
+    console.log(val)
+    setRangeValues((curr) => curr.map((c, i) => (idx === i ? val : c)))
+  }
 
   // Generate alternating background color based on number of partitions
   useEffect(() => {
@@ -242,9 +268,9 @@ const DayTimeline = () => {
   }, [theme])
 
   return (
-    <Stack className="day" gap={2} py="8px">
-      {schedule.map((e, i) => (
-        <TimeRangeSlider key={i} />
+    <Stack mih="48px" className="day" gap={2} py="8px">
+      {schedule.map((sched, i) => (
+        <TimeRangeSlider value={sched} setValue={(val) => setRangeValue(i, val)} key={i} />
       ))}
     </Stack>
   )
@@ -252,6 +278,7 @@ const DayTimeline = () => {
 
 export const WeeklySchedule = () => {
   const { schedule } = useSchedule()
+
   const sidebarCols = 4
   const cols = sidebarCols + hours.length * 2
   const minColWidth = 64
@@ -301,7 +328,7 @@ export const WeeklySchedule = () => {
           </GridCol>
 
           <GridCol span={hours.length * 2}>
-            <DayTimeline schedule={schedule} />
+            <DayTimeline schedule={schedule.filter((sched) => sched.day === day)} />
           </GridCol>
 
           {i !== daysOfWeek.length - 1 && (

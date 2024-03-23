@@ -29,3 +29,12 @@ export function convertTimeToIndex(time: string): number {
 
   return hour * 2 + minuteOffset
 }
+
+// Reverse of convertTimeToIndex.
+// 0 -> 0000, 1 -> 0030, 2 -> 0100, ... , 48 -> 2400
+export function convertIndexToTime(index: number): string {
+  const timeIndex = Math.min(index, 48)
+  const hour: number = Math.floor(timeIndex / 2)
+  const minute: string = timeIndex % 2 === 0 ? "00" : "30"
+  return (hour < 10 ? `0${hour}` : hour.toString()) + minute
+}
