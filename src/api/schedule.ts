@@ -3,7 +3,7 @@ interface Schedule {
   start: string
   end: string
   day: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday"
-  role: "Waiter" | "Chef" | "Dishwasher" | "Manager"
+  role: "Server" | "Chef" | "Dishwasher" | "Manager"
 }
 
 export const getSchedule = async (): Promise<Schedule[]> => {
@@ -15,7 +15,7 @@ export const getSchedule = async (): Promise<Schedule[]> => {
       start: "1200",
       end: "2000",
       day: "Monday",
-      role: "Waiter",
+      role: "Server",
     },
   ]
 }

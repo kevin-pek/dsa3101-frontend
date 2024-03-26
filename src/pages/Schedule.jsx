@@ -161,6 +161,12 @@ export function Schedule() {
               >
                 <ListItem
                   component="span"
+                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-pink-4)" />}
+                >
+                  Manager
+                </ListItem>
+                <ListItem
+                  component="span"
                   icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-6)" />}
                 >
                   Dishwasher
