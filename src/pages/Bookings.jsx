@@ -19,6 +19,14 @@ export function Bookings() {
   const columns = useMemo(
     () => [ 
       { 
+        accessorKey: 'bookingId',
+        header: 'Booking ID', 
+        mantineEditTextInputProps: ({ cell, row }) => ({ 
+          type: 'number',
+          required: true
+        })
+      },
+      { 
         accessorKey: 'eventName',
         header: 'Event Name', 
         mantineEditTextInputProps: ({ cell, row }) => ({ 
