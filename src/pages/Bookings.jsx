@@ -76,16 +76,27 @@ export function Bookings() {
   const table = useMantineReactTable({
     columns,
     data: fakeBookings,
-    createDisplayMode: 'row',
-    editDisplayMode: 'table',
+    createDisplayMode: 'modal',
+    editDisplayMode: 'modal',
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: 'last',
     enableBottomToolbar: false,
+    onEditingRowCancel: () => setValidationErrors({}),
+    onEditingRowSave: handleSaveEmployee,
+    renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
+      <Stack>
+        <Title order={3}>Edit Event</Title>
+        {internalEditComponents}
+        <Flex justify="flex-end" mt="xl">
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </Flex>
+      </Stack>
+    ),
     renderRowActions: ({ row }) => (
       <>
         <Tooltip label="Edit">
-          <ActionIcon color="blue">
+          <ActionIcon onClick={() => table.setEditingRow(row)}>
             <IconEdit />
           </ActionIcon>
         </Tooltip>
