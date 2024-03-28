@@ -1,7 +1,12 @@
-export const fakeEmployees = [
+import { Employee } from "./api/employee";
+
+export const fakeEmployees: Employee[] = [
   {
-    empId: 1,
+    id: 1,
     name: "Dylan Murray",
+    type: "FT", // status
+    wage: 800,
+    role: "Dishwasher",
     mon: "9am to 10pm",
     tues: "9am to 6pm",
     wed: "9am to 10pm",
@@ -11,8 +16,11 @@ export const fakeEmployees = [
     sun: "9am to 10pm",
   },
   {
-    empId: 2,
+    id: 2,
     name: "Rachel Stone",
+    type: "PT",
+    wage: 500,
+    role: "Manager",
     mon: "9am to 3pm",
     tues: "NA",
     wed: "9am to 10pm",
