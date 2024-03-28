@@ -3,11 +3,7 @@ import { MRT_EditActionButtons, MantineReactTable, useMantineReactTable } from '
 import { Flex, Stack, Text, Title, ActionIcon, Button, Tooltip } from '@mantine/core';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { fakeBookings } from '../sampleBookings.jsx';
-// import {
-//   useMutation,
-//   useQueryClient,
-// } from '@tanstack/react-query';
-// import { modals } from '@mantine/modals';
+import { Modal } from '@mantine/core';
 
 
 export function Bookings() {
@@ -118,32 +114,32 @@ export function Bookings() {
     enableRowActions: true,
     positionActionsColumn: 'last',
     enableBottomToolbar: false,
-    onCreatingRowCancel: () => setValidationErrors({}),
-    onCreatingRowSave: handleCreateUser,
-    onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveUser,
-    renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
-      <Stack>
-        <Title order={3}>Add New Event</Title>
-        {internalEditComponents}
-        <Flex justify="flex-end" mt="xl">
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </Flex>
-      </Stack>
-    ),
-    renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
-      <Stack>
-        <Title order={3}>Edit Event</Title>
-        {internalEditComponents}
-        <Flex justify="flex-end" mt="xl">
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </Flex>
-      </Stack>
-    ),
+    // onCreatingRowCancel: () => setValidationErrors({}),
+    // onCreatingRowSave: handleCreateUser,
+    // onEditingRowCancel: () => setValidationErrors({}),
+    // onEditingRowSave: handleSaveUser,
+    // renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
+    //   <Stack>
+    //     <Title order={3}>Add New Event</Title>
+    //     {internalEditComponents}
+    //     <Flex justify="flex-end" mt="xl">
+    //       <MRT_EditActionButtons variant="text" table={table} row={row} />
+    //     </Flex>
+    //   </Stack>
+    // ),
+    // renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
+    //   <Stack>
+    //     <Title order={3}>Edit Event</Title>
+    //     {internalEditComponents}
+    //     <Flex justify="flex-end" mt="xl">
+    //       <MRT_EditActionButtons variant="text" table={table} row={row} />
+    //     </Flex>
+    //   </Stack>
+    // ),
     renderRowActions: ({ row }) => (
       <>
         <Tooltip label="Edit">
-        <ActionIcon onClick={() => table.setEditingRow(row)}>
+        <ActionIcon color ="blue" onClick={() => table.setEditingRow(row)}>
             <IconEdit />
           </ActionIcon>
         </Tooltip>
