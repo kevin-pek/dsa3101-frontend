@@ -35,6 +35,16 @@ export const updateBooking = async (updatedBooking: Booking): Promise<Booking[]>
   return updatedBookings;
 };
 
+export const deleteBooking = async (bookingId: number): Promise<void> => {
+  console.debug("Deleting booking with ID:", bookingId);
+  
+
+  await new Promise((resolve) => setTimeout(resolve,2000)); // delay result by 2 seconds
+
+  const deletedBookings = fakeBookings.filter((booking) => booking.bookingId !== bookingId);
+
+  mutate("bookings", deletedBookings, false);
+}
 
 
 // //UPDATE hook (put user in api)
