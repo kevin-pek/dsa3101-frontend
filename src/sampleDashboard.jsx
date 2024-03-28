@@ -13,6 +13,36 @@ export const Employees = [
     { month: 'Dec', Expenditure: null, Workers: null, Hours: null },
   ];
 
+  export const hoursWorked = [
+    { month: 'Jan', Manager: 14434, Chef: 23153, Cashier: 19499},
+    { month: 'Feb', Manager: 2192, Chef: 6564, Cashier: 13559},
+    { month: 'Mar', Manager: 12205, Chef: 3274, Cashier: 10269},
+    { month: 'Apr', Manager: null, Chef: null, Cashier: null},
+    { month: 'May', Manager: null, Chef: null, Cashier: null},
+    { month: 'Jun', Manager: null, Chef: null, Cashier: null},
+    { month: 'Jul', Manager: null, Chef: null, Cashier: null},
+    { month: 'Aug', Manager: null, Chef: null, Cashier: null},
+    { month: 'Sep', Manager: null, Chef: null, Cashier: null},
+    { month: 'Oct', Manager: null, Chef: null, Cashier: null},
+    { month: 'Nov', Manager: null, Chef: null, Cashier: null},
+    { month: 'Dec', Manager: null, Chef: null, Cashier: null},
+  ]
+
+  export const hiringExpenditure = [
+    { month: 'Jan', Manager: 2890, Chef: 139, Cashier: 4709 },
+    { month: 'Feb', Manager: 2700, Workers: 176, Hours: 1017 },
+    { month: 'Mar', Manager: 3600, Workers: 228, Hours: 376 },
+    { month: 'Apr', Manager: 2500, Workers: 232, Hours: 6922 },
+    { month: 'May', Manager: null, Workers: null, Hours: null },
+    { month: 'Jun', Manager: null, Workers: null, Hours: null },
+    { month: 'Jul', Manager: null, Workers: null, Hours: null },
+    { month: 'Aug', Manager: 5000, Workers: null, Hours: null },
+    { month: 'Sep', Manager: null, Workers: null, Hours: null },
+    { month: 'Oct', Manager: null, Workers: null, Hours: null },
+    { month: 'Nov', Manager: null, Workers: null, Hours: null },
+    { month: 'Dec', Manager: null, Workers: null, Hours: null },
+  ];
+
 export const empAvailability = [
     { day: 'Mon', PT: 46, FT: 84 },
     { day: 'Tues', PT: 29, FT: 57 },
@@ -22,6 +52,21 @@ export const empAvailability = [
     { day: 'Sat', PT: 50, FT: 78 },
     { day: 'Sun', PT: 50, FT: 59 },
   ];
+
+export const empRoles = [
+  {month: 'Jan', Manager: 23, Chef: 50, Cashier: 40 },
+  {month: 'Feb', Manager: 14, Chef: 50, Cashier: 40 },
+  {month: 'Mar', Manager: 20, Chef: 50, Cashier: 40 },
+  {month: 'Apr', Manager: 22, Chef: 50, Cashier: 40 },
+  {month: 'May', Manager: 13, Chef: 50, Cashier: 40 },
+  {month: 'Jun', Manager: 47, Chef: 50, Cashier: 40 },
+  {month: 'Jul', Manager: 36, Chef: 50, Cashier: 40 },
+  {month: 'Aug', Manager: 23, Chef: 50, Cashier: 40 },
+  {month: 'Sep', Manager: 23, Chef: 50, Cashier: 40 },
+  {month: 'Oct', Manager: 23, Chef: 50, Cashier: 40 },
+  {month: 'Nov', Manager: 23, Chef: 50, Cashier: 40 },
+  {month: 'Dec', Manager: 23, Chef: 50, Cashier: 40 },
+]
 
 export const monthlyBookings = [
     { month: 'Jan', Bookings: 46 },
