@@ -30,24 +30,3 @@ export const fakeEmployees: Employee[] = [
     sun: "9am to 10pm",
   },
 ]
-// {
-//   id: 1,
-//   name: "John Doe",
-//   type: "FT",
-// },
-// {
-//   id: 2,
-//   name: "Jane Smith",
-//   type: "PT",
-//   availability: [
-//     { day: "Wednesday", start: "13:00", end: "17:00" },
-//     { day: "Thursday", start: "13:00", end: "22:00" },
-//     { day: "Friday", start: "11:00", end: "17:00" }
-//   ]
-// },
-// {
-//   id: 3,
-//   name: "Alice Johnson",
-//   type: "FT",
-// }
-// ]

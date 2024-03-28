@@ -1,10 +1,6 @@
 import React from "react"
 import { useState, useMemo } from "react"
-import {
-  MantineReactTable,
-  useMantineReactTable,
-  MRT_EditActionButtons,
-} from "mantine-react-table"
+import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
 import {
   ActionIcon,
   Button,
@@ -21,7 +17,7 @@ import { fakeEmployees } from "../sampleEmployees"
 import { updateEmployee } from "../api/employee"
 
 export function Employees() {
-  const [validationErrors, setValidationErrors] = useState({})
+  const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const [file, setFile] = useState(null)
   const columns = useMemo(
     () => [
@@ -121,11 +117,28 @@ export function Employees() {
 
   // UPDATE action
   const handleSaveEmployee = async ({ values, table }) => {
-      await updateEmployee(values)
-      // Reset validation errors
-      setValidationErrors({})
-      table.setEditingRow(null)
-  };
+    await updateEmployee(values)
+    setValidationErrors({})
+    table.setEditingRow(null)
+  }
+
+  // For CSV upload
+  const handleUpload = async (selectedFile) => {
+    const parsedData = await parseEmployeesFile(selectedFile) // or just pass to backend to parse
+    saveData(parsedData)
+
+    setFile(selectedFile)
+  }
+
+  const parseEmployeesFile = async (file) => {
+    console.log("parsing...")
+  }
+
+  const saveData = async (data) => {
+    // const updatePromises = data.map(employee => updateEmployee(employee));
+    // await Promise.all(updatePromises)
+    console.log("saving...!")
+  }
 
   const table = useMantineReactTable({
     columns,
@@ -139,7 +152,7 @@ export function Employees() {
     defaultColumn: {
       minSize: 30,
       maxSize: 9001,
-      size: 120
+      size: 120,
     },
     mantineTableProps: {
       sx: {
@@ -182,7 +195,7 @@ export function Employees() {
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <FileButton
-            onChange={setFile}
+            onChange={handleUpload}
             accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           >
             {(props) => (
