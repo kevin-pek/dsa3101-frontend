@@ -6,7 +6,7 @@ import { Flex,
   Text,
   Title, ActionIcon, Button, Tooltip } from '@mantine/core';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
-import { modals } from '@mantine/modals';
+import { ModalsProvider, modals } from '@mantine/modals';
 import {
   useMutation,
   useQueryClient,
