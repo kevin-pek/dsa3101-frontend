@@ -1,19 +1,17 @@
-import React from 'react';
-import { useState } from 'react';
-import { MRT_EditActionButtons,MantineReactTable, useMantineReactTable } from 'mantine-react-table';
-import { Flex,
-  Stack,
-  Text,
-  Title, ActionIcon, Button, Tooltip } from '@mantine/core';
+import React, { useState } from 'react';
+import { MRT_EditActionButtons, MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { Flex, Stack, Text, Title, ActionIcon, Button, Tooltip } from '@mantine/core';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
-import { ModalsProvider, modals } from '@mantine/modals';
-import {
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { modals } from '@mantine/modals';
 import { fakeBookings } from '../sampleBookings.jsx';
+// import {
+//   useMutation,
+//   useQueryClient,
+// } from '@tanstack/react-query';
+
 
 export function Bookings() {
+  const [bookings, setBookings] = useState(fakeBookings); // Manage state of bookings here
   const columns = [
     { 
       accessorKey: 'eventName',
@@ -74,6 +72,24 @@ export function Bookings() {
     }
   ];
 
+  const handleDeleteBooking = (bookingId) => {
+    modals.openConfirmModal({
+      title: 'Are you sure you want to delete this event?',
+      children: (
+        <Text>
+          Are you sure you want to delete this event? This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => deleteBooking(bookingId),
+    });
+  };
+
+  const deleteBooking = (bookingId) => {
+    const updatedBookings = bookings.filter(booking => booking.bookingId !== bookingId);
+    setBookings(updatedBookings);
+  };
 
   const table = useMantineReactTable({
     columns,
@@ -114,7 +130,7 @@ export function Bookings() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => openDeleteConfirmModal(row)}>
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
@@ -140,21 +156,7 @@ export function Bookings() {
 
 // const { mutateAsync: deleteUser} = useDeleteUser();
 
-// functions below
-//DELETE action
-const openDeleteConfirmModal = (row) =>
-modals.openConfirmModal({
-  title: 'Are you sure you want to delete this event?',
-  children: (
-    <Text>
-      Are you sure you want to delete {row.original.eventName} on 
-      {row.original.eventDate}? This action cannot be undone.
-    </Text>
-  ),
-  labels: { confirm: 'Delete', cancel: 'Cancel' },
-  confirmProps: { color: 'red' },
-  onConfirm: () => deleteBooking(row.original.bookingId),
-});
+
 
  //UPDATE action
 //  const handleSaveUser = async ({ values, table }) => {
@@ -167,20 +169,5 @@ modals.openConfirmModal({
 //   await updateUser(values);
 //   table.setEditingRow(null); //exit editing mode
 // };
-
-
-function deleteBooking(bookingId) {
-  // Use useState hook to manage state of bookings
-  const [bookings, setBookings] = useState(fakeBookings);
-
-  // Filter out the booking with the provided bookingId
-  const updatedBookings = bookings.filter(booking => booking.bookingId !== bookingId);
-
-  // Update state with the filtered bookings
-  setBookings(updatedBookings);
-
-  // Return the updated bookings array
-  return updatedBookings;
-}
 
 // NOTE: api linked codes are in api > booking.js
