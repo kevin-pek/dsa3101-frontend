@@ -48,6 +48,14 @@ export function Bookings() {
       })
     },
     {
+      accessorKey: 'numPax',
+      header: 'Number of Pax',
+      mantineEditTextInputProps: ({cell,row}) => ({
+        type: 'number',
+        required: true
+      })
+    },
+    {
       accessorKey: 'staffReq',
       header: 'Number of Staff Required',
       mantineEditTextInputProps: ({cell,row}) => ({
