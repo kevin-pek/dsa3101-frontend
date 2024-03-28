@@ -93,6 +93,16 @@ export function Bookings() {
     setValidationErrors({})
     table.setEditingRow(null)
   }
+
+// delete action
+const handleDeleteBooking = async ({ row, table }) => {
+  const bookingId = row.original.bookingId;
+
+  await deleteBooking(bookingId);
+  table.setEditingRow(null);
+};
+
+
   const table = useMantineReactTable({
     columns,
     data: fakeBookings,
@@ -121,7 +131,7 @@ export function Bookings() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red">
+          <ActionIcon color="red" onClick={() => handleDeleteBooking({ row, table })}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
