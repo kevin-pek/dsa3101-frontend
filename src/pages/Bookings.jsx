@@ -15,8 +15,7 @@ import { fakeBookings } from '../sampleBookings';
 import { updateBooking } from '../api/booking'
 
 export function Bookings() {
-
-
+  const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const columns = useMemo(
     () => [ 
       { 
