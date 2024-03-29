@@ -11,20 +11,21 @@ import { ActionIcon,
   Stack, } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { fakeBookings } from '../sampleBookings';
-import { updateBooking } from '../api/booking'
+import { updateBooking, deleteBooking, addBooking } from '../api/booking';
+
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const columns = useMemo(
     () => [ 
-      { 
-        accessorKey: 'bookingId',
-        header: 'Booking ID', 
-        mantineEditTextInputProps: ({ cell, row }) => ({ 
-          type: 'number',
-          required: true
-        })
-      },
+      // { 
+      //   accessorKey: 'bookingId',
+      //   header: 'Booking ID', 
+      //   mantineEditTextInputProps: ({ cell, row }) => ({ 
+      //     type: 'number',
+      //     required: true
+      //   })
+      // },
       { 
         accessorKey: 'eventName',
         header: 'Event Name', 
@@ -101,15 +102,25 @@ export function Bookings() {
     table.setEditingRow(null)
   }
 
+// ADD action
+const handleAddBooking = async ({ values, table }) => {
+  await addBooking(values)
+  setValidationErrors({})
+  table.setEditingRow(null)
+}
+
 // delete action
 const handleDeleteBooking = async (bookingId) => {
-  try {
-    await deleteBooking(bookingId);
-    console.log(`Booking with ID ${bookingId} has been deleted successfully.`);
-  } 
-  catch (error) {
-    // Handle any errors that occur during the deletion operation
-    console.error(`Error deleting booking with ID ${bookingId}:`, error);
+  const isConfirmed = window.confirm('Are you sure you want to delete this booking?');
+  if (isConfirmed) {
+    try {
+      await deleteBooking(bookingId);
+      console.log(`Booking with ID ${bookingId} has been deleted successfully.`);
+    } 
+    catch (error) {
+      // Handle any errors that occur during the deletion operation
+      console.error(`Error deleting booking with ID ${bookingId}:`, error);
+    }
   }
 };
 
@@ -123,8 +134,19 @@ const handleDeleteBooking = async (bookingId) => {
     enableRowActions: true,
     positionActionsColumn: 'last',
     enableBottomToolbar: false,
+    onCreatingRowCancel: () => setValidationErrors({}),
+    onCreatingRowSave: handleAddBooking,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveBooking,
+    renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
+      <Stack>
+        <Title order={3}>Add New Event</Title>
+        {internalEditComponents}
+        <Flex justify="flex-end" mt="xl">
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </Flex>
+      </Stack>
+    ),
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
         <Title order={3}>Edit Event</Title>
@@ -149,7 +171,11 @@ const handleDeleteBooking = async (bookingId) => {
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button>
+      <Button
+      onClick={() =>
+      {table.setCreatingRow(true);
+      }}
+      >
         Add New Event
       </Button>
     )

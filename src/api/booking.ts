@@ -1,6 +1,7 @@
 import { mutate } from "swr";
 import { fakeBookings } from "../sampleBookings";
 
+
 export const getBookings = async () => {
   console.debug("Fetching bookings");
   await new Promise((resolve) => setTimeout(resolve, 3000)); // delay result by 3 seconds
@@ -35,6 +36,28 @@ export const updateBooking = async (updatedBooking: Booking): Promise<Booking[]>
   return updatedBookings;
 };
 
+export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
+  console.debug("Adding new booking");
+  console.debug(newBooking);
+  
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // delay result by 1 second
+
+  // Find the maximum bookingId in the existing bookings
+  const maxBookingId = Math.max(...fakeBookings.map((booking) => booking.bookingId));
+
+  // Generate a new bookingId by adding 1 to the maximum bookingId
+  const newBookingId = maxBookingId + 1;
+
+  // Add the new booking with the generated bookingId
+  const updatedBookings = [...fakeBookings, { ...newBooking, bookingId: newBookingId }];
+
+  // Assuming mutate is a function to update some external data source or state
+  mutate("bookings", updatedBookings, false); // Use the correct key ("bookings") and pass updatedBookings
+  
+  return updatedBookings;
+};
+
+
 export const deleteBooking = async (bookingId: number): Promise<void> => {
   console.debug("Deleting booking with ID:", bookingId);
   
@@ -42,9 +65,9 @@ export const deleteBooking = async (bookingId: number): Promise<void> => {
 
   const updatedBookings = fakeBookings.filter((booking) => booking.bookingId !== bookingId);
 
-  Object.assign(fakeBookings, updatedBookings);
+  // Object.assign(fakeBookings, updatedBookings);
 
-  // mutate("bookings", updatedBookings, false);
+  mutate("bookings", updatedBookings, false);
 }
 
 
