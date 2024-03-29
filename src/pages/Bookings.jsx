@@ -4,7 +4,6 @@ import { MantineReactTable, useMantineReactTable,MRT_EditActionButtons } from 'm
 import { ActionIcon,
   Button,
   Tooltip,
-  FileButton,
   Text,
   Group,
   Flex,
@@ -105,8 +104,8 @@ export function Bookings() {
 // delete action
 const handleDeleteBooking = async ({ row, table }) => {
   const bookingId = row.original.bookingId;
-
   await deleteBooking(bookingId);
+  setValidationErrors({});
   table.setEditingRow(null);
 };
 
@@ -139,7 +138,7 @@ const handleDeleteBooking = async ({ row, table }) => {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => handleDeleteBooking({ row, table })}>
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
