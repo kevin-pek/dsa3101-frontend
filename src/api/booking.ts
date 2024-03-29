@@ -40,7 +40,7 @@ export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
   console.debug("Adding new booking");
   console.debug(newBooking);
   
-  await new Promise((resolve) => setTimeout(resolve, 2000)); // delay result by 1 second
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // delay result by 2 seconds
 
   // Find the maximum bookingId in the existing bookings
   const maxBookingId = Math.max(...fakeBookings.map((booking) => booking.bookingId));
@@ -50,6 +50,7 @@ export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
 
   // Add the new booking with the generated bookingId
   const updatedBookings = [...fakeBookings, { ...newBooking, bookingId: newBookingId }];
+  // fakeBookings.push(updatedBookings);
 
   // Assuming mutate is a function to update some external data source or state
   mutate("bookings", updatedBookings, false); // Use the correct key ("bookings") and pass updatedBookings

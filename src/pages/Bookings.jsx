@@ -87,7 +87,7 @@ export function Bookings() {
         accessorKey: 'remark',
         header: 'Remarks (if any)',
         mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'Text',
+          type: 'text',
           required: false
         })
       }
@@ -106,7 +106,7 @@ export function Bookings() {
 const handleAddBooking = async ({ values, table }) => {
   await addBooking(values)
   setValidationErrors({})
-  table.setEditingRow(null)
+  table.setCreatingRow(true)
 }
 
 // delete action
@@ -123,7 +123,6 @@ const handleDeleteBooking = async (bookingId) => {
     }
   }
 };
-
 
   const table = useMantineReactTable({
     columns,
