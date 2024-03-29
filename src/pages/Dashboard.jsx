@@ -1,7 +1,6 @@
-import { LineChart, BarChart } from '@mantine/charts';
-import { AreaChart } from '@mantine/charts';
+import { LineChart, BarChart, AreaChart, RadarChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
-import { Employees, hiringExpenditure, monthlyBookings, hoursWorked, empRoles, empAvailability, demandForecast } from '../sampleDashboard.jsx';
+import { empAvailability, hiringExpenditure, empRoles, hoursWorked, weeklyBookings, monthlyBookings, demandForecast } from '../sampleDashboard.jsx';
 
 export function Dashboard() {
 
@@ -34,11 +33,11 @@ export function Dashboard() {
         orientation="vertical"
         xAxisProps={{ padding: { left: 30, right: 30 } }}
         //withLegend
-        //legendProps={{ layout: 'horizontal', verticalAlign: 'top' }}
+        //legendProps={{ horizontalAlign: 'bottom', height: 5 }}
         withTooltip={true}
         series={[
-          { name: 'PT', color: '#2FAD66' },
-          { name: 'FT', color: '#F29204' },
+          { name: 'PartTime', color: '#2FAD66' },
+          { name: 'FullTime', color: '#F29204' },
         ]}
         tickLine="y"
       />
@@ -47,7 +46,7 @@ export function Dashboard() {
 
       <div style={{ padding: '20px' }}>
       <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
-        Monthly Role Breakdown:
+        Current Number of Staff Employed (by Month, Role):
       </Text>
 
       <BarChart
@@ -73,7 +72,7 @@ export function Dashboard() {
 
       <div style={{ padding: '20px' }}>
       <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
-        Monthly Hours Worked Breakdown:
+        Monthly Breakdown of Hours Worked (Combined Total):
       </Text>
 
       <AreaChart
@@ -98,18 +97,18 @@ export function Dashboard() {
 
       <div style={{ padding: '20px' }}>
       <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}> 
-        Monthly Hiring Expenditure:
+        Monthly Hiring Expenditure (Combined Total):
       </Text>
     
       <LineChart
         h={300}
-        data={Employees}
+        data={hiringExpenditure}
         dataKey="month"
         yAxisLabel="Expenditure"
         xAxisProps={{ padding: { left: 30, right: 30 } }}
         xAxisLabel="Date"
         series={[
-          { name: "Expenditure", color: 'rgb(47, 173, 102)' },
+          { name: "Total", color: 'rgb(47, 173, 102)' },
         ]}
         curveType="linear"
         tickLine="xy"
@@ -120,17 +119,14 @@ export function Dashboard() {
 
       <div style={{ padding: '20px' }}>
       <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}> 
-        Monthly Hiring Expenditure Breakdown:
+        Monthly Hiring Expenditure Breakdown (by Role):
       </Text>
 
       </div>
-      <BarChart
+      <AreaChart
         h={300}
         data={hiringExpenditure}
         dataKey="month"
-        type="stacked"
-        xAxisLabel = "Day"
-        orientation="vertical"
         xAxisProps={{ padding: { left: 30, right: 30 } }}
         withTooltip={true}
         series={[
@@ -138,13 +134,32 @@ export function Dashboard() {
           { name: 'Chef', color: '#2FAD66' },
           { name: 'Cashier', color: '#116732' },
         ]}
-        tickLine="y"
+        curveType = "linear"
       />
+
+      <br></br>
 
       <div style={{ textAlign: 'center' }}>
         <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
           Demand Statistics
         </Text>
+      </div>
+
+      <div style={{ padding: '20px' }} >
+      <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
+        Weekly Bookings:
+      </Text>
+
+      <RadarChart
+      h={300}
+      data={weeklyBookings}
+      dataKey="day"
+      series={[{ name: 'Bookings', color: 'rgb(47, 173, 102)', opacity: 0.2 }]}
+      withPolarGrid
+      withPolarAngleAxis
+      withPolarRadiusAxis
+      />
+
       </div>
 
       <div style={{ padding: '20px' }} >
@@ -169,7 +184,7 @@ export function Dashboard() {
       
       <div style={{ padding: '20px' }}>
       <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
-        Customer Demand Forecast:
+        Monthly Customer Demand Forecast:
       </Text>
 
       <LineChart
