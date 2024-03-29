@@ -40,9 +40,11 @@ export const deleteBooking = async (bookingId: number): Promise<void> => {
   
   await new Promise((resolve) => setTimeout(resolve,2000)); // delay result by 2 seconds
 
-  const deletedBookings = fakeBookings.filter((booking) => booking.bookingId !== bookingId);
+  const updatedBookings = fakeBookings.filter((booking) => booking.bookingId !== bookingId);
 
-  mutate("bookings", deletedBookings, false);
+  Object.assign(fakeBookings, updatedBookings);
+
+  // mutate("bookings", updatedBookings, false);
 }
 
 

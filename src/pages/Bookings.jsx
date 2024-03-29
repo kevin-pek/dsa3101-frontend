@@ -102,11 +102,15 @@ export function Bookings() {
   }
 
 // delete action
-const handleDeleteBooking = async ({ row, table }) => {
-  const bookingId = row.original.bookingId;
-  await deleteBooking(bookingId);
-  setValidationErrors({});
-  table.setEditingRow(null);
+const handleDeleteBooking = async (bookingId) => {
+  try {
+    await deleteBooking(bookingId);
+    console.log(`Booking with ID ${bookingId} has been deleted successfully.`);
+  } 
+  catch (error) {
+    // Handle any errors that occur during the deletion operation
+    console.error(`Error deleting booking with ID ${bookingId}:`, error);
+  }
 };
 
 
@@ -138,7 +142,7 @@ const handleDeleteBooking = async ({ row, table }) => {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => handleDeleteBooking(row)}>
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
