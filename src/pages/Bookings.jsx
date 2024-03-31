@@ -12,6 +12,10 @@ import { ActionIcon,
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { fakeBookings } from '../sampleBookings';
 import { updateBooking, deleteBooking, addBooking } from '../api/booking';
+import { List, DeleteButton } from "@refinedev/mantine";
+import { Table, Pagination } from "@mantine/core";
+import { useTable } from "@refinedev/react-table";
+import { ColumnDef, flexRender } from "@tanstack/react-table";
 
 
 export function Bookings() {
