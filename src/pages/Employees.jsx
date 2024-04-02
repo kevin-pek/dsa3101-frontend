@@ -14,7 +14,7 @@ import {
   Modal,
 } from "@mantine/core"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { updateEmployee, parseEmployeesFile, saveEmployeesData } from "../api/employee"
+import { updateEmployee, saveEmployeesData } from "../api/employee"
 import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 
 export function Employees() {
@@ -121,8 +121,9 @@ export function Employees() {
   )
 
   // UPDATE action
-  const handleUpdateEmployee = async ({ values, table }) => {
-    await updateEmployee(values, employees)
+  const handleUpdateEmployee = async ({ row, values, table }) => {
+    const updatedEmployee = { ...values, id: row.original.id }
+    await updateEmployee(updatedEmployee)
     setValidationErrors({})
     table.setEditingRow(null)
   }
@@ -149,8 +150,7 @@ export function Employees() {
 
   // For CSV upload
   const handleUpload = async (selectedFile) => {
-    const parsedData = await parseEmployeesFile(selectedFile)
-    await saveEmployeesData(parsedData)
+    await saveEmployeesData(selectedFile)
     setFile(selectedFile)
   }
 

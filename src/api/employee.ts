@@ -1,4 +1,5 @@
 import { fakeEmployees } from "../sampleEmployees"
+import { mutate } from "swr"
 
 export interface Employee {
   id: number
@@ -22,39 +23,29 @@ export const getEmployees = async (): Promise<Employee[]> => {
 }
 
 export const updateEmployee = async (
-  updatedEmployee: Employee,
-  currentEmployees: Employee[],
+  updatedEmployee: Employee
 ): Promise<Employee[]> => {
   console.debug("Updating employee")
 
   await new Promise((resolve) => setTimeout(resolve, 1000)) // delay result by 1 second
-  const updatedEmployees = currentEmployees.map((employee) =>
-    employee.id === updatedEmployee.id ? { ...employee, ...updatedEmployee } : employee,
+  const updatedEmployees = fakeEmployees.map((employee) =>
+    employee.id === updatedEmployee.id ? { ...employee, ...updatedEmployee } : employee
   )
-
+  mutate("Employee", updatedEmployees)
+  Object.assign(fakeEmployees, updatedEmployees)
   return updatedEmployees
 }
 
 export const deleteEmployee = async (
-  employeeId: number,
-  currentEmployees: Employee[],
+  employeeId: number
 ): Promise<Employee[]> => {
   console.debug("Deleting employee with ID:", employeeId)
 
   await new Promise((resolve) => setTimeout(resolve, 1000)) // delay result by 1 second
-  const updatedEmployees = currentEmployees.filter((employee) => employee.id !== employeeId)
-
+  const updatedEmployees = fakeEmployees.filter((employee) => employee.id !== employeeId)
+  mutate("Employee", updatedEmployees)
+  Object.assign(fakeEmployees, updatedEmployees)
   return updatedEmployees
-}
-
-export const parseEmployeesFile = async (file: File): Promise<Employee[]> => {
-  // logic to parse the CSV file and convert it to an array of Employee objects or pass to backend to parse
-  console.log("Parsing file...", file.name)
-  // if the parse function returns an array of Employee objects
-  // return parse(file.text(), { headers: true });
-
-  // For demonstration, return an empty array
-  return []
 }
 
 export const saveEmployeesData = async (employees: Employee[]): Promise<void> => {
@@ -64,5 +55,5 @@ export const saveEmployeesData = async (employees: Employee[]): Promise<void> =>
   console.log(employees)
 
   // update SWR cache....??
-  // mutate("Employee", [...fakeEmployees, ...employees], false);
+  mutate("Employee", [...fakeEmployees, ...employees], false);
 }
