@@ -42,3 +42,23 @@ export const deleteEmployee = async (employeeId: number, currentEmployees: Emplo
 
   return updatedEmployees;
 }
+
+export const parseEmployeesFile = async (file: File): Promise<Employee[]> => {
+  // logic to parse the CSV file and convert it to an array of Employee objects
+  console.log("Parsing file...", file.name);
+  // if the parse function returns an array of Employee objects
+  // return parse(file.text(), { headers: true });
+
+  // For demonstration, return an empty array
+  return [];
+};
+
+export const saveEmployeesData = async (employees: Employee[]): Promise<void> => {
+  console.log("Saving data for employees", employees.length);
+
+  // send a request to backend to save the data
+  console.log(employees);
+
+  // update SWR cache....??
+  // mutate("Employee", [...fakeEmployees, ...employees], false);
+};

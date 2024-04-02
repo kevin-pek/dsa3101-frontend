@@ -13,7 +13,7 @@ import {
   Stack,
 } from "@mantine/core"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { updateEmployee } from "../api/employee"
+import { updateEmployee, parseEmployeesFile, saveEmployeesData } from "../api/employee"
 import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 
 export function Employees() {
@@ -141,19 +141,8 @@ export function Employees() {
   // For CSV upload
   const handleUpload = async (selectedFile) => {
     const parsedData = await parseEmployeesFile(selectedFile) // or just pass to backend to parse
-    saveData(parsedData)
-
+    await saveEmployeesData(parsedData)
     setFile(selectedFile)
-  }
-
-  const parseEmployeesFile = async (file) => {
-    console.log("parsing...")
-  }
-
-  const saveData = async (data) => {
-    // const updatePromises = data.map(employee => updateEmployee(employee));
-    // await Promise.all(updatePromises)
-    console.log("saving...!")
   }
 
   const table = useMantineReactTable({
