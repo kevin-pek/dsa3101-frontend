@@ -55,5 +55,5 @@ export const saveEmployeesData = async (employees: Employee[]): Promise<void> =>
   console.log(employees)
 
   // update SWR cache....??
-  mutate("Employee", [...fakeEmployees, ...employees], false);
+  mutate("Employee");
 }

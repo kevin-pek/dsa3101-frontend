@@ -1,18 +1,8 @@
 import React from "react"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
-import {
-  ActionIcon,
-  Button,
-  Tooltip,
-  FileButton,
-  Text,
-  Group,
-  Flex,
-  Title,
-  Stack,
-  Modal,
-} from "@mantine/core"
+import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
+import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
 import { updateEmployee, saveEmployeesData } from "../api/employee"
 import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
@@ -20,6 +10,7 @@ import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 export function Employees() {
   const { employees } = useEmployees()
   const deleteEmployee = useDeleteEmployee()
+  const openRef = useRef(null)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [employeeToDelete, setEmployeeToDelete] = useState(null)
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
@@ -223,24 +214,26 @@ export function Employees() {
               </Button>
             </Group>
           </Modal>
-          <FileButton
-            onChange={handleUpload}
-            accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          <Dropzone
+            openRef={openRef}
+            onDrop={handleUpload}
+            activateOnClick={false}
+            accept={[
+              "text/csv",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ]}
           >
-            {(props) => (
-              <Tooltip label="Employees CSV">
-                <Button {...props} rightSection={<IconUpload size={18} />}>
-                  Upload CSV
-                </Button>
-              </Tooltip>
-            )}
-          </FileButton>
+            <Tooltip label="Employees CSV">
+              <Button
+                rightSection={<IconUpload size={18} />}
+                onClick={() => openRef.current && openRef.current()}
+                style={{ pointerEvents: "all" }}
+              >
+                Upload CSV
+              </Button>
+            </Tooltip>
+          </Dropzone>
         </Group>
-        {file && (
-          <Text ta="right" mt="2px">
-            Uploaded File: {file.name}
-          </Text>
-        )}
       </div>
     </div>
   )
