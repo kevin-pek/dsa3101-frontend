@@ -1,22 +1,18 @@
 import React from "react"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
-import {
-  ActionIcon,
-  Button,
-  Tooltip,
-  FileButton,
-  Text,
-  Group,
-  Flex,
-  Title,
-  Stack,
-} from "@mantine/core"
+import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
+import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { fakeEmployees } from "../sampleEmployees"
-import { updateEmployee } from "../api/employee"
+import { updateEmployee, saveEmployeesData } from "../api/employee"
+import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 
 export function Employees() {
+  const { employees } = useEmployees()
+  const deleteEmployee = useDeleteEmployee()
+  const openRef = useRef(null)
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [employeeToDelete, setEmployeeToDelete] = useState(null)
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const [file, setFile] = useState(null)
   const columns = useMemo(
@@ -116,33 +112,42 @@ export function Employees() {
   )
 
   // UPDATE action
-  const handleSaveEmployee = async ({ values, table }) => {
-    await updateEmployee(values)
+  const handleUpdateEmployee = async ({ row, values, table }) => {
+    const updatedEmployee = { ...values, id: row.original.id }
+    await updateEmployee(updatedEmployee)
     setValidationErrors({})
     table.setEditingRow(null)
   }
 
+  // DELETE action
+  const handleDeleteEmployee = (employeeId) => {
+    setEmployeeToDelete(employeeId)
+    setDeleteModalOpen(true)
+  }
+
+  const confirmDeleteEmployee = async () => {
+    if (!employeeToDelete) return
+
+    try {
+      await deleteEmployee(employeeToDelete)
+      console.log(`Employee with ID ${employeeToDelete} has been removed successfully.`)
+    } catch (error) {
+      console.error(`Error deleting employee with ID ${employeeToDelete}:`, error)
+    }
+
+    setDeleteModalOpen(false)
+    setEmployeeToDelete(null)
+  }
+
   // For CSV upload
   const handleUpload = async (selectedFile) => {
-    const parsedData = await parseEmployeesFile(selectedFile) // or just pass to backend to parse
-    saveData(parsedData)
-
+    await saveEmployeesData(selectedFile)
     setFile(selectedFile)
-  }
-
-  const parseEmployeesFile = async (file) => {
-    console.log("parsing...")
-  }
-
-  const saveData = async (data) => {
-    // const updatePromises = data.map(employee => updateEmployee(employee));
-    // await Promise.all(updatePromises)
-    console.log("saving...!")
   }
 
   const table = useMantineReactTable({
     columns,
-    data: fakeEmployees,
+    data: employees,
     createDisplayMode: "modal",
     editDisplayMode: "modal",
     enableEditing: true,
@@ -160,7 +165,7 @@ export function Employees() {
       },
     },
     onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveEmployee,
+    onEditingRowSave: handleUpdateEmployee,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
         <Title order={3}>Edit Employee</Title>
@@ -178,7 +183,7 @@ export function Employees() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red">
+          <ActionIcon color="red" onClick={() => handleDeleteEmployee(row.original.id)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
@@ -194,24 +199,41 @@ export function Employees() {
       <MantineReactTable table={table} />
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
-          <FileButton
-            onChange={handleUpload}
-            accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          <Modal
+            opened={isDeleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+            title="Confirm Deletion"
           >
-            {(props) => (
-              <Tooltip label="Employees CSV">
-                <Button {...props} rightSection={<IconUpload size={18} />}>
-                  Upload CSV
-                </Button>
-              </Tooltip>
-            )}
-          </FileButton>
+            <Text>Are you sure you want to remove this employee?</Text>
+            <Group position="right" spacing="md" mt="md">
+              <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button color="red" onClick={() => confirmDeleteEmployee()}>
+                Delete
+              </Button>
+            </Group>
+          </Modal>
+          <Dropzone
+            openRef={openRef}
+            onDrop={handleUpload}
+            activateOnClick={false}
+            accept={[
+              "text/csv",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ]}
+          >
+            <Tooltip label="Employees CSV">
+              <Button
+                rightSection={<IconUpload size={18} />}
+                onClick={() => openRef.current && openRef.current()}
+                style={{ pointerEvents: "all" }}
+              >
+                Upload CSV
+              </Button>
+            </Tooltip>
+          </Dropzone>
         </Group>
-        {file && (
-          <Text ta="right" mt="2px">
-            Uploaded File: {file.name}
-          </Text>
-        )}
       </div>
     </div>
   )
