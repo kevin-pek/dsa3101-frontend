@@ -11,14 +11,17 @@ import {
   Flex,
   Title,
   Stack,
+  Modal,
 } from "@mantine/core"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
 import { updateEmployee, parseEmployeesFile, saveEmployeesData } from "../api/employee"
 import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 
 export function Employees() {
-  const {employees} = useEmployees()
+  const { employees } = useEmployees()
   const deleteEmployee = useDeleteEmployee()
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [employeeToDelete, setEmployeeToDelete] = useState(null)
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const [file, setFile] = useState(null)
   const columns = useMemo(
@@ -125,22 +128,28 @@ export function Employees() {
   }
 
   // DELETE action
-  const handleDeleteEmployee = async (employeeId) => {
-    const isConfirmed = window.confirm('Are you sure you want to remove this employee?');
-    if (isConfirmed) {
-      try {
-        await deleteEmployee(employeeId);
-        console.log(`Employee with ID ${employeeId} has been removed successfully.`);
-      } 
-      catch (error) {
-        console.error(`Error deleting booking with ID ${employeeId}:`, error);
-      }
+  const handleDeleteEmployee = (employeeId) => {
+    setEmployeeToDelete(employeeId)
+    setDeleteModalOpen(true)
+  }
+
+  const confirmDeleteEmployee = async () => {
+    if (!employeeToDelete) return
+
+    try {
+      await deleteEmployee(employeeToDelete)
+      console.log(`Employee with ID ${employeeToDelete} has been removed successfully.`)
+    } catch (error) {
+      console.error(`Error deleting employee with ID ${employeeToDelete}:`, error)
     }
+
+    setDeleteModalOpen(false)
+    setEmployeeToDelete(null)
   }
 
   // For CSV upload
   const handleUpload = async (selectedFile) => {
-    const parsedData = await parseEmployeesFile(selectedFile) // or just pass to backend to parse
+    const parsedData = await parseEmployeesFile(selectedFile)
     await saveEmployeesData(parsedData)
     setFile(selectedFile)
   }
@@ -196,9 +205,24 @@ export function Employees() {
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table}/>
+      <MantineReactTable table={table} />
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
+          <Modal
+            opened={isDeleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+            title="Confirm Deletion"
+          >
+            <Text>Are you sure you want to remove this employee?</Text>
+            <Group position="right" spacing="md" mt="md">
+              <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button color="red" onClick={() => confirmDeleteEmployee()}>
+                Delete
+              </Button>
+            </Group>
+          </Modal>
           <FileButton
             onChange={handleUpload}
             accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
