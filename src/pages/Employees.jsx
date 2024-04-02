@@ -13,10 +13,12 @@ import {
   Stack,
 } from "@mantine/core"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { fakeEmployees } from "../sampleEmployees"
 import { updateEmployee } from "../api/employee"
+import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
 
 export function Employees() {
+  const {employees} = useEmployees()
+  const deleteEmployee = useDeleteEmployee()
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const [file, setFile] = useState(null)
   const columns = useMemo(
@@ -116,10 +118,24 @@ export function Employees() {
   )
 
   // UPDATE action
-  const handleSaveEmployee = async ({ values, table }) => {
-    await updateEmployee(values)
+  const handleUpdateEmployee = async ({ values, table }) => {
+    await updateEmployee(values, employees)
     setValidationErrors({})
     table.setEditingRow(null)
+  }
+
+  // DELETE action
+  const handleDeleteEmployee = async (employeeId) => {
+    const isConfirmed = window.confirm('Are you sure you want to remove this employee?');
+    if (isConfirmed) {
+      try {
+        await deleteEmployee(employeeId);
+        console.log(`Employee with ID ${employeeId} has been removed successfully.`);
+      } 
+      catch (error) {
+        console.error(`Error deleting booking with ID ${employeeId}:`, error);
+      }
+    }
   }
 
   // For CSV upload
@@ -142,7 +158,7 @@ export function Employees() {
 
   const table = useMantineReactTable({
     columns,
-    data: fakeEmployees,
+    data: employees,
     createDisplayMode: "modal",
     editDisplayMode: "modal",
     enableEditing: true,
@@ -160,7 +176,7 @@ export function Employees() {
       },
     },
     onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveEmployee,
+    onEditingRowSave: handleUpdateEmployee,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
         <Title order={3}>Edit Employee</Title>
@@ -178,7 +194,7 @@ export function Employees() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red">
+          <ActionIcon color="red" onClick={() => handleDeleteEmployee(row.original.id)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
@@ -191,7 +207,7 @@ export function Employees() {
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table} />
+      <MantineReactTable table={table}/>
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <FileButton
