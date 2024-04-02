@@ -1,6 +1,6 @@
 import { Employee } from "./api/employee";
 
-export const fakeEmployees: Employee[] = [
+export let fakeEmployees: Employee[] = [
   {
     id: 1,
     name: "Dylan Murray",
