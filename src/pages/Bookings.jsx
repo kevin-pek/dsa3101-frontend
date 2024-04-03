@@ -1,25 +1,21 @@
 import React from 'react';
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { MantineReactTable, useMantineReactTable,MRT_EditActionButtons } from 'mantine-react-table';
-import { ActionIcon,
-  Button,
-  Tooltip,
-  Text,
-  Group,
-  Flex,
-  Title,
-  Stack, } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { fakeBookings } from '../sampleBookings';
-import { updateBooking, deleteBooking, addBooking } from '../api/booking';
-import { List, DeleteButton } from "@refinedev/mantine";
-import { Table, Pagination } from "@mantine/core";
-import { useTable } from "@refinedev/react-table";
-import { ColumnDef, flexRender } from "@tanstack/react-table";
-
+import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from '@mantine/core';
+import { Dropzone } from "@mantine/dropzone";
+import { IconTrash, IconEdit } from "@tabler/icons-react";
+import { updateBooking, saveBookingData } from '../api/booking';
+import { useBookings, useDeleteBooking } from "../hooks/use-bookings"
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
+  const { bookings } = useBookings()
+  const deleteBooking = useDeleteBooking()
+  const openRef = useRef(null)
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [bookingToDelete, setBookingToDelete] = useState(null)
+  const [file, setFile] = useState(null)
+
   const columns = useMemo(
     () => [ 
       // { 
@@ -100,8 +96,9 @@ export function Bookings() {
   )
   
 // UPDATE action
-  const handleSaveBooking = async ({ values, table }) => {
-    await updateBooking(values)
+  const handleUpdateBooking = async ({ row, values, table }) => {
+    const updatedBooking = {...values, id: row.original.id}
+    await updateBooking(updatedBooking)
     setValidationErrors({})
     table.setEditingRow(null)
   }
@@ -112,25 +109,43 @@ const handleAddBooking = async ({ values, table }) => {
   setValidationErrors({})
   table.setCreatingRow(true)
 }
+// DELETE action
+const handleDeleteBooking = (bookingId) => {
+  setBookingToDelete(bookingId)
+  setDeleteModalOpen(true)
+}
 
-// delete action
-const handleDeleteBooking = async (bookingId) => {
-  const isConfirmed = window.confirm('Are you sure you want to delete this booking?');
-  if (isConfirmed) {
-    try {
-      await deleteBooking(bookingId);
-      console.log(`Booking with ID ${bookingId} has been deleted successfully.`);
-    } 
-    catch (error) {
-      // Handle any errors that occur during the deletion operation
-      console.error(`Error deleting booking with ID ${bookingId}:`, error);
-    }
+const confirmDeleteBooking = async () => {
+  if (!bookingToDelete) return
+
+  try {
+    await deleteBooking(bookingToDelete)
+    console.log(`Booking with ID ${bookingToDelete} has been removed successfully.`)
+  } catch (error) {
+    console.error(`Error deleting booking with ID ${bookingToDelete}:`, error)
   }
-};
+
+  setDeleteModalOpen(false)
+  setBookingToDelete(null)
+}
+// delete action
+// const handleDeleteBooking = async (bookingId) => {
+//   const isConfirmed = window.confirm('Are you sure you want to delete this booking?');
+//   if (isConfirmed) {
+//     try {
+//       await deleteBooking(bookingId);
+//       console.log(`Booking with ID ${bookingId} has been deleted successfully.`);
+//     } 
+//     catch (error) {
+//       // Handle any errors that occur during the deletion operation
+//       console.error(`Error deleting booking with ID ${bookingId}:`, error);
+//     }
+//   }
+// };
 
   const table = useMantineReactTable({
     columns,
-    data: fakeBookings,
+    data: bookings,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableEditing: true,
@@ -140,7 +155,7 @@ const handleDeleteBooking = async (bookingId) => {
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleAddBooking,
     onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveBooking,
+    onEditingRowSave: handleUpdateBooking,
     renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
         <Title order={3}>Add New Event</Title>
@@ -167,12 +182,12 @@ const handleDeleteBooking = async (bookingId) => {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}>
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.id)}> 
             <IconTrash />
           </ActionIcon>
         </Tooltip>
       </Flex>
-    ),
+    ), // handleDeleteBooking(row.original.bookingId)
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
       onClick={() =>
@@ -187,6 +202,25 @@ const handleDeleteBooking = async (bookingId) => {
   return (
     <div style={{ overflowX: "auto" }}>
       <MantineReactTable table={table}/>
+      <div style={{ overflowX: "auto", padding: "25px" }}>
+        <Group justify="right">
+          <Modal
+            opened={isDeleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+            title="Confirm Deletion"
+          >
+            <Text>Are you sure you want to remove this employee?</Text>
+            <Group position="right" spacing="md" mt="md">
+              <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button color="red" onClick={() => confirmDeleteBooking()}>
+                Delete
+              </Button>
+            </Group>
+          </Modal>
+          </Group>
+      </div>
     </div>
   );
 }
