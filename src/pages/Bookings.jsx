@@ -3,13 +3,14 @@ import { useState, useMemo } from "react";
 import { MantineReactTable, useMantineReactTable,MRT_EditActionButtons } from 'mantine-react-table';
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from '@mantine/core';
 import { IconTrash, IconEdit } from "@tabler/icons-react";
-import { updateBooking, addBooking } from '../api/booking';
-import { useBookings, useDeleteBooking } from "../hooks/use-bookings"
+import { updateBooking } from '../api/booking';
+import { useBookings, useDeleteBooking, useAddBooking } from "../hooks/use-bookings"
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
+  const addBooking = useAddBooking()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [bookingToDelete, setBookingToDelete] = useState(null)
 
