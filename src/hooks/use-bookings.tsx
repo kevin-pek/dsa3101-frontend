@@ -1,8 +1,7 @@
 import useSWR from "swr"
 import { fetcher } from "../api/swr"
 import { useCallback } from "react"
-import { deleteBooking } from "../api/booking"
-import { Booking } from "../api/booking"
+import { deleteBooking, Booking } from "../api/booking"
 
 export const useBookings = () => {
   const { data, isLoading } = useSWR<Booking[]>("Booking", fetcher)

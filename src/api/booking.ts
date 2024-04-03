@@ -5,7 +5,7 @@ export interface Booking {
   bookingId: number;
   eventName: string;
   eventDate: string;
-  eventDay: string;
+  eventDay: "Monday" |'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday' ;
   eventSTime: string;
   eventETime: string;
   numPax: number;
@@ -46,14 +46,14 @@ export const deleteBooking = async (
   return updatedBookings
 }
 
-export const saveBookingData = async(bookings: Booking[]):
-Promise<void> => {
-  console.log("Saving data for bookings", bookings.length)
+// export const saveBookingData = async(bookings: Booking[]):
+// Promise<void> => {
+//   console.log("Saving data for bookings", bookings.length)
 
-  console.log(bookings)
+//   console.log(bookings)
 
-  mutate("Bookings");
-}
+//   mutate("Bookings");
+// }
 
 export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
   console.debug("Adding new booking");
@@ -72,6 +72,7 @@ export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
   // fakeBookings.push(updatedBookings);
 
   mutate("bookings", updatedBookings, false); // Use the correct key ("bookings") and pass updatedBookings
+  Object.assign(fakeBookings,updatedBookings)
   
   return updatedBookings;
 };
