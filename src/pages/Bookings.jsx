@@ -42,9 +42,9 @@ export function Bookings() {
       { // try and get this automated once you get the day
         accessorKey: 'eventDay',
         header: 'Event Day', 
-        editVariant: 'select',
         mantineEditTextInputProps: ({ cell, row }) => ({  
-          data: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday', 'Sunday'],
+          type: 'select',
+          options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday', 'Sunday'],
           required: true
         })
       },

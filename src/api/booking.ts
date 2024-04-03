@@ -5,7 +5,7 @@ export interface Booking {
   bookingId: number;
   eventName: string;
   eventDate: string;
-  eventDay: "Monday" |'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday' ;
+  eventDay: string; // "Monday" |"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday"|"Sunday" ;
   eventSTime: string;
   eventETime: string;
   numPax: number;
