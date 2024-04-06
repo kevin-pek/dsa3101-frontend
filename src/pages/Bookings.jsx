@@ -123,11 +123,23 @@ export function Bookings() {
   }
 
 // ADD action
-  const handleAddBooking = async ({ values, table }) => {
-      await addBooking(values)
-      setValidationErrors({})
-      table.setCreatingRow(true)
+  const handleAddBooking = async ({ values, exitCreatingMode }) => {
+    setValidationErrors({});  
+    await addBooking(values)
+    exitCreatingMode();
+    // table.setCreatingRow(true)
     }
+
+    // const handleCreateUser = async ({ values, exitCreatingMode }) => {
+    //   const newValidationErrors = validateUser(values);
+    //   if (Object.values(newValidationErrors).some((error) => !!error)) {
+    //     setValidationErrors(newValidationErrors);
+    //     return;
+    //   }
+    //   setValidationErrors({});
+    //   await createUser(values);
+    //   exitCreatingMode();
+    // };
 
   const table = useMantineReactTable({
     columns,
@@ -177,7 +189,7 @@ export function Bookings() {
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
       onClick={() =>
-      {table.setCreatingRow(row);
+      {table.setCreatingRow(true);
       }}
       >
         Add New Event
