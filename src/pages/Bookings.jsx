@@ -207,7 +207,7 @@ export function Bookings() {
             onClose={() => setDeleteModalOpen(false)}
             title="Confirm Deletion"
           >
-            <Text>Are you sure you want to remove this employee?</Text>
+            <Text>Are you sure you want to remove this booking?</Text>
             <Group position="right" spacing="md" mt="md">
               <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
                 Cancel
