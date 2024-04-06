@@ -177,7 +177,7 @@ export function Bookings() {
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
       onClick={() =>
-      {table.setCreatingRow(true);
+      {table.setCreatingRow(row);
       }}
       >
         Add New Event
