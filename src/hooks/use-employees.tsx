@@ -1,40 +1,33 @@
-import useSWR from "swr"
-import { fetcher } from "../api/swr"
-import { useCallback } from "react"
-import { addEmployee, deleteEmployee, Employee } from "../api/employee"
+import useSWR, { mutate } from "swr"
+import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
+import { Employee } from "../types/employee"
 
 export const useEmployees = () => {
-  const { data, isLoading } = useSWR<Employee[]>("Employee", fetcher)
+  const { data, isLoading } = useSWR<Employee[]>("/employee", fetcher)
   return { employees: data || [], isLoading }
 }
 
-export const useAddEmployee = () => {
-  const { data: employees, mutate } = useSWR("Employee", fetcher);
-
-  const handleAdd = useCallback(
-    async (newEmployeeData) => {
-      if (employees) {
-        const updatedEmployees = await addEmployee(newEmployeeData);
-        mutate(updatedEmployees, false);
-      }
-    },
-    [employees, mutate]
-  );
-
-  return handleAdd;
-};
-
 export const useDeleteEmployee = () => {
-  const { data: employees, mutate } = useSWR("Employee", fetcher)
+  return (id: number) =>
+    mutate("/employee", async () => await deleteRequest("/employee", id), {
+      optimisticData: (prev: Employee[] | undefined) => prev?.filter((b) => b.id !== id) || [],
+    })
+}
 
-  const handleDelete = useCallback(
-    async (employeeId) => {
-      const updatedEmployees = await deleteEmployee(employeeId, employees)
+export const useUpdateEmployee = () => {
+  return (data: Employee) =>
+    mutate("/employee", async () => await putRequest("/employee", data.id, data), {
+      optimisticData: (prev: Employee[] | undefined) =>
+        prev?.map((b) => (b.id === data.id ? data : b)) || [],
+    })
+}
 
-      mutate(updatedEmployees, false)
-    },
-    [employees, mutate],
-  )
+export const useAddEmployee = () => {
+  return (data: Employee) =>
+    mutate("/employee", async () => await postRequest("/employee", data), false)
+}
 
-  return handleDelete
+export const useUploadEmployee = () => {
+  return (data: File) =>
+    mutate("/employee", async () => await postRequest("/employee", data), false)
 }
