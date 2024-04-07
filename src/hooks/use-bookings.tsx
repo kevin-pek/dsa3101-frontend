@@ -1,47 +1,28 @@
-import useSWR from "swr"
-import { fetcher } from "../api/swr"
-import { useCallback } from "react"
-import { deleteBooking, Booking, addBooking } from "../api/booking"
+import useSWR, { mutate } from "swr"
+import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
+import { Booking } from "../types/booking"
 
 export const useBookings = () => {
-  const { data, isLoading } = useSWR<Booking[]>("Booking", fetcher)
+  const { data, isLoading } = useSWR<Booking[]>("/booking", fetcher)
   return { bookings: data || [], isLoading }
 }
 
 export const useDeleteBooking = () => {
-  const { data: bookings, mutate } = useSWR("Booking", fetcher);
+  return (id: number) =>
+    mutate("/booking", async () => await deleteRequest("/booking", id), {
+      optimisticData: (prev: Booking[] | undefined) => prev?.filter((b) => b.id !== id) || [],
+    })
+}
 
-  const handleDelete = useCallback(
-    async (bookingId: number) => {
-      if (bookings) {
-        // Assuming deleteBooking is a function that takes bookingId and bookings
-        const updatedBookings = await deleteBooking(bookingId, bookings);
-
-        mutate(updatedBookings, false);
-      }
-    },
-    [bookings, mutate]
-  );
-
-  return handleDelete;
-};
+export const useUpdateBooking = () => {
+  return (data: Booking) =>
+    mutate("/booking", async () => await putRequest("/booking", data.id, data), {
+      optimisticData: (prev: Booking[] | undefined) =>
+        prev?.map((b) => (b.id === data.id ? data : b)) || [],
+    })
+}
 
 export const useAddBooking = () => {
-  const { data: bookings, mutate } = useSWR("Booking", fetcher);
-
-  const handleAdd = useCallback(
-    async (newBookingData) => {
-      if (bookings) {
-        // Assuming addBooking is a function that adds a new booking
-        const updatedBookings = await addBooking(newBookingData);
-        mutate(updatedBookings, false);
-      }
-    },
-    [bookings, mutate]
-  );
-
-  return handleAdd;
-};
-
-
-
+  return (data: Booking) =>
+    mutate("/booking", async () => await postRequest("/booking", data), false)
+}

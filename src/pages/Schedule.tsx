@@ -23,22 +23,22 @@ import {
 import { WeeklySchedule } from "../components/WeeklySchedule"
 import { IconPlus, IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
 import { useCallback, useMemo, useState } from "react"
-import { useSWRConfig } from "swr"
 import { useEmployees } from "../hooks/use-employees"
-import { useSchedule } from "../hooks/use-schedule"
-import { roles, daysOfWeek } from "../utils/constants"
+import { useSchedules } from "../hooks/use-schedule"
 import { useMediaQuery } from "@mantine/hooks"
+import React from "react"
+import { Role } from "../types/employee"
+import { DoW } from "../types/constants"
 
 const AddSchedulePopover = () => {
-  const [role, setRole] = useState()
+  const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
   const [selectedDay, setSelectedDay] = useState()
   const [dayError, setDayError] = useState("")
   const [selectedEmployee, setSelectedEmployee] = useState()
   const [employeeError, setEmployeeError] = useState("")
   const { employees } = useEmployees()
-  const { schedule } = useSchedule()
-  const { mutate } = useSWRConfig()
+  const { schedules } = useSchedules()
   const [open, setOpen] = useState(false)
 
   const handleSubmit = useCallback(() => {
@@ -48,11 +48,11 @@ const AddSchedulePopover = () => {
       setEmployeeError("Invalid employee selected!")
       valid = false
     } else setEmployeeError("")
-    if (!role || !roles.includes(role)) {
+    if (!role || !Object.values(Role).includes(role)) {
       setRoleError("Invalid role selected!")
       valid = false
     } else setRoleError("")
-    if (!selectedDay || !daysOfWeek.includes(selectedDay)) {
+    if (!selectedDay || !Object.values(DoW).includes(selectedDay)) {
       setDayError("Invalid day selected!")
       valid = false
     } else setDayError("")
@@ -67,11 +67,11 @@ const AddSchedulePopover = () => {
       console.debug("Inserting schedule: ", newSchedule)
       // mutate("Schedule", [...schedule, newSchedule])
       setOpen(false)
-      setSelectedEmployee() // reset fields if successful creation
-      setRole()
-      setSelectedDay()
+      setSelectedEmployee(null) // reset fields if successful creation
+      setRole(null)
+      setSelectedDay(null)
     }
-  }, [schedule, selectedEmployee, role, selectedDay, employees])
+  }, [schedules, selectedEmployee, role, selectedDay, employees])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
@@ -101,7 +101,7 @@ const AddSchedulePopover = () => {
             required
             label="Role:"
             placeholder="Select role..."
-            data={roles}
+            data={Object.values(Role)}
             value={role}
             onChange={setRole}
             comboboxProps={{ withinPortal: false }}
@@ -114,7 +114,7 @@ const AddSchedulePopover = () => {
             placeholder="Select day of week..."
             value={selectedDay}
             onChange={setSelectedDay}
-            data={daysOfWeek}
+            data={Object.values(DoW)}
             error={dayError}
           />
           <Space />

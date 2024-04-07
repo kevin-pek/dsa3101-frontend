@@ -15,6 +15,7 @@ import {
   useMantineColorScheme,
   Modal,
   ModalBody,
+  Loader,
 } from "@mantine/core"
 import { IconSwitch } from "@tabler/icons-react"
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react"
@@ -23,19 +24,20 @@ import "react-range-slider-input/dist/style.css"
 import "./rangeslider.css"
 import "./schedule.css"
 import { useEmployees } from "../hooks/use-employees"
-import { useSchedule } from "../hooks/use-schedule"
+import { useSchedules } from "../hooks/use-schedule"
 import { useSWRConfig } from "swr"
-import { roles, hours, daysOfWeek } from "../utils/constants"
+import { DoW, hours } from "../types/constants"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import { convertIndexToTime, convertTimeToIndex } from "../utils/time"
+import { Role } from "../types/employee"
 
 const SwapEmployeeModal = ({ onSubmit }) => {
   const { employees } = useEmployees()
-  const { schedule } = useSchedule()
+  const { schedules } = useSchedules()
   const { mutate } = useSWRConfig()
   const [selectedEmployee, setSelectedEmployee] = useState()
   const [employeeError, setEmployeeError] = useState("")
-  const [role, setRole] = useState()
+  const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
 
   const handleSwap = useCallback(() => {
@@ -46,7 +48,7 @@ const SwapEmployeeModal = ({ onSubmit }) => {
       setEmployeeError("Invalid employee selected!")
       valid = false
     } else setEmployeeError("")
-    if (!role || !roles.includes(role)) {
+    if (!role || !Object.values(Role).includes(role)) {
       setRoleError("Invalid role selected!")
       valid = false
     } else setRoleError("")
@@ -54,7 +56,7 @@ const SwapEmployeeModal = ({ onSubmit }) => {
       // mutate("Schedule", [...schedule])
       onSubmit()
     }
-  }, [selectedEmployee, employees, role, schedule])
+  }, [selectedEmployee, employees, role, schedules])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
@@ -76,7 +78,7 @@ const SwapEmployeeModal = ({ onSubmit }) => {
         required
         label="Role:"
         placeholder="Change role..."
-        data={roles}
+        data={Object.values(Role)}
         value={role}
         onChange={setRole}
         comboboxProps={{ withinPortal: false }}
@@ -104,7 +106,7 @@ const TimeRangeSlider = ({ value, setValue }) => {
     convertTimeToIndex(value.start) - timeIdxOffset,
     convertTimeToIndex(value.end) - timeIdxOffset,
   ])
-  const name = useMemo(() => employees.find((e) => e.id === value.employeeId)?.name)
+  const name = useMemo(() => employees.find((e) => e.id === value.employeeId)?.name, [value, employees])
 
   useEffect(() => {
     setValue({
@@ -277,7 +279,7 @@ const DayTimeline = ({ schedule }) => {
 }
 
 export const WeeklySchedule = () => {
-  const { schedule } = useSchedule()
+  const { schedules } = useSchedules()
 
   const sidebarCols = 4
   const cols = sidebarCols + hours.length * 2
@@ -312,7 +314,7 @@ export const WeeklySchedule = () => {
         <Divider />
       </GridCol>
 
-      {daysOfWeek.map((day, i) => (
+      {Object.values(DoW).map((day, i) => (
         <React.Fragment key={i}>
           <GridCol
             span={sidebarCols}
@@ -328,10 +330,10 @@ export const WeeklySchedule = () => {
           </GridCol>
 
           <GridCol span={hours.length * 2}>
-            <DayTimeline schedule={schedule.filter((sched) => sched.day === day)} />
+            <DayTimeline schedule={schedules.filter((sched) => sched.day === day)} />
           </GridCol>
 
-          {i !== daysOfWeek.length - 1 && (
+          {i !== Object.values(DoW).length - 1 && (
             <GridCol span={cols}>
               <Divider />
             </GridCol>

@@ -4,12 +4,13 @@ import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { updateEmployee, saveEmployeesData } from "../api/employee"
-import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
+import { useEmployees, useDeleteEmployee, useUpdateEmployee, useUploadEmployee } from "../hooks/use-employees"
 
 export function Employees() {
   const { employees } = useEmployees()
   const deleteEmployee = useDeleteEmployee()
+  const updateEmployee = useUpdateEmployee()
+  const uploadEmployee = useUploadEmployee()
   const openRef = useRef(null)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [employeeToDelete, setEmployeeToDelete] = useState(null)
@@ -141,7 +142,7 @@ export function Employees() {
 
   // For CSV upload
   const handleUpload = async (selectedFile) => {
-    await saveEmployeesData(selectedFile)
+    await uploadEmployee(selectedFile)
     setFile(selectedFile)
   }
 
