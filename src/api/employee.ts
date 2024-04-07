@@ -22,6 +22,27 @@ export const getEmployees = async (): Promise<Employee[]> => {
   return fakeEmployees
 }
 
+export const addEmployee = async (newEmployee: Employee): Promise<Employee[]> => {
+  console.debug("Adding new Employee");
+  console.debug(newEmployee);
+  
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // delay result by 2 seconds
+
+  // Find the maximum EmployeeId in the existing Employees
+  const maxEmployeeId = Math.max(...fakeEmployees.map((Employee) => Employee.id));
+
+  // Generate a new EmployeeId by adding 1 to the maximum EmployeeId
+  const newEmployeeId = maxEmployeeId + 1;
+
+  // Add the new Employee with the generated EmployeeId
+  const updatedEmployees = [...fakeEmployees, { ...newEmployee, id: newEmployeeId }];
+
+  mutate("Employee", updatedEmployees); // Use the correct key ("Employees") and pass updatedEmployees
+  Object.assign(fakeEmployees,updatedEmployees)
+  
+  return updatedEmployees;
+};
+
 export const updateEmployee = async (
   updatedEmployee: Employee
 ): Promise<Employee[]> => {

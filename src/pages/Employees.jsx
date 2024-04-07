@@ -5,11 +5,12 @@ import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } f
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
 import { updateEmployee, saveEmployeesData } from "../api/employee"
-import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
+import { useEmployees, useDeleteEmployee, useAddEmployee } from "../hooks/use-employees"
 
 export function Employees() {
   const { employees } = useEmployees()
   const deleteEmployee = useDeleteEmployee()
+  const addEmployee = useAddEmployee()
   const openRef = useRef(null)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [employeeToDelete, setEmployeeToDelete] = useState(null)
@@ -111,6 +112,13 @@ export function Employees() {
     [validationErrors],
   )
 
+  // ADD action
+  const handleAddEmployee = async ({ values, exitCreatingMode }) => {
+    setValidationErrors({})
+    await addEmployee(values)
+    exitCreatingMode()
+  }
+
   // UPDATE action
   const handleUpdateEmployee = async ({ row, values, table }) => {
     const updatedEmployee = { ...values, id: row.original.id }
@@ -164,6 +172,8 @@ export function Employees() {
         tableLayout: "fixed",
       },
     },
+    onCreatingRowCancel: () => setValidationErrors({}),
+    onCreatingRowSave: handleAddEmployee,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleUpdateEmployee,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
@@ -190,7 +200,14 @@ export function Employees() {
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button leftSection={<IconPlus size={20} />}>Create New Employee</Button>
+      <Button
+        onClick={() => {
+          table.setCreatingRow(true)
+        }}
+        leftSection={<IconPlus size={20} />}
+      >
+        Create New Employee
+      </Button>
     ),
   })
 
