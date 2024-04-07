@@ -1,16 +1,25 @@
 import { LineChart, BarChart, AreaChart, RadarChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
 import { empAvailability, hiringExpenditure, empRoles, hoursWorked, weeklyBookings, monthlyBookings, demandForecast } from '../sampleDashboard.jsx';
+import Dropdown from '../components/Dropdown.jsx';
+import '../components/dropdown.css';
+import { useState } from 'react';
 
 export function Dashboard() {
+
+  const [selected, setSelected] = useState("");
 
   return (
     <>
 
-      <div style={{ textAlign: 'center' }}>
-        <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '30px' }}>
-          Dashboard
-        </Text>
+      <div style={{ marginTop: '50px' }}>
+
+        <Dropdown selected = {selected} setSelected = {setSelected} />
+
+        <div style={{ textAlign: 'center' }}>
+          <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '30px' }}>
+            Dashboard
+          </Text>
       </div>
 
       <div style={{ textAlign: 'center' }}>
@@ -200,6 +209,8 @@ export function Dashboard() {
         connectNulls="false"
       />
       
+      </div>
+
       </div>
 
     </>
