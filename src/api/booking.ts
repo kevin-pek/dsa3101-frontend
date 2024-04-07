@@ -71,7 +71,7 @@ export const addBooking = async (newBooking: Booking): Promise<Booking[]> => {
   const updatedBookings = [...fakeBookings, { ...newBooking, bookingId: newBookingId }];
   // fakeBookings.push(updatedBookings);
 
-  mutate("bookings", updatedBookings, false); // Use the correct key ("bookings") and pass updatedBookings
+  mutate("Booking", updatedBookings); // Use the correct key ("bookings") and pass updatedBookings
   Object.assign(fakeBookings,updatedBookings)
   
   return updatedBookings;

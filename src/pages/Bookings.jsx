@@ -3,13 +3,14 @@ import { useState, useMemo } from "react";
 import { MantineReactTable, useMantineReactTable,MRT_EditActionButtons } from 'mantine-react-table';
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from '@mantine/core';
 import { IconTrash, IconEdit } from "@tabler/icons-react";
-import { updateBooking, addBooking } from '../api/booking';
-import { useBookings, useDeleteBooking } from "../hooks/use-bookings"
+import { updateBooking } from '../api/booking';
+import { useBookings, useDeleteBooking, useAddBooking } from "../hooks/use-bookings"
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
+  const addBooking = useAddBooking()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [bookingToDelete, setBookingToDelete] = useState(null)
 
@@ -122,11 +123,23 @@ export function Bookings() {
   }
 
 // ADD action
-  const handleAddBooking = async ({ values, table }) => {
-      await addBooking(values)
-      setValidationErrors({})
-      table.setCreatingRow(true)
+  const handleAddBooking = async ({ values, exitCreatingMode }) => {
+    setValidationErrors({});  
+    await addBooking(values)
+    exitCreatingMode();
+    // table.setCreatingRow(true)
     }
+
+    // const handleCreateUser = async ({ values, exitCreatingMode }) => {
+    //   const newValidationErrors = validateUser(values);
+    //   if (Object.values(newValidationErrors).some((error) => !!error)) {
+    //     setValidationErrors(newValidationErrors);
+    //     return;
+    //   }
+    //   setValidationErrors({});
+    //   await createUser(values);
+    //   exitCreatingMode();
+    // };
 
   const table = useMantineReactTable({
     columns,
@@ -194,7 +207,7 @@ export function Bookings() {
             onClose={() => setDeleteModalOpen(false)}
             title="Confirm Deletion"
           >
-            <Text>Are you sure you want to remove this employee?</Text>
+            <Text>Are you sure you want to remove this booking?</Text>
             <Group position="right" spacing="md" mt="md">
               <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
                 Cancel
