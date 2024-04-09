@@ -29,18 +29,18 @@ export const hoursWorked = [
 ]
 
 export const hiringExpenditure = [
-  { month: 'Jan', Manager: 2890, Chef: 139, Cashier: 4709, Total: 1500 },
-  { month: 'Feb', Manager: 2700, Chef: 176, Cashier: 1017, Total: 2300 },
-  { month: 'Mar', Manager: 3600, Chef: 228, Cashier: 376, Total: 4500 },
-  { month: 'Apr', Manager: 2500, Chef: 232, Cashier: 6922, Total: 1760 },
-  { month: 'May', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Jun', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Jul', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Aug', Manager: 5000, Chef: null, Cashier: null, Total: null },
-  { month: 'Sep', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Oct', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Nov', Manager: null, Chef: null, Cashier: null, Total: null },
-  { month: 'Dec', Manager: null, Chef: null, Cashier: null, Total: null },
+  { month: 'Jan', Manager: 2890, Chef: 139, Cashier: 4709, Total: 1500, Weekday: 500, Weekend: 400, PH: 600 },
+  { month: 'Feb', Manager: 2700, Chef: 176, Cashier: 1017, Total: 2400, Weekday: 800, Weekend: 900, PH: 700 },
+  { month: 'Mar', Manager: 3600, Chef: 228, Cashier: 376, Total: 4500, Weekday: 1500, Weekend: 1200, PH: 1700 },
+  { month: 'Apr', Manager: 2500, Chef: 232, Cashier: 6922, Total: 1800, Weekday: 600, Weekend: 200, PH: 400 },
+  { month: 'May', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Jun', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Jul', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Aug', Manager: 5000, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Sep', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Oct', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Nov', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
+  { month: 'Dec', Manager: null, Chef: null, Cashier: null, Total: null, Weekday: null, Weekend: null, PH: null },
 ];
 
 export const empAvailability = [
