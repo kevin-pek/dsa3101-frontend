@@ -1,20 +1,23 @@
 import { LineChart, BarChart, AreaChart, RadarChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
-import { empAvailability, hiringExpenditure, empRoles, hoursWorked, weeklyBookings, monthlyBookings, demandForecast } from '../sampleDashboard.jsx';
+import { 
+  empAvailability, 
+  hiringExpenditure, 
+  empRoles, 
+  hoursWorked, 
+  weeklyBookings, 
+  monthlyBookings, 
+  demandForecast } from '../sampleDashboard.jsx';
 import Dropdown from '../components/Dropdown.jsx';
+import DemandModal from '../components/DemandModal.jsx';
+import DatePicker from '../components/DatePicker.jsx';
 import '../components/dropdown.css';
 import { useState } from 'react';
 
 export function Dashboard() {
 
   const [selectedView, setSelectedView] = useState("Monthly"); //Default state/view to be weekly
-
-  //Define data for each view type
-  const viewData = {
-    Weekly: {chart1: empAvailability, chart2: weeklyBookings},
-    Monthly: {chart1: empRoles, chart2: hoursWorked, chart3: hiringExpenditure, chart4: hiringExpenditure, chart5: monthlyBookings, chart6: demandForecast},
-    Yearly: "",
-  }
+  const [dropdownActive, setDropdownActive] = useState(false);
 
   //Define chart components for each view type
   const viewCharts = {
@@ -23,7 +26,7 @@ export function Dashboard() {
         <div>
           <div style={{ textAlign: 'center' }}>
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
-              Employee Statistics
+              Weekly Employee Statistics
             </Text>
           </div>
 
@@ -59,13 +62,13 @@ export function Dashboard() {
         <div>
           <div style={{ textAlign: 'center' }}>
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
-              Demand Statistics
+              Weekly Demand Statistics
             </Text>
           </div>
 
           <div style={{ padding: '20px' }} >
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
-              Weekly Bookings:
+              Number of Weekly Bookings (by Day):
             </Text>
   
             <RadarChart
@@ -89,7 +92,7 @@ export function Dashboard() {
         <div>
           <div style={{ textAlign: 'center' }}>
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
-              Employee Statistics
+              Monthly Employee Statistics
             </Text>
           </div>
 
@@ -146,7 +149,7 @@ export function Dashboard() {
         <div>
           <div style={{ textAlign: 'center' }}>
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
-              Expenditure Statistics
+              Monthly Expenditure Statistics
             </Text>
           </div>
 
@@ -198,16 +201,39 @@ export function Dashboard() {
       ),
 
       chart5: (
+        <div style={{ padding: '20px' }}>
+        <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}> 
+          Monthly Hiring Expenditure Breakdown (by Occasion):
+        </Text>
+  
+        <AreaChart
+          h={300}
+          data={hiringExpenditure}
+          dataKey="month"
+          xAxisProps={{ padding: { left: 30, right: 30 } }}
+          withTooltip={true}
+          series={[
+            { name: 'Weekday', color: '#F29204' },
+            { name: 'Weekend', color: '#2FAD66' },
+            { name: 'PH', color: '#116732' },
+          ]}
+          curveType = "linear"
+        />
+  
+        </div>
+      ),
+
+      chart6: (
         <div>
           <div style={{ textAlign: 'center' }}>
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '24px' }}>
-              Demand Statistics
+              Monthly Demand Statistics
             </Text>
           </div>
 
           <div style={{ padding: '20px' }} >
             <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
-              Monthly Bookings:
+              Monthly Number of Bookings:
             </Text>
   
             <LineChart
@@ -227,7 +253,7 @@ export function Dashboard() {
         </div>
       ),
 
-      chart6: (
+      chart7: (
         <div style={{ padding: '20px' }}>
         <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '16px' }}>
           Monthly Customer Demand Forecast:
@@ -253,20 +279,58 @@ export function Dashboard() {
 
     Yearly: {
 
+      chart1: (
+        <p>
+          Add chart here
+        </p>
+      ),
+
     }
   }
 
   return (
     <>
 
-      <div style={{ marginTop: '50px' }}>
-
+      <div style={{ marginTop: '50px', position: 'relative' }}>
+        
         <Dropdown selected = {selectedView} setSelected = {setSelectedView} />
+
+        <div style={{ padding: '20px' }}></div>
+
+        <div style = {{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '20px' }}>
+              Select Date Range
+            </Text>
+          </div>
+
+          <div style={{
+            display: 'inline-block',
+            textAlign: 'center',
+            margin: '0 auto',
+          }}>
+            <DatePicker />
+          </div>
+
+        </div>
+
+        <div style={{ padding: '20px' }}></div>
 
         <div style={{ textAlign: 'center' }}>
           <Text mb="md" pl="md" style={{ fontWeight: 'bold', fontSize: '30px' }}>
             Dashboard
           </Text>
+        </div>
+
+        <div style={{ padding: '20px' }}></div>
+
+        <div style={{
+            position: 'relative',
+            left: '50%',
+            textAlign: 'center',
+            transform: 'translate(-50%, -50%)',
+          }}>
+          <DemandModal />
         </div>
 
       </div>
@@ -293,6 +357,10 @@ export function Dashboard() {
 
       <div style={{ padding: '20px' }}>
         {viewCharts[selectedView].chart6}
+      </div>
+
+      <div style={{ padding: '20px' }}>
+        {viewCharts[selectedView].chart7}
       </div>
 
     </>

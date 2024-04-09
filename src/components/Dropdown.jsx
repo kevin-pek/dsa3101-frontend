@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { IconSelect } from "@tabler/icons-react"
 
 function Dropdown({ selected, setSelected }) {
     const [isActive, setIsActive] = useState(false);
@@ -25,7 +26,7 @@ function Dropdown({ selected, setSelected }) {
         <div className="dropdown" ref={dropdownRef}>
             <div className="dropdown-btn" onClick={() => setIsActive(!isActive)}> 
                 Current Selected View: {selected}
-                <span className="fas fa-caret-down"></span>
+                <IconSelect />
             </div>
             
             {isActive && (
