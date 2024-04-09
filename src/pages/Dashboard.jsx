@@ -13,6 +13,7 @@ import DemandModal from '../components/DemandModal.jsx';
 import DatePicker from '../components/DatePicker.jsx';
 import '../components/dropdown.css';
 import { useState } from 'react';
+import React from 'react';
 
 export function Dashboard() {
 
@@ -373,7 +374,6 @@ export function Dashboard() {
           tickLine="xy"
           connectNulls="false"
         />
-      </div>
     </>
   )
 }

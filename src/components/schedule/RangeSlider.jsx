@@ -1,6 +1,6 @@
 import React, { PureComponent, createRef } from "react"
 import clsx from "clsx"
-import { Tooltip } from "@mantine/core"
+import "./rangeslider.css"
 
 // Aliases
 const abs = Math.abs

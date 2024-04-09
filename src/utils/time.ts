@@ -1,5 +1,8 @@
 // Adapted from NUSmods https://github.com/nusmodifications/nusmods/blob/master/website/src/utils/timify.ts
 
+import { Role } from "../types/employee"
+import { Shift } from "../types/schedule"
+
 export function getLessonTimeHours(time: string): number {
   return parseInt(time.substring(0, 2), 10)
 }
@@ -37,4 +40,29 @@ export function convertIndexToTime(index: number): string {
   const hour: number = Math.floor(timeIndex / 2)
   const minute: string = timeIndex % 2 === 0 ? "00" : "30"
   return (hour < 10 ? `0${hour}` : hour.toString()) + minute
+}
+
+export const shiftToString = (shift: Shift, role: Role) => {
+  const start = role === Role.Kitchen ? " 8am" : "10pm"
+  const end = role === Role.Server ? "10am" : "10pm"
+  if (shift === Shift.Full) {
+    return `${start} - ${end}`
+  } else if (shift === Shift.Morning) {
+    return `${start} -  6pm`
+  } else if (shift === Shift.Night) {
+    return `12pm - ${end}`
+  }
+  return "Unavailablee"
+}
+
+export const stringToShift = (str: string) => {
+  const morn = str.startsWith(" 8am") || str.startsWith("10am")
+  const night = str.endsWith("10pm")
+  if (morn && night) {
+    return Shift.Full
+  } else if (morn) {
+    return Shift.Morning
+  } else if (night) {
+    return Shift.Night
+  }
 }

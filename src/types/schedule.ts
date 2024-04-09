@@ -1,5 +1,11 @@
 import { DoW } from "./constants"
-import { Role, Shift } from "./employee"
+import { Role } from "./employee"
+
+export enum Shift {
+  Morning = "Morning",
+  Night = "Night",
+  Full = "Full",
+}
 
 export interface Schedule {
   id: number
@@ -9,4 +15,5 @@ export interface Schedule {
   shift: Shift
   day: DoW
   role: Role
+  week: Date // make sure this corresponds to date from mantine's getStartOfWeek function
 }

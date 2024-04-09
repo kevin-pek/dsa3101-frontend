@@ -1,15 +1,9 @@
-export enum Shift {
-  UNAVAILABLE = 0,
-  DAY = 1,
-  NIGHT = 2,
-  BOTH = 3,
-}
+import { Shift } from "./schedule"
 
 export enum Role {
   Manager = "Manager",
-  Server = "Server",
-  Cook = "Cook",
-  Dishwasher = "Dishwasher",
+  Server = "Service",
+  Kitchen = "Kitchen",
 }
 
 export interface Employee {

@@ -23,6 +23,6 @@ export const useUpdateSchedule = () => {
 }
 
 export const useAddSchedule = () => {
-  return (data: Schedule) =>
+  return (data: Omit<Schedule, 'id'>) =>
     mutate("/schedule", async () => await postRequest("/schedule", data), false)
 }

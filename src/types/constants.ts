@@ -18,7 +18,10 @@ export enum DoWShort {
   Sun = "Sun",
 }
 
+// working hours for each day
 export const hours = [
+  "8am",
+  "9am",
   "10am",
   "11am",
   "12pm",
