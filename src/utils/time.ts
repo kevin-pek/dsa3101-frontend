@@ -43,7 +43,7 @@ export function convertIndexToTime(index: number): string {
 }
 
 export const shiftToString = (shift: Shift, role: Role) => {
-  const start = role === Role.Kitchen ? " 8am" : "10pm"
+  const start = role === Role.Kitchen ? "8am" : "10pm"
   const end = role === Role.Server ? "10am" : "10pm"
   if (shift === Shift.Full) {
     return `${start} - ${end}`
@@ -52,11 +52,10 @@ export const shiftToString = (shift: Shift, role: Role) => {
   } else if (shift === Shift.Night) {
     return `12pm - ${end}`
   }
-  return "Unavailablee"
 }
 
 export const stringToShift = (str: string) => {
-  const morn = str.startsWith(" 8am") || str.startsWith("10am")
+  const morn = str.startsWith("8am") || str.startsWith("10am")
   const night = str.endsWith("10pm")
   if (morn && night) {
     return Shift.Full

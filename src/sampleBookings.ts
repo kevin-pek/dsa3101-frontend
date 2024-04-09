@@ -1,4 +1,4 @@
-import { Booking } from "./api/booking";
+import { Booking } from "./api/booking"
 
 export let fakeBookings: Booking[] = [
   {
@@ -46,4 +46,3 @@ export let fakeBookings: Booking[] = [
     remark: "NIL",
   },
 ]
-  

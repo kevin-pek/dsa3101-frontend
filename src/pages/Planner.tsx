@@ -15,12 +15,12 @@ import {
   ColorSwatch,
   ScrollArea,
 } from "@mantine/core"
-import { WeeklySchedule } from "../components/WeeklySchedule"
+import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
 import { IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
 import { useMediaQuery } from "@mantine/hooks"
 import React, { useEffect, useState } from "react"
 import { AddSchedulePopover } from "../components/AddSchedulePopover"
-import { useSchedules } from "../hooks/use-schedule"
+import { useSchedules } from "../hooks/use-schedules"
 import { getStartOfWeek } from "@mantine/dates"
 import { Schedule } from "../types/schedule"
 
@@ -36,7 +36,7 @@ export function Planner() {
   // initial schedule to display is for the current week
   useEffect(() => {
     const weekStart = getStartOfWeek(new Date())
-    const sched = schedules.filter(s => weekStart === getStartOfWeek(s.week))
+    const sched = schedules.filter((s) => weekStart === getStartOfWeek(s.week))
     setCurrSched(sched.length > 0 ? sched : [])
   }, [schedules])
 

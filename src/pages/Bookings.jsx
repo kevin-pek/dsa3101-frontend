@@ -3,7 +3,12 @@ import { useState, useMemo } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
 import { IconTrash, IconEdit } from "@tabler/icons-react"
-import { useBookings, useDeleteBooking, useAddBooking, useUpdateBooking } from "../hooks/use-bookings"
+import {
+  useBookings,
+  useDeleteBooking,
+  useAddBooking,
+  useUpdateBooking,
+} from "../hooks/use-bookings"
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation

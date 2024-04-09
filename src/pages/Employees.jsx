@@ -4,7 +4,13 @@ import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { useEmployees, useDeleteEmployee, useUpdateEmployee, useUploadEmployee, useAddEmployee } from "../hooks/use-employees"
+import {
+  useEmployees,
+  useDeleteEmployee,
+  useUpdateEmployee,
+  useUploadEmployee,
+  useAddEmployee,
+} from "../hooks/use-employees"
 
 export function Employees() {
   const { employees } = useEmployees()

@@ -1,20 +1,12 @@
-import {
-  Grid,
-  Text,
-  Box,
-  GridCol,
-  Divider,
-} from "@mantine/core"
+import { Grid, Text, Box, GridCol, Divider } from "@mantine/core"
 import React from "react"
 import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
-import { useSchedules } from "../hooks/use-schedule"
-import { DoW, hours } from "../types/constants"
-import { DayTimeline } from "./schedule/DayTimeline"
+import { useSchedules } from "../../hooks/use-schedules"
+import { DoW, hours } from "../../types/constants"
+import { DayTimeline } from "./DayTimeline"
 
 export const WeeklySchedule = ({ schedule, setSchedule }) => {
-  const { schedules } = useSchedules()
-
   const sidebarCols = 4
   const cols = sidebarCols + hours.length * 2
   const minColWidth = 64
@@ -64,7 +56,10 @@ export const WeeklySchedule = ({ schedule, setSchedule }) => {
           </GridCol>
 
           <GridCol span={hours.length * 2}>
-            <DayTimeline schedule={schedules.filter((sched) => sched.day === day)} setSchedule={setSchedule} />
+            <DayTimeline
+              schedule={schedule.filter((sched) => sched.day === day)}
+              setSchedule={setSchedule}
+            />
           </GridCol>
 
           {i !== Object.values(DoW).length - 1 && (
