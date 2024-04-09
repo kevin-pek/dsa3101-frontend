@@ -2,7 +2,6 @@ import { Grid, Text, Box, GridCol, Divider } from "@mantine/core"
 import React from "react"
 import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
-import { useSchedules } from "../../hooks/use-schedules"
 import { DoW, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
 

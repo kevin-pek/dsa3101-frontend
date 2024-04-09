@@ -14,26 +14,30 @@ import {
   ListItem,
   ColorSwatch,
   ScrollArea,
+  ActionIcon,
+  ModalBody,
+  Modal,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
-import { IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
-import { useMediaQuery } from "@mantine/hooks"
+import { IconCoin, IconArrowUpRight, IconArrowDownRight, IconPlus } from "@tabler/icons-react"
+import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useEffect, useState } from "react"
-import { AddSchedulePopover } from "../components/AddSchedulePopover"
+import { AddScheduleModal } from "../components/AddSchedulePopover"
 import { useSchedules } from "../hooks/use-schedules"
 import { getStartOfWeek } from "@mantine/dates"
 import { Schedule } from "../types/schedule"
 
 export function Planner() {
   const { schedules } = useSchedules()
+  const [opened, { open, close }] = useDisclosure(false) // modal for adding shift open
   const cost = 1000
   const diff = -10
   const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight
 
   const isMobile = useMediaQuery("(max-width: 50em)")
 
-  const [currSched, setCurrSched] = useState<Schedule[]>()
-  // initial schedule to display is for the current week
+  // schedules to display are those that fall within the current week
+  const [currSched, setCurrSched] = useState<Schedule[]>([])
   useEffect(() => {
     const weekStart = getStartOfWeek(new Date())
     const sched = schedules.filter((s) => weekStart === getStartOfWeek(s.week))
@@ -46,7 +50,17 @@ export function Planner() {
         <WeeklySchedule schedule={currSched} setSchedule={setCurrSched} />
       </ScrollArea>
 
-      <Divider label={<AddSchedulePopover />} labelPosition="center" />
+      <Divider label={
+        <ActionIcon onClick={open} variant="subtle" w="fit-content" px="xs">
+          <IconPlus />
+          Assign New Shift
+        </ActionIcon>
+      } labelPosition="center" />
+    <Modal title="Add New Shift" centered fullScreen={isMobile} opened={opened} onClose={close}>
+      <ModalBody>
+        <AddScheduleModal onSubmit={close} />
+      </ModalBody>
+    </Modal>
 
       <Space h="md" />
 

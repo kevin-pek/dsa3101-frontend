@@ -2,14 +2,12 @@ import { Stack, Select, Button } from "@mantine/core"
 import React, { useCallback, useState, useMemo } from "react"
 import { useEmployees } from "../hooks/use-employees"
 import { useSchedules } from "../hooks/use-schedules"
-import { useSWRConfig } from "swr"
 import { Role } from "../types/employee"
 
 export const SwapEmployeeModal = ({ onSubmit }) => {
   const { employees } = useEmployees()
   const { schedules } = useSchedules()
-  const { mutate } = useSWRConfig()
-  const [selectedEmployee, setSelectedEmployee] = useState()
+  const [selectedEmployee, setSelectedEmployee] = useState<string>()
   const [employeeError, setEmployeeError] = useState("")
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
@@ -42,7 +40,7 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
         placeholder="Select another employee..."
         data={employeeData}
         value={selectedEmployee}
-        onChange={setSelectedEmployee}
+        onChange={val => setSelectedEmployee(val)}
         comboboxProps={{ withinPortal: false }}
         searchable
         nothingFoundMessage="No employees found..."
@@ -54,7 +52,7 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
         placeholder="Change role..."
         data={Object.values(Role)}
         value={role}
-        onChange={setRole}
+        onChange={val => setRole(val as Role)}
         comboboxProps={{ withinPortal: false }}
         error={roleError}
       />

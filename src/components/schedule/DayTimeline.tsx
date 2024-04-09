@@ -1,5 +1,5 @@
 import { Stack, useMantineColorScheme } from "@mantine/core"
-import React, { Dispatch, useCallback, useEffect, useState } from "react"
+import React, { Dispatch, useCallback, useEffect } from "react"
 import { hours } from "../../types/constants"
 import { TimeRangeSlider } from "./TimeRangeSlider"
 import { Schedule } from "../../types/schedule"
@@ -26,7 +26,7 @@ export const DayTimeline = ({
 
   // Generate alternating background color based on number of partitions
   useEffect(() => {
-    const rangeSliders = document.querySelectorAll(".day")
+    const rangeSliders = document.querySelectorAll<HTMLElement>(".day")
     const darkMode = theme.colorScheme === "dark"
     rangeSliders.forEach((slider) => {
       const color1 = darkMode ? "var(--mantine-color-dark-6)" : "var(--mantine-color-gray-0)"

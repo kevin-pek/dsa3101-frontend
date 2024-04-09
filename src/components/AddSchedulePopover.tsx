@@ -1,9 +1,5 @@
 import {
   Button,
-  ActionIcon,
-  Popover,
-  PopoverTarget,
-  PopoverDropdown,
   Select,
   Stack,
   Space,
@@ -16,10 +12,10 @@ import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
 import { Schedule, Shift } from "../types/schedule"
 import { getStartOfWeek } from "@mantine/dates"
-import { shiftToString, stringToShift } from "../utils/time"
+import { shiftToString } from "../utils/time"
 import React from "react"
 
-export const AddSchedulePopover = () => {
+export const AddScheduleModal = ({ onSubmit }) => {
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
   const [day, setDay] = useState<DoW>()
@@ -30,7 +26,6 @@ export const AddSchedulePopover = () => {
   const [shiftError, setShiftError] = useState("")
 
   const { employees } = useEmployees()
-  const [open, setOpen] = useState(false)
   const createSchedule = useAddSchedule()
 
   const handleSubmit = useCallback(async () => {
@@ -55,33 +50,25 @@ export const AddSchedulePopover = () => {
     if (valid) {
       const newSchedule: Omit<Schedule, "id"> = {
         employeeId: employee,
-        start: shiftToString(shift, role), // give new schedules default values
-        end: shiftToString(shift, role),
+        start: shiftToString(shift, role).substring(0, 3), // give new schedules default values
+        end: shiftToString(shift, role).slice(-3),
         day,
         role,
         shift,
         week: getStartOfWeek(new Date()),
       }
       await createSchedule(newSchedule)
-      setOpen(false)
       setEmpName(null) // reset fields if successful creation
       setRole(null)
       setDay(null)
       setShift(null)
+      onSubmit()
     }
   }, [empName, role, day, employees])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
   return (
-    <Popover shadow="md" position="bottom" offset={-100} opened={open} onChange={setOpen}>
-      <PopoverTarget>
-        <ActionIcon onClick={() => setOpen(true)} variant="subtle" w="fit-content" px="xs">
-          <IconPlus />
-          Assign New Shift
-        </ActionIcon>
-      </PopoverTarget>
-      <PopoverDropdown>
         <Stack miw="16em">
           <Select
             required
@@ -99,9 +86,9 @@ export const AddSchedulePopover = () => {
             required
             label="Shift"
             placeholder="Select shift..."
-            data={Object.values(Shift).map(toString)}
-            value={shiftToString(shift, role)}
-            onChange={(val) => setShift(stringToShift(val))}
+            data={Object.values(Shift)}
+            value={shift}
+            onChange={(val) => setShift(val as Shift)}
             comboboxProps={{ withinPortal: false }}
             nothingFoundMessage="No shifts available..."
             error={shiftError}
@@ -131,7 +118,5 @@ export const AddSchedulePopover = () => {
             Add
           </Button>
         </Stack>
-      </PopoverDropdown>
-    </Popover>
   )
 }
