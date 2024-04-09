@@ -1,6 +1,6 @@
 import { useDisclosure, useCounter } from '@mantine/hooks';
 import { Modal, Button, Group, Text, Badge } from '@mantine/core';
-import DatePicker from './DatePicker.jsx'
+import DateRange from './DateRange.jsx'
 
 function DemandModal() {
   const [opened, { close, open }] = useDisclosure(false);
@@ -18,13 +18,7 @@ function DemandModal() {
       <Modal opened={opened} onClose={close} size="auto" fontWeight="bold" title=" Demand Forecast Figures">
         <Text>Select Date</Text>
 
-        <div style={{
-          display: 'inline-block',
-          textAlign: 'center',
-          margin: '0 auto',
-        }}>
-          <DatePicker />
-        </div>
+        <DateRange />
 
         <Text>Input Number of Customers</Text>
 

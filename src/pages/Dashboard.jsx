@@ -1,5 +1,6 @@
 import { LineChart, BarChart, AreaChart, RadarChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
 import { 
   empAvailability, 
   hiringExpenditure, 
@@ -10,14 +11,14 @@ import {
   demandForecast } from '../sampleDashboard.jsx';
 import Dropdown from '../components/Dropdown.jsx';
 import DemandModal from '../components/DemandModal.jsx';
-import DatePicker from '../components/DatePicker.jsx';
+import DateRange from '../components/DateRange.jsx';
 import '../components/dropdown.css';
 import { useState } from 'react';
 
 export function Dashboard() {
 
   const [selectedView, setSelectedView] = useState("Monthly"); //Default state/view to be weekly
-  const [dropdownActive, setDropdownActive] = useState(false);
+  const [value, setValue] = useState(null);
 
   //Define chart components for each view type
   const viewCharts = {
@@ -304,13 +305,7 @@ export function Dashboard() {
             </Text>
           </div>
 
-          <div style={{
-            display: 'inline-block',
-            textAlign: 'center',
-            margin: '0 auto',
-          }}>
-            <DatePicker />
-          </div>
+          <DateRange />
 
         </div>
 
