@@ -113,8 +113,8 @@ export const TimeRangeSlider = ({
   }
 
   useEffect(() => {
-    // click handlers for mobile devices
     if (isMobile) {
+      // if mobile device, add tap handler for activating each slider
       const handleClick = (e) => {
         if (rangeRef.current) {
           if (
@@ -130,6 +130,13 @@ export const TimeRangeSlider = ({
       document.addEventListener("mousedown", handleClick)
       setActive(false) // trigger active useEffect handler
       return () => document.removeEventListener("mousedown", handleClick)
+    } else {
+      // if isMobile is deactivated, activate all pointer events for the sliders
+      rangeRef.current.querySelectorAll<HTMLElement>(".range-slider__thumb").forEach((c) => {
+        c.style.pointerEvents = "auto"
+      })
+      rangeRef.current.querySelector<HTMLElement>(".range-slider__range").style.pointerEvents = "auto"
+      setActive(false)
     }
   }, [isMobile])
 

@@ -1,4 +1,4 @@
-import { Stack, Select, Button } from "@mantine/core"
+import { Stack, Select, Button, Space } from "@mantine/core"
 import React, { useCallback, useState, useMemo } from "react"
 import { useEmployees } from "../hooks/use-employees"
 import { useUpdateSchedule } from "../hooks/use-schedules"
@@ -66,6 +66,7 @@ export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps
         comboboxProps={{ withinPortal: false }}
         error={roleError}
       />
+      <Space h="md" />
       <Button type="submit" onClick={handleSwap}>
         Swap
       </Button>

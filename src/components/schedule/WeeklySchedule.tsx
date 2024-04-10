@@ -2,7 +2,7 @@ import { Grid, Text, Box, GridCol, Divider } from "@mantine/core"
 import React from "react"
 import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
-import { DoW, hours } from "../../types/constants"
+import { DoW, DoWShort, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
 import { Schedule } from "../../types/schedule"
 
@@ -12,14 +12,15 @@ interface WeeklyScheduleProps {
 }
 
 export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) => {
-  const sidebarCols = 4
+  const sidebarCols = 3
   const cols = sidebarCols + hours.length * 2
   const minColWidth = 64
 
   return (
     <Grid
       columns={cols}
-      p="lg"
+      py="lg"
+      px="sm"
       style={{ overflowX: "auto", minWidth: `${hours.length * minColWidth}px` }}
     >
       <GridCol
@@ -56,7 +57,7 @@ export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) =
             }}
           >
             <Box />
-            <Text size="lg">{day}</Text>
+            <Text size="lg">{Object.values(DoWShort)[i]}</Text>
             <Divider orientation="vertical" />
           </GridCol>
 
