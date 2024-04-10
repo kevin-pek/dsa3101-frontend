@@ -30,9 +30,7 @@ function DemandModal() {
 
   return (
     <>
-      <div></div>
       <Modal opened={opened} onClose={close} size="auto" fontWeight="bold" title=" Demand Forecast Figures">
-        <Text>Select Date</Text>
 
         <DateRange />
 

@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
-import { DatePicker } from '@mantine/dates';
-import { Group } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import '@mantine/dates/styles.css'
 
 function DateRange() {
   const [value, setValue] = useState([null, null]);
 
   return (
-    <Group justify="center">
-        <DatePicker 
-            style={{ width: '100%', maxWidth: '200px' }}
+        <DatePickerInput 
+            label="Pick Date Range"
             type="range" 
-            allowSingleDateInRange 
             value={value} 
             onChange={setValue}
         />
-    </Group>
   );
 }
 
