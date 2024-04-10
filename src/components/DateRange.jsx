@@ -7,7 +7,13 @@ function DateRange() {
 
   return (
     <Group justify="center">
-        <DatePicker type="range" allowSingleDateInRange value={value} onChange={setValue} />
+        <DatePicker 
+            style={{ width: '100%', maxWidth: '200px' }}
+            type="range" 
+            allowSingleDateInRange 
+            value={value} 
+            onChange={setValue}
+        />
     </Group>
   );
 }
