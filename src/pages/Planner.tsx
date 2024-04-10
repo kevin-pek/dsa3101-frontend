@@ -18,6 +18,8 @@ import {
   ModalBody,
   Modal,
   Center,
+  Flex,
+  Box,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
 import { IconCoin, IconArrowUpRight, IconArrowDownRight, IconPlus } from "@tabler/icons-react"
@@ -58,7 +60,8 @@ export function Planner() {
 
   return (
     <Container fluid>
-          <Paper p="md" radius="md">
+        <Stack style={{ alignItems: "center" }}>
+          <Box p="md">
             <Text size="xl" fw={700}>
               Shift Planner
             </Text>
@@ -67,51 +70,16 @@ export function Planner() {
               <ListItem>Click the button at the bottom of the page to generate a new schedule based on the settings shown. The schedule will account for their availability and working hours as much as possible.</ListItem>
               <ListItem>Click and drag using your mouse to adjust the start and end times for each shift.</ListItem>
               <ListItem>Hover your mouse over a schedule to assign it to another employee, or to change the allocated role.</ListItem>
-              <ListItem>Click to save any changes you made to the schedule.</ListItem>
+              <ListItem>Click the `Save Changes` button below to save any changes you made to the schedule.</ListItem>
               <ListItem>Export this schedule as an image to share the finalised schedule with your staff.</ListItem>
             </List>
-          </Paper>
+          </Box>
 
-      <Grid>
-        <GridCol span={isMobile ? 12 : 8}>
-          <Center style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
-            <Text size="lg">Showing staff schedule for the week:</Text>
-            <Text size="xl" fw={500}>{formatDate(weekStart)} — {formatDate(weekEnd)}</Text>
-          </Center>
-        </GridCol>
-
-        <GridCol span={isMobile ? 12 : 4}>
-          <Paper  p="md" radius="md">
-            <Text size="lg" fw={700}>
-              Legend
-            </Text>
-            <Text fz="md" my={8}>
-              Each role is indicated by their colour.
-            </Text>
-            <List
-              withPadding
-              center
-              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-            >
-              <ListItem
-                component="span"
-                icon={<ColorSwatch size="1.1em" color="var(--mantine-color-violet-outline)" />}
-              >
-                Manager
-              </ListItem>
-              <ListItem
-                component="span"
-                icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-outline)" />}
-              >
-                Kitchen
-              </ListItem>
-              <ListItem component="span" icon={<ColorSwatch size="1.1em" color="var(--mantine-color-green-outline)" />}>
-                Server
-              </ListItem>
-            </List>
-          </Paper>
-        </GridCol>
-      </Grid>
+          <Stack gap="sm" style={{ textAlign: "center" }}>
+            <Text size="lg" fw={700}>Showing staff schedule for the week:</Text>
+            <Text size="xl" fw={700}>{formatDate(weekStart)} — {formatDate(weekEnd)}</Text>
+          </Stack>
+        </Stack>
 
       <ScrollArea>
         <WeeklySchedule schedule={currSched} setSchedule={setCurrSched} />
@@ -135,6 +103,32 @@ export function Planner() {
       <Grid>
         <GridCol span={isMobile ? 12 : 4}>
           <Stack>
+
+          <Paper withBorder p="md" radius="md">
+            <Text size="lg" fw={700}>Legend</Text>
+            <Space h="sm" />
+            <List
+              withPadding
+              center
+              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+            >
+              <ListItem
+                component="span"
+                icon={<ColorSwatch size="1em" color="var(--mantine-color-violet-outline)" />}
+              >
+                Manager
+              </ListItem>
+              <ListItem
+                component="span"
+                icon={<ColorSwatch size="1em" color="var(--mantine-color-orange-outline)" />}
+              >
+                Kitchen
+              </ListItem>
+              <ListItem component="span" icon={<ColorSwatch size="1em" color="var(--mantine-color-green-outline)" />}>
+                Server
+              </ListItem>
+            </List>
+            </Paper>
             {/* TODO: Add confirmation modal and handler for each of these */}
             <Button>Revert Changes</Button>
 
