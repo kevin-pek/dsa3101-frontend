@@ -19,7 +19,9 @@ import { Schedule } from "../../types/schedule"
 import RangeSlider from "./RangeSlider"
 
 /**
- * Individual time range slider with mouse pointer events and responsive design.
+ * Adjustable time range slider with hover behaviour and responsive design.
+ * Displays name of employee on middle of entry, and color is determined by type
+ * of role assigned.
  */
 export const TimeRangeSlider = ({
   value,
@@ -38,21 +40,23 @@ export const TimeRangeSlider = ({
   const hoverRef = useRef<HTMLDivElement>()
 
   const timeIdxOffset = convertTimeToIndex(hours[0])
-  const [range, setRange] = useState([
+  const [range, setRange] = useState<number[]>([
     convertTimeToIndex(value.start) - timeIdxOffset,
     convertTimeToIndex(value.end) - timeIdxOffset,
-  ])
+  ]) // 2 element array containing start/end indices
   const name = useMemo(
     () => employees.find((e) => e.id === value.employeeId)?.name,
     [value, employees],
   )
 
   useEffect(() => {
-    setValue({
-      ...value,
-      start: convertIndexToTime(range[0] + timeIdxOffset - 2),
-      end: convertIndexToTime(range[1] + timeIdxOffset - 2),
-    })
+    if (range) {
+      setValue({
+        ...value,
+        start: convertIndexToTime(range[0] + timeIdxOffset),
+        end: convertIndexToTime(range[1] + timeIdxOffset),
+      })
+    }
   }, [range])
 
   const handleMouseHover = (e) => {
@@ -78,8 +82,9 @@ export const TimeRangeSlider = ({
     if ((isMobile && active) || !isMobile) {
       // mobile devices need to click on the range first
       // show thumb adjustment slider icons when hovering the slider range
-      e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+      rangeRef.current.querySelectorAll<HTMLElement>(".range-slider__thumb").forEach((child) => {
         child.style.background = "var(--mantine-color-gray-0)"
+        child.style.boxShadow = "0 0 2px gray"
       })
     }
   }
@@ -88,8 +93,9 @@ export const TimeRangeSlider = ({
     if ((isMobile && active) || !isMobile) {
       // mobile devices need to click on the range first
       // remove thumb adjustment slider icons when no longer hovering the slider
-      e.target.parentNode.querySelectorAll(".range-slider__thumb").forEach((child) => {
+      rangeRef.current.querySelectorAll<HTMLElement>(".range-slider__thumb").forEach((child) => {
         child.style.background = "transparent"
+        child.style.boxShadow = "none"
       })
     }
   }

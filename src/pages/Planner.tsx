@@ -24,8 +24,9 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useEffect, useState } from "react"
 import { AddScheduleModal } from "../components/AddSchedulePopover"
 import { useSchedules } from "../hooks/use-schedules"
-import { getStartOfWeek } from "@mantine/dates"
+import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
 import { Schedule } from "../types/schedule"
+import { compareDates } from "../utils/time"
 
 export function Planner() {
   const { schedules } = useSchedules()
@@ -39,8 +40,10 @@ export function Planner() {
   // schedules to display are those that fall within the current week
   const [currSched, setCurrSched] = useState<Schedule[]>([])
   useEffect(() => {
-    const weekStart = getStartOfWeek(new Date())
-    const sched = schedules.filter((s) => weekStart === getStartOfWeek(s.week))
+    const now = new Date()
+    const weekStart = getStartOfWeek(now)
+    const weekEnd = getEndOfWeek(now)
+    const sched = schedules.filter(s => (compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0))
     setCurrSched(sched.length > 0 ? sched : [])
   }, [schedules])
 
@@ -56,11 +59,12 @@ export function Planner() {
           Assign New Shift
         </ActionIcon>
       } labelPosition="center" />
-    <Modal title="Add New Shift" centered fullScreen={isMobile} opened={opened} onClose={close}>
-      <ModalBody>
-        <AddScheduleModal onSubmit={close} />
-      </ModalBody>
-    </Modal>
+
+      <Modal title="Add New Shift" centered fullScreen={isMobile} opened={opened} onClose={close}>
+        <ModalBody>
+          <AddScheduleModal onSubmit={close} />
+        </ModalBody>
+      </Modal>
 
       <Space h="md" />
 
@@ -68,10 +72,10 @@ export function Planner() {
         <GridCol span={isMobile ? 12 : 4}>
           <Stack>
             <Paper withBorder p="md" radius="md">
-              <Text size="md" c="dimmed" fw={700}>
+              <Text size="md" fw={700}>
                 Legend
               </Text>
-              <Text fz="md" c="dimmed" my={8}>
+              <Text fz="md" my={8}>
                 Each role is indicated by their colour
               </Text>
               <List
@@ -81,24 +85,18 @@ export function Planner() {
               >
                 <ListItem
                   component="span"
-                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-pink-4)" />}
+                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-violet-outline)" />}
                 >
                   Manager
                 </ListItem>
                 <ListItem
                   component="span"
-                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-6)" />}
+                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-outline)" />}
                 >
-                  Dishwasher
+                  Kitchen
                 </ListItem>
-                <ListItem component="span" icon={<ColorSwatch size="1.1em" color="teal" />}>
-                  Chef
-                </ListItem>
-                <ListItem
-                  component="span"
-                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-green-4)" />}
-                >
-                  Waiter
+                <ListItem component="span" icon={<ColorSwatch size="1.1em" color="var(--mantine-color-green-outline)" />}>
+                  Server
                 </ListItem>
               </List>
             </Paper>

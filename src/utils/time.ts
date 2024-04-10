@@ -3,43 +3,97 @@
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
-export function getLessonTimeHours(time: string): number {
-  return parseInt(time.substring(0, 2), 10)
+export function convertTimeToIndex(timeStr: string): number {
+  // Normalize the time string to ensure it's in a consistent format
+  const normalizedTimeStr = timeStr.replace(':', '');
+
+  // Determine if it's half past the hour
+  const isHalfHour = normalizedTimeStr.includes('30');
+
+  // Extract the hour and period (am/pm)
+  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/);
+  let hour = parseInt(hourPart, 10);
+
+  // Correct for 12am and 12pm
+  if (hour === 12) {
+      hour = 0;
+  }
+  if (period === 'pm') {
+      hour += 12;
+  }
+
+  // Calculate the number (0 to 47)
+  let number = hour * 2;
+  if (isHalfHour) {
+      number += 1;
+  }
+
+  return number;
 }
 
-export function getLessonTimeMinutes(time: string): number {
-  return parseInt(time.substring(2), 10)
-}
 
 // Converts a 24-hour format time string to an index.
 // Each index corresponds to one cell of each timetable row.
-// Each row may not start from index 0, it depends on the config's starting time.
-// 0000 -> 0, 0030 -> 1, 0100 -> 2, ...
-export function convertTimeToIndex(time: string): number {
-  const hour = getLessonTimeHours(time)
-  const minute = getLessonTimeMinutes(time)
-
-  // TODO: Expose incorrect offsets to user via UI
-  // Currently we round up in half hour blocks, but the actual time is not shown
-  let minuteOffset
-  if (minute === 0) {
-    minuteOffset = 0
-  } else if (minute <= 30) {
-    minuteOffset = 1
-  } else {
-    minuteOffset = 2
+export function convertIndexToTime(number: number): string {
+  if (number < 0 || number > 47) {
+      throw new Error('Number must be between 0 and 47');
   }
 
-  return hour * 2 + minuteOffset
+  // Determine if it's on the hour or half-hour
+  const isHalfHour = number % 2 !== 0;
+
+  // Convert the number to hours
+  let hour = Math.floor(number / 2);
+
+  // Determine AM or PM and adjust hour for 12-hour format
+  let period = 'am';
+  if (hour >= 12) {
+      period = 'pm';
+      if (hour > 12) hour -= 12;
+  }
+  if (hour === 0) hour = 12;
+
+  // Construct the time string
+  let time = `${hour}`;
+  if (isHalfHour) {
+      time += ':30';
+  }
+  time += period;
+
+  return time;
 }
 
-// Reverse of convertTimeToIndex.
-// 0 -> 0000, 1 -> 0030, 2 -> 0100, ... , 48 -> 2400
-export function convertIndexToTime(index: number): string {
-  const timeIndex = Math.min(index, 48)
-  const hour: number = Math.floor(timeIndex / 2)
-  const minute: string = timeIndex % 2 === 0 ? "00" : "30"
-  return (hour < 10 ? `0${hour}` : hour.toString()) + minute
+/**
+ * Compares 2 dates only using the year month and date. Returns -1 if first is
+ * before the other, 0 if they are the same day, and 1 if first is after the
+ * second date.
+ */
+
+export function compareDates(date1, date2) {
+  // Extract the year, month, and day from the first date
+  const year1 = date1.getFullYear();
+  const month1 = date1.getMonth();
+  const day1 = date1.getDate();
+
+  // Extract the year, month, and day from the second date
+  const year2 = date2.getFullYear();
+  const month2 = date2.getMonth();
+  const day2 = date2.getDate();
+
+  // Compare the year, then month, then day
+  if (year1 < year2) return -1;
+  if (year1 > year2) return 1;
+
+  // If the years are the same, compare the months
+  if (month1 < month2) return -1;
+  if (month1 > month2) return 1;
+
+  // If the months are also the same, compare the days
+  if (day1 < day2) return -1;
+  if (day1 > day2) return 1;
+
+  // If all are the same, the dates are identical (in terms of day, month, and year)
+  return 0;
 }
 
 export const shiftToString = (shift: Shift, role: Role) => {

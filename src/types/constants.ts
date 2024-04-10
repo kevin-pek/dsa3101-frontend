@@ -34,5 +34,5 @@ export const hours = [
   "7pm",
   "8pm",
   "9pm",
-  "10pm",
+  // "10pm",
 ]

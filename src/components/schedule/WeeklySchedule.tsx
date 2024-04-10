@@ -4,8 +4,14 @@ import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
 import { DoW, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
+import { Schedule } from "../../types/schedule"
 
-export const WeeklySchedule = ({ schedule, setSchedule }) => {
+interface WeeklyScheduleProps {
+  schedule: Schedule[]
+  setSchedule: React.Dispatch<Schedule[]>
+}
+
+export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) => {
   const sidebarCols = 4
   const cols = sidebarCols + hours.length * 2
   const minColWidth = 64
@@ -61,6 +67,7 @@ export const WeeklySchedule = ({ schedule, setSchedule }) => {
             />
           </GridCol>
 
+          {/* Add spacer between the days of the week */}
           {i !== Object.values(DoW).length - 1 && (
             <GridCol span={cols}>
               <Divider />

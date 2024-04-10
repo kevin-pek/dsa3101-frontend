@@ -1,8 +1,13 @@
 import { Stack, useMantineColorScheme } from "@mantine/core"
-import React, { Dispatch, useCallback, useEffect } from "react"
+import React, { useCallback, useEffect } from "react"
 import { hours } from "../../types/constants"
 import { TimeRangeSlider } from "./TimeRangeSlider"
 import { Schedule } from "../../types/schedule"
+
+interface DayTimelineProps {
+  schedule: Schedule[]
+  setSchedule: React.Dispatch<React.SetStateAction<Schedule[]>>
+}
 
 /**
  * Displays a day entry in the schedule. Height grows with number of employees in schedule.
@@ -10,16 +15,13 @@ import { Schedule } from "../../types/schedule"
 export const DayTimeline = ({
   schedule,
   setSchedule,
-}: {
-  schedule: Schedule[]
-  setSchedule: Dispatch<Schedule[]>
-}) => {
+}: DayTimelineProps) => {
   const theme = useMantineColorScheme()
 
   // function to update individual range value
   const setScheduleRange = useCallback(
-    (idx, val) => {
-      setSchedule(schedule.map((c, i) => (idx === i ? val : c)))
+    (val) => {
+      setSchedule(prev => prev.map((c) => (c.id === val.id ? val : c)))
     },
     [schedule],
   )
@@ -47,7 +49,7 @@ export const DayTimeline = ({
   return (
     <Stack mih="48px" className="day" gap={2} py="8px">
       {schedule.map((sched, i) => (
-        <TimeRangeSlider value={sched} setValue={(val) => setScheduleRange(i, val)} key={i} />
+        <TimeRangeSlider value={sched} setValue={(val) => setScheduleRange(val)} key={i} />
       ))}
     </Stack>
   )

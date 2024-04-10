@@ -1,4 +1,8 @@
+import { getStartOfWeek } from '@mantine/dates';
 import axios from "axios"
+import { Schedule, Shift } from "../types/schedule"
+import { Role } from "../types/employee"
+import { DoW } from "../types/constants"
 
 const BASE_URL = "http://localhost:5001"
 
@@ -31,8 +35,8 @@ export const handleError = (error: unknown) => {
 
 export const fetcher = async (url: string) => {
   try {
+    if (url === "/schedule") return generateSchedules()
     const response = await apiClient.get(url)
-    console.log(response.data)
     return response.data
   } catch (error) {
     handleError(error)
@@ -64,4 +68,59 @@ export const deleteRequest = async (url: string, id: number) => {
   } catch (error) {
     handleError(error)
   }
+}
+
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function generateSchedules(): Schedule[] {
+  const roles = Object.values(Role);
+  const daysOfWeek = Object.values(DoW);
+  const shifts = Object.values(Shift);
+  const schedules: Schedule[] = [];
+  const employeeIds = [1, 2, 3, 4, 5];
+
+  employeeIds.forEach((employeeId) => {
+    daysOfWeek.forEach((day) => {
+      const role = roles[getRandomInt(0, roles.length - 1)];
+      const shift = shifts[getRandomInt(0, shifts.length - 1)];
+
+      // Initialize start and end with default values
+      let start: string = '9am'; // Default start time
+      let end: string = '5pm';   // Default end time
+
+      if (role === 'Kitchen' && shift === 'Morning') {
+        start = '8am';
+        end = '6pm';
+      } else if (role === 'Server' && shift === 'Morning') {
+        start = '10am';
+        end = '6pm';
+      } else if (role === 'Kitchen' && shift === 'Night') {
+        start = '12pm';
+        end = '10pm';
+      } else if (role === 'Server' && shift === 'Night') {
+        start = '12pm';
+        end = '10pm';
+      } else if (shift === 'Full') {
+        start = role === 'Kitchen' ? '8am' : '10am';
+        end = '10pm';
+      }
+
+      const schedule: Schedule = {
+        id: getRandomInt(100, 999),
+        employeeId: employeeId,
+        day: day,
+        role: role,
+        week: getStartOfWeek(new Date()), // For simplicity, using the current date
+        shift: shift,
+        start: start,
+        end: end,
+      };
+
+      schedules.push(schedule);
+    });
+  });
+
+  console.log(schedules);
+  return schedules;
 }
