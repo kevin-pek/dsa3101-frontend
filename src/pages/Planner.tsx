@@ -17,6 +17,7 @@ import {
   ActionIcon,
   ModalBody,
   Modal,
+  Center,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
 import { IconCoin, IconArrowUpRight, IconArrowDownRight, IconPlus } from "@tabler/icons-react"
@@ -39,16 +40,79 @@ export function Planner() {
 
   // schedules to display are those that fall within the current week
   const [currSched, setCurrSched] = useState<Schedule[]>([])
+  const now = new Date()
+  const weekStart = getStartOfWeek(now)
+  const weekEnd = getEndOfWeek(now)
   useEffect(() => {
-    const now = new Date()
-    const weekStart = getStartOfWeek(now)
-    const weekEnd = getEndOfWeek(now)
     const sched = schedules.filter(s => (compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0))
     setCurrSched(sched.length > 0 ? sched : [])
   }, [schedules])
 
+  const formatDate = (date: Date) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const day = date.getDate()
+    const month = months[date.getMonth()]
+    const year = date.getFullYear().toString()
+    return `${day} ${month} ${year}`
+  }
+
   return (
     <Container fluid>
+          <Paper p="md" radius="md">
+            <Text size="xl" fw={700}>
+              Shift Planner
+            </Text>
+            <Text>Use this interface to automatically assign shifts among your staff on a weekly basis. Here's a list of things of what you can do on this page:</Text>
+            <List>
+              <ListItem>Click the button at the bottom of the page to generate a new schedule based on the settings shown. The schedule will account for their availability and working hours as much as possible.</ListItem>
+              <ListItem>Click and drag using your mouse to adjust the start and end times for each shift.</ListItem>
+              <ListItem>Hover your mouse over a schedule to assign it to another employee, or to change the allocated role.</ListItem>
+              <ListItem>Click to save any changes you made to the schedule.</ListItem>
+              <ListItem>Export this schedule as an image to share the finalised schedule with your staff.</ListItem>
+            </List>
+          </Paper>
+
+      <Grid>
+        <GridCol span={isMobile ? 12 : 8}>
+          <Center style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
+            <Text size="lg">Showing staff schedule for the week:</Text>
+            <Text size="xl" fw={500}>{formatDate(weekStart)} — {formatDate(weekEnd)}</Text>
+          </Center>
+        </GridCol>
+
+        <GridCol span={isMobile ? 12 : 4}>
+          <Paper  p="md" radius="md">
+            <Text size="lg" fw={700}>
+              Legend
+            </Text>
+            <Text fz="md" my={8}>
+              Each role is indicated by their colour.
+            </Text>
+            <List
+              withPadding
+              center
+              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+            >
+              <ListItem
+                component="span"
+                icon={<ColorSwatch size="1.1em" color="var(--mantine-color-violet-outline)" />}
+              >
+                Manager
+              </ListItem>
+              <ListItem
+                component="span"
+                icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-outline)" />}
+              >
+                Kitchen
+              </ListItem>
+              <ListItem component="span" icon={<ColorSwatch size="1.1em" color="var(--mantine-color-green-outline)" />}>
+                Server
+              </ListItem>
+            </List>
+          </Paper>
+        </GridCol>
+      </Grid>
+
       <ScrollArea>
         <WeeklySchedule schedule={currSched} setSchedule={setCurrSched} />
       </ScrollArea>
@@ -71,54 +135,10 @@ export function Planner() {
       <Grid>
         <GridCol span={isMobile ? 12 : 4}>
           <Stack>
-            <Paper withBorder p="md" radius="md">
-              <Text size="md" fw={700}>
-                Legend
-              </Text>
-              <Text fz="md" my={8}>
-                Each role is indicated by their colour
-              </Text>
-              <List
-                withPadding
-                center
-                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-              >
-                <ListItem
-                  component="span"
-                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-violet-outline)" />}
-                >
-                  Manager
-                </ListItem>
-                <ListItem
-                  component="span"
-                  icon={<ColorSwatch size="1.1em" color="var(--mantine-color-orange-outline)" />}
-                >
-                  Kitchen
-                </ListItem>
-                <ListItem component="span" icon={<ColorSwatch size="1.1em" color="var(--mantine-color-green-outline)" />}>
-                  Server
-                </ListItem>
-              </List>
-            </Paper>
+            {/* TODO: Add confirmation modal and handler for each of these */}
+            <Button>Revert Changes</Button>
 
-            <Paper withBorder p="md" radius="md">
-              <Group justify="space-between">
-                <Text size="md" c="dimmed" fw={700}>
-                  Projected Cost
-                </Text>
-                <IconCoin size="1.4rem" stroke={1.5} />
-              </Group>
-              <Group align="flex-end" gap="xs" mt={25}>
-                <Text size="lg">{cost}</Text>
-                <Text c={diff > 0 ? "teal" : "red"} fz="sm" fw={500}>
-                  <span>{diff}%</span>
-                  <DiffIcon size="1rem" stroke={1.5} />
-                </Text>
-              </Group>
-              <Text fz="md" c="dimmed" mt={8}>
-                based on currently shown schedule
-              </Text>
-            </Paper>
+            <Button>Save Changes</Button>
           </Stack>
         </GridCol>
 
