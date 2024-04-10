@@ -7,9 +7,13 @@ import {
   HoverCardTarget,
   Modal,
   ModalBody,
+  Button,
+  Stack,
+  Text,
+  Space
 } from "@mantine/core"
-import { IconSwitch } from "@tabler/icons-react"
-import React, { useEffect, useState, useMemo, useRef, Dispatch } from "react"
+import { IconSwitch, IconTrash } from "@tabler/icons-react"
+import React, { useEffect, useState, useMemo, useRef, Dispatch, useCallback } from "react"
 import { useEmployees } from "../../hooks/use-employees"
 import { hours } from "../../types/constants"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
@@ -17,6 +21,7 @@ import { convertIndexToTime, convertTimeToIndex } from "../../utils/time"
 import { SwapEmployeeModal } from "../SwapEmployeeModal"
 import { Schedule } from "../../types/schedule"
 import RangeSlider from "./RangeSlider"
+import { useDeleteSchedule } from "../../hooks/use-schedules"
 
 /**
  * Adjustable time range slider with hover behaviour and responsive design.
@@ -31,9 +36,11 @@ export const TimeRangeSlider = ({
   setValue: Dispatch<Schedule>
 }) => {
   const { employees } = useEmployees()
+  const deleteSchedule = useDeleteSchedule()
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
-  const [opened, { open, close }] = useDisclosure(false) // popover open
+  const [swapOpened, { open: openSwap, close: closeSwap }] = useDisclosure(false) // swap modal
+  const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false) // delete model
   const isMobile = useMediaQuery("(max-width: 50em)")
   const [active, setActive] = useState(true)
   const rangeRef = useRef<HTMLDivElement>()
@@ -58,6 +65,11 @@ export const TimeRangeSlider = ({
       })
     }
   }, [range])
+
+  const handleDelete = useCallback(async () => {
+    await deleteSchedule(value.id)
+    closeDelete()
+  }, [value])
 
   const handleMouseHover = (e) => {
     if ((isMobile && active) || !isMobile) {
@@ -156,24 +168,48 @@ export const TimeRangeSlider = ({
           </Box>
         </HoverCardTarget>
         <HoverCardDropdown hidden={!hovering} p={4} left={hoverPos.x} top={hoverPos.y}>
-          <Group ref={hoverRef} p={0}>
+          <Group gap={4} ref={hoverRef} p={0}>
             <ActionIcon
               onClick={() => {
-                open()
+                openSwap()
                 setHovering(false)
               }}
               variant="subtle"
               w="fit-content"
             >
               <IconSwitch />
-              Swap
+            </ActionIcon>
+
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                openDelete()
+                setHovering(false)
+              }}
+              variant="subtle"
+              w="fit-content"
+            >
+              <IconTrash />
             </ActionIcon>
           </Group>
         </HoverCardDropdown>
       </HoverCard>
-      <Modal opened={opened} onClose={close} title="Swap Shift" centered fullScreen={isMobile}>
+      <Modal opened={swapOpened} onClose={closeSwap} title="Swap Shift" centered fullScreen={isMobile}>
         <ModalBody>
-          <SwapEmployeeModal onSubmit={close} />
+          <SwapEmployeeModal onSubmit={closeSwap} schedule={value}/>
+        </ModalBody>
+      </Modal>
+      <Modal opened={deleteOpened} onClose={closeDelete} title="Delete Shift" centered fullScreen={isMobile}>
+        <ModalBody style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <Space h="xl" />
+          <Stack p="md" style={{ textAlign: "center" }}>
+            <Text>Confirm that you want to delete this shift? This action is not reversible!</Text>
+          </Stack>
+          <Space h="xl" />
+          <Group>
+            <Button onClick={closeDelete} variant="default" style={{ flexGrow: 1 }}>Cancel</Button>
+            <Button onClick={handleDelete} style={{ flexGrow: 1 }}>Delete</Button>
+          </Group>
         </ModalBody>
       </Modal>
     </>

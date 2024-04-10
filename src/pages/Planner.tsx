@@ -4,7 +4,6 @@ import {
   Text,
   Paper,
   Stack,
-  Group,
   Container,
   Grid,
   NumberInput,
@@ -17,8 +16,6 @@ import {
   ActionIcon,
   ModalBody,
   Modal,
-  Center,
-  Flex,
   Box,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"

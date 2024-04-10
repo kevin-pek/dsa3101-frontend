@@ -1,19 +1,24 @@
 import { Stack, Select, Button } from "@mantine/core"
 import React, { useCallback, useState, useMemo } from "react"
 import { useEmployees } from "../hooks/use-employees"
-import { useSchedules } from "../hooks/use-schedules"
+import { useUpdateSchedule } from "../hooks/use-schedules"
 import { Role } from "../types/employee"
+import { Schedule } from "../types/schedule"
 
-export const SwapEmployeeModal = ({ onSubmit }) => {
+interface SwapEmployeeModalProps {
+  onSubmit: CallableFunction
+  schedule: Schedule
+}
+
+export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps) => {
   const { employees } = useEmployees()
-  const { schedules } = useSchedules()
+  const updateSchedule = useUpdateSchedule()
   const [selectedEmployee, setSelectedEmployee] = useState<string>()
   const [employeeError, setEmployeeError] = useState("")
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
 
-  const handleSwap = useCallback(() => {
-    console.log("Swap!")
+  const handleSwap = useCallback(async () => {
     let valid = true
     const employee = employees.find((e) => e.name === selectedEmployee)?.id
     if (!employee) {
@@ -25,10 +30,15 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
       valid = false
     } else setRoleError("")
     if (valid) {
-      // mutate("Schedule", [...schedule])
+      const newSchedule = {
+        ...schedule,
+        employeeId: employee,
+        role: role,
+      }
+      await updateSchedule(newSchedule)
       onSubmit()
     }
-  }, [selectedEmployee, employees, role, schedules])
+  }, [selectedEmployee, employees, role])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
