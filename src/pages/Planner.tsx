@@ -153,7 +153,7 @@ export function Planner() {
   // build a new component from the associated elements and save it as an image
   const handleExport = async () => {
     const parent = document.createElement("div")
-    parent.style.width = `${(hours.length + 1) * 64}px`
+    parent.style.width = `${(hours.length + 2) * 64}px`
     parent.style.padding = "var(--mantine-spacing-lg)"
     parent.style.position = "absolute"
     parent.style.left = "-9999px"
