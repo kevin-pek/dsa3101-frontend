@@ -162,7 +162,7 @@ export const TimeRangeSlider = ({
               onInput={(val) => setValue(val)}
               className={schedule.role}
             >
-              {name}
+              <Text style={{ transform: "translateY(-2px)" }}>{name}</Text>
             </RangeSlider>
           </Box>
         </HoverCardTarget>
