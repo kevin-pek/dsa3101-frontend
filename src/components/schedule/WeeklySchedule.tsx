@@ -5,13 +5,14 @@ import "./schedule.css"
 import { DoW, DoWShort, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
 
-export const WeeklySchedule = () => {
+export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
   const sidebarCols = 3
   const ncols = sidebarCols + hours.length * 2
   const minColWidth = 64
 
   return (
     <Grid
+      ref={ref}
       columns={ncols}
       py="lg"
       px="sm"
@@ -69,4 +70,4 @@ export const WeeklySchedule = () => {
       ))}
     </Grid>
   )
-}
+})

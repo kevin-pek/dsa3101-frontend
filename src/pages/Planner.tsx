@@ -17,14 +17,20 @@ import {
   ModalBody,
   Modal,
   Box,
-  Loader,
+  Group,
+  useMantineColorScheme,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
-import { IconPlus } from "@tabler/icons-react"
+import { IconPlus, IconShare2 } from "@tabler/icons-react"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AddScheduleModal } from "../components/AddScheduleModal"
-import { useDeleteSchedule, useLocalSchedule, useSchedules, useUpdateSchedule } from "../hooks/use-schedules"
+import {
+  useDeleteSchedule,
+  useLocalSchedule,
+  useSchedules,
+  useUpdateSchedule,
+} from "../hooks/use-schedules"
 import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
 import { compareDates } from "../utils/time"
 import { isObjectEqual } from "../utils/object"
@@ -32,14 +38,20 @@ import { useGenerateSchedule } from "../hooks/use-schedules"
 import { ScheduleParameters } from "../types/schedule"
 import { useAddSchedule } from "../hooks/use-schedules"
 import { mutate } from "swr"
+import html2canvas from "html2canvas"
+import { hours } from "../types/constants"
 
 export function Planner() {
   const { schedules, isLoading } = useSchedules()
+  const { colorScheme } = useMantineColorScheme()
   const addSchedule = useAddSchedule()
   const updateSchedule = useUpdateSchedule()
   const deleteSchedule = useDeleteSchedule()
   const generateSchedule = useGenerateSchedule()
   const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
+  const scheduleRef = useRef<HTMLDivElement>()
+  const legendRef = useRef<HTMLDivElement>()
+  const headerRef = useRef<HTMLDivElement>()
 
   const isMobile = useMediaQuery("(max-width: 50em)")
 
@@ -90,7 +102,7 @@ export function Planner() {
 
   const handleSave = useCallback(async () => {
     const requests = []
-    const ids = new Set(currWeekSchedule.map(s => s.id))
+    const ids = new Set(currWeekSchedule.map((s) => s.id))
     for (let i = 0; i < localSched.length; i++) {
       if (localSched[i].id < 0) {
         // negative id value means it is a newly created schedule
@@ -98,7 +110,12 @@ export function Planner() {
         delete newSched.id
         requests.push(addSchedule(newSched))
       } else {
-        if (!isObjectEqual(currWeekSchedule.find(s => s.id === localSched[i].id), localSched[i])) {
+        if (
+          !isObjectEqual(
+            currWeekSchedule.find((s) => s.id === localSched[i].id),
+            localSched[i],
+          )
+        ) {
           requests.push(updateSchedule(localSched[i]))
         }
         ids.delete(localSched[i].id)
@@ -116,6 +133,50 @@ export function Planner() {
     // TODO: create parameter object
     const params: ScheduleParameters = {}
     await generateSchedule(params)
+  }
+
+  // build a new component from the associated elements and save it as an image
+  const handleExport = async () => {
+    const parent = document.createElement("div")
+    parent.style.padding = "var(--mantine-spacing-lg)"
+    parent.style.position = "absolute"
+    parent.style.left = "-9999px"
+    parent.style.top = "-9999px"
+    console.log(colorScheme)
+    parent.style.backgroundColor =
+      colorScheme === "light" ? "var(--mantine-color-gray-0)" : "var(--mantine-color-dark-7)"
+    document.body.appendChild(parent)
+    const container = document.createElement("div")
+    const ncols = 3 + hours.length * 2
+    container.style.display = "grid"
+    container.style.gridTemplateColumns = `repeat(${ncols}, 1fr)`
+    container.style.overflowX = "auto"
+    container.style.minWidth = `${hours.length * 64}px`
+    container.style.padding = "var(--mantine-spacing-lg)"
+
+    const legend = document.createElement("div")
+    legend.style.gridColumn = `span ${Math.round(ncols * 0.15)}`
+    const header = document.createElement("div")
+    header.style.gridColumn = `span ${Math.round(ncols * 0.85)}`
+    header.style.display = "flex"
+    header.style.justifyContent = "center"
+    header.style.alignItems = "center"
+    header.appendChild(headerRef.current.cloneNode(true))
+    legend.appendChild(legendRef.current.cloneNode(true))
+    container.appendChild(header)
+    container.appendChild(legend)
+
+    parent.appendChild(container)
+    parent.appendChild(scheduleRef.current.cloneNode(true))
+
+    const canvas = await html2canvas(parent)
+    const image = canvas.toDataURL("image/png", 1.0)
+
+    const link = document.createElement("a")
+    link.href = image
+    link.download = `Schedule ${formatDate(weekStart)} ${formatDate(weekEnd)}`
+    link.click()
+    document.body.removeChild(parent)
   }
 
   const formatDate = (date: Date) => {
@@ -172,9 +233,9 @@ export function Planner() {
           </List>
         </Box>
 
-        <Stack gap="sm" style={{ textAlign: "center" }}>
+        <Stack ref={headerRef} gap="sm" style={{ textAlign: "center" }}>
           <Text size="lg" fw={700}>
-            Showing staff schedule for the week:
+            Staff schedule for the week:
           </Text>
           <Text size="xl" fw={700}>
             {formatDate(weekStart)} — {formatDate(weekEnd)}
@@ -183,7 +244,7 @@ export function Planner() {
       </Stack>
 
       <ScrollArea>
-        <WeeklySchedule />
+        <WeeklySchedule ref={scheduleRef} />
       </ScrollArea>
 
       <Divider
@@ -207,7 +268,7 @@ export function Planner() {
       <Grid>
         <GridCol span={isMobile ? 12 : 4}>
           <Stack>
-            <Paper withBorder p="md" radius="md">
+            <Paper ref={legendRef} withBorder p="md" radius="md">
               <Text size="lg" fw={700}>
                 Legend
               </Text>
@@ -219,25 +280,32 @@ export function Planner() {
               >
                 <ListItem
                   component="span"
-                  icon={<ColorSwatch size="1em" color="var(--mantine-color-violet-outline)" />}
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-violet-light-color)" />}
                 >
                   Manager
                 </ListItem>
                 <ListItem
                   component="span"
-                  icon={<ColorSwatch size="1em" color="var(--mantine-color-orange-outline)" />}
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-orange-light-color)" />}
                 >
                   Kitchen
                 </ListItem>
                 <ListItem
                   component="span"
-                  icon={<ColorSwatch size="1em" color="var(--mantine-color-green-outline)" />}
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-green-light-color)" />}
                 >
                   Server
                 </ListItem>
               </List>
             </Paper>
-            {/* TODO: Add confirmation modal and handler for each of these */}
+
+            <Button onClick={handleExport}>
+              <Group gap="sm">
+                Export as Image
+                <IconShare2 />
+              </Group>
+            </Button>
+
             <Button disabled={!hasChanged} onClick={revertChanges}>
               Revert Changes
             </Button>
