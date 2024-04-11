@@ -4,21 +4,15 @@ import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
 import { DoW, DoWShort, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
-import { Schedule } from "../../types/schedule"
 
-interface WeeklyScheduleProps {
-  schedule: Schedule[]
-  setSchedule: React.Dispatch<Schedule[]>
-}
-
-export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) => {
+export const WeeklySchedule = () => {
   const sidebarCols = 3
-  const cols = sidebarCols + hours.length * 2
+  const ncols = sidebarCols + hours.length * 2
   const minColWidth = 64
 
   return (
     <Grid
-      columns={cols}
+      columns={ncols}
       py="lg"
       px="sm"
       style={{ overflowX: "auto", minWidth: `${hours.length * minColWidth}px` }}
@@ -42,7 +36,7 @@ export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) =
         </GridCol>
       ))}
 
-      <GridCol span={cols}>
+      <GridCol span={ncols}>
         <Divider />
       </GridCol>
 
@@ -62,15 +56,12 @@ export const WeeklySchedule = ({ schedule, setSchedule }: WeeklyScheduleProps) =
           </GridCol>
 
           <GridCol span={hours.length * 2}>
-            <DayTimeline
-              schedule={schedule.filter((sched) => sched.day === day)}
-              setSchedule={setSchedule}
-            />
+            <DayTimeline day={day} />
           </GridCol>
 
           {/* Add spacer between the days of the week */}
           {i !== Object.values(DoW).length - 1 && (
-            <GridCol span={cols}>
+            <GridCol span={ncols}>
               <Divider />
             </GridCol>
           )}

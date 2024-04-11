@@ -1,21 +1,19 @@
-import {
-  Button,
-  Select,
-  Stack,
-  Space,
-} from "@mantine/core"
-import { IconPlus } from "@tabler/icons-react"
+import { Button, Select, Stack, Space } from "@mantine/core"
 import { useCallback, useMemo, useState } from "react"
 import { useEmployees } from "../hooks/use-employees"
-import { useAddSchedule } from "../hooks/use-schedules"
 import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
 import { Schedule, Shift } from "../types/schedule"
 import { getStartOfWeek } from "@mantine/dates"
 import { shiftToString } from "../utils/time"
 import React from "react"
+import { useLocalSchedule } from "../hooks/use-schedules"
 
-export const AddScheduleModal = ({ onSubmit }) => {
+interface AddScheduleModalProps {
+  onSubmit: CallableFunction
+}
+
+export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
   const [day, setDay] = useState<DoW>()
@@ -25,8 +23,10 @@ export const AddScheduleModal = ({ onSubmit }) => {
   const [shift, setShift] = useState<Shift>() // employee name
   const [shiftError, setShiftError] = useState("")
 
+  const addSchedule = useLocalSchedule(state => state.addItem)
+  const newId = useLocalSchedule(state => state.newId)
+
   const { employees } = useEmployees()
-  const createSchedule = useAddSchedule()
 
   const handleSubmit = useCallback(async () => {
     let valid = true
@@ -48,7 +48,7 @@ export const AddScheduleModal = ({ onSubmit }) => {
       valid = false
     } else setDayError("")
     if (valid) {
-      const newSchedule: Omit<Schedule, "id"> = {
+      const newSchedule: Schedule = {
         employeeId: employee,
         start: shiftToString(shift, role).substring(0, 3), // give new schedules default values
         end: shiftToString(shift, role).slice(-3),
@@ -56,8 +56,9 @@ export const AddScheduleModal = ({ onSubmit }) => {
         role,
         shift,
         week: getStartOfWeek(new Date()),
+        id: newId 
       }
-      await createSchedule(newSchedule)
+      addSchedule(newSchedule)
       setEmpName(null) // reset fields if successful creation
       setRole(null)
       setDay(null)
@@ -69,54 +70,54 @@ export const AddScheduleModal = ({ onSubmit }) => {
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
   return (
-        <Stack miw="16em">
-          <Select
-            required
-            label="Employee:"
-            placeholder="Select employee..."
-            data={employeeData}
-            value={empName}
-            onChange={(val) => setEmpName(val)}
-            comboboxProps={{ withinPortal: false }}
-            searchable
-            nothingFoundMessage="No employees found..."
-            error={empError}
-          />
-          <Select
-            required
-            label="Shift"
-            placeholder="Select shift..."
-            data={Object.values(Shift)}
-            value={shift}
-            onChange={(val) => setShift(val as Shift)}
-            comboboxProps={{ withinPortal: false }}
-            nothingFoundMessage="No shifts available..."
-            error={shiftError}
-          />
-          <Select
-            required
-            label="Role:"
-            placeholder="Select role..."
-            data={Object.values(Role)}
-            value={role}
-            onChange={(val) => setRole(val as Role)}
-            comboboxProps={{ withinPortal: false }}
-            error={roleError}
-          />
-          <Select
-            comboboxProps={{ withinPortal: false }}
-            required
-            label="Day"
-            placeholder="Select day of week..."
-            value={day}
-            onChange={(val) => setDay(val as DoW)}
-            data={Object.values(DoW)}
-            error={dayError}
-          />
-          <Space />
-          <Button type="submit" onClick={handleSubmit}>
-            Add
-          </Button>
-        </Stack>
+    <Stack miw="16em">
+      <Select
+        required
+        label="Employee:"
+        placeholder="Select employee..."
+        data={employeeData}
+        value={empName}
+        onChange={(val) => setEmpName(val)}
+        comboboxProps={{ withinPortal: false }}
+        searchable
+        nothingFoundMessage="No employees found..."
+        error={empError}
+      />
+      <Select
+        required
+        label="Shift"
+        placeholder="Select shift..."
+        data={Object.values(Shift)}
+        value={shift}
+        onChange={(val) => setShift(val as Shift)}
+        comboboxProps={{ withinPortal: false }}
+        nothingFoundMessage="No shifts available..."
+        error={shiftError}
+      />
+      <Select
+        required
+        label="Role:"
+        placeholder="Select role..."
+        data={Object.values(Role)}
+        value={role}
+        onChange={(val) => setRole(val as Role)}
+        comboboxProps={{ withinPortal: false }}
+        error={roleError}
+      />
+      <Select
+        comboboxProps={{ withinPortal: false }}
+        required
+        label="Day"
+        placeholder="Select day of week..."
+        value={day}
+        onChange={(val) => setDay(val as DoW)}
+        data={Object.values(DoW)}
+        error={dayError}
+      />
+      <Space />
+      <Button type="submit" onClick={handleSubmit}>
+        Add
+      </Button>
+    </Stack>
   )
 }

@@ -10,18 +10,17 @@ import {
   Button,
   Stack,
   Text,
-  Space
+  Space,
 } from "@mantine/core"
 import { IconSwitch, IconTrash } from "@tabler/icons-react"
 import React, { useEffect, useState, useMemo, useRef, Dispatch, useCallback } from "react"
 import { useEmployees } from "../../hooks/use-employees"
 import { hours } from "../../types/constants"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
-import { convertIndexToTime, convertTimeToIndex } from "../../utils/time"
 import { SwapEmployeeModal } from "../SwapEmployeeModal"
 import { Schedule } from "../../types/schedule"
 import RangeSlider from "./RangeSlider"
-import { useDeleteSchedule } from "../../hooks/use-schedules"
+import { useLocalSchedule } from "../../hooks/use-schedules"
 
 /**
  * Adjustable time range slider with hover behaviour and responsive design.
@@ -29,14 +28,15 @@ import { useDeleteSchedule } from "../../hooks/use-schedules"
  * of role assigned.
  */
 export const TimeRangeSlider = ({
+  schedule,
   value,
   setValue,
 }: {
-  value: Schedule
-  setValue: Dispatch<Schedule>
+  schedule: Schedule
+  value: number[]
+  setValue: Dispatch<number[]>
 }) => {
   const { employees } = useEmployees()
-  const deleteSchedule = useDeleteSchedule()
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
   const [swapOpened, { open: openSwap, close: closeSwap }] = useDisclosure(false) // swap modal
@@ -45,29 +45,15 @@ export const TimeRangeSlider = ({
   const [active, setActive] = useState(true)
   const rangeRef = useRef<HTMLDivElement>()
   const hoverRef = useRef<HTMLDivElement>()
+  const deleteSchedule = useLocalSchedule((state) => state.removeItem)
 
-  const timeIdxOffset = convertTimeToIndex(hours[0])
-  const [range, setRange] = useState<number[]>([
-    convertTimeToIndex(value.start) - timeIdxOffset,
-    convertTimeToIndex(value.end) - timeIdxOffset,
-  ]) // 2 element array containing start/end indices
   const name = useMemo(
-    () => employees.find((e) => e.id === value.employeeId)?.name,
+    () => employees.find((e) => e.id === schedule.employeeId)?.name,
     [value, employees],
   )
 
-  useEffect(() => {
-    if (range) {
-      setValue({
-        ...value,
-        start: convertIndexToTime(range[0] + timeIdxOffset),
-        end: convertIndexToTime(range[1] + timeIdxOffset),
-      })
-    }
-  }, [range])
-
-  const handleDelete = useCallback(async () => {
-    await deleteSchedule(value.id)
+  const handleDelete = useCallback(() => {
+    deleteSchedule(schedule.id)
     closeDelete()
   }, [value])
 
@@ -78,7 +64,7 @@ export const TimeRangeSlider = ({
         // show switch over mouse position in time range
         if (!hovering) {
           const rect = e.target.getBoundingClientRect()
-          const yOffset = 4
+          const yOffset = 12
           const xOffset = 44
           setHoverPos({
             x: e.clientX - xOffset,
@@ -135,7 +121,8 @@ export const TimeRangeSlider = ({
       rangeRef.current.querySelectorAll<HTMLElement>(".range-slider__thumb").forEach((c) => {
         c.style.pointerEvents = "auto"
       })
-      rangeRef.current.querySelector<HTMLElement>(".range-slider__range").style.pointerEvents = "auto"
+      rangeRef.current.querySelector<HTMLElement>(".range-slider__range").style.pointerEvents =
+        "auto"
       setActive(false)
     }
   }, [isMobile])
@@ -166,9 +153,9 @@ export const TimeRangeSlider = ({
               step={1}
               min={0}
               max={hours.length * 2}
-              value={range}
-              onInput={(val, userInt) => setRange(val)}
-              className={value.role}
+              value={value}
+              onInput={(val) => setValue(val)}
+              className={schedule.role}
             >
               {name}
             </RangeSlider>
@@ -201,21 +188,39 @@ export const TimeRangeSlider = ({
           </Group>
         </HoverCardDropdown>
       </HoverCard>
-      <Modal opened={swapOpened} onClose={closeSwap} title="Swap Shift" centered fullScreen={isMobile}>
+      <Modal
+        opened={swapOpened}
+        onClose={closeSwap}
+        title="Swap Shift"
+        centered
+        fullScreen={isMobile}
+      >
         <ModalBody>
-          <SwapEmployeeModal onSubmit={closeSwap} schedule={value}/>
+          <SwapEmployeeModal onSubmit={closeSwap} schedule={schedule} />
         </ModalBody>
       </Modal>
-      <Modal opened={deleteOpened} onClose={closeDelete} title="Delete Shift" centered fullScreen={isMobile}>
-        <ModalBody style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <Modal
+        opened={deleteOpened}
+        onClose={closeDelete}
+        title="Delete Shift"
+        centered
+        fullScreen={isMobile}
+      >
+        <ModalBody
+          style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+        >
           <Space h="xl" />
           <Stack p="md" style={{ textAlign: "center" }}>
             <Text>Confirm that you want to delete this shift? This action is not reversible!</Text>
           </Stack>
           <Space h="xl" />
           <Group>
-            <Button onClick={closeDelete} variant="default" style={{ flexGrow: 1 }}>Cancel</Button>
-            <Button onClick={handleDelete} style={{ flexGrow: 1 }}>Delete</Button>
+            <Button onClick={closeDelete} variant="default" style={{ flexGrow: 1 }}>
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} style={{ flexGrow: 1 }}>
+              Delete
+            </Button>
           </Group>
         </ModalBody>
       </Modal>
