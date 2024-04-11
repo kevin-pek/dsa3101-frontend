@@ -1,5 +1,10 @@
 import { LineChart, BarChart, AreaChart, RadarChart } from "@mantine/charts"
+<<<<<<< HEAD
 import { Text } from "@mantine/core"
+=======
+import { Text, Grid, Paper, Group, Container } from "@mantine/core"
+import { IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
+>>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
 import {
   empAvailability,
   hiringExpenditure,
@@ -11,6 +16,7 @@ import {
 } from "../sampleDashboard.jsx"
 import Dropdown from "../components/Dropdown.jsx"
 import DemandModal from "../components/DemandModal.jsx"
+<<<<<<< HEAD
 import DatePicker from "../components/DatePicker.jsx"
 import "../components/dropdown.css"
 import { useState } from "react"
@@ -20,6 +26,19 @@ export function Dashboard() {
   const [selectedView, setSelectedView] = useState("Monthly") //Default state/view to be weekly
   const [dropdownActive, setDropdownActive] = useState(false)
 
+=======
+import DateRange from "../components/DateRange.jsx"
+import "../components/dropdown.css"
+import { useState } from "react"
+import "@mantine/charts/styles.css"
+
+export function Dashboard() {
+  const [selectedView, setSelectedView] = useState("Monthly") //Default state/view to be weekly
+  const [value, setValue] = useState(null)
+  const cost = 1000
+  const diff = -10
+  const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight
+>>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
   //Define chart components for each view type
   const viewCharts = {
     Weekly: {
@@ -267,6 +286,7 @@ export function Dashboard() {
 
   return (
     <>
+<<<<<<< HEAD
       <div style={{ marginTop: "50px", position: "relative" }}>
         <Dropdown selected={selectedView} setSelected={setSelectedView} />
 
@@ -336,6 +356,82 @@ export function Dashboard() {
         tickLine="xy"
         connectNulls="false"
       />
+=======
+      <Container fluid style={{ padding: "1rem" }}>
+        <Grid grow>
+        <div style={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
+          <Grid.Col span={4} style={{ justifyContent: "bottom", alignItems: "bottom"}}>
+            <Dropdown selected={selectedView} setSelected={setSelectedView} />
+          </Grid.Col>
+          <Grid.Col span={4} style={{ justifyContent: "bottom", alignItems: "bottom" }}>
+            <DateRange />
+          </Grid.Col>
+          <Grid.Col span={4} style={{ justifyContent: "bottom", alignItems: "bottom" }}>
+              <DemandModal />
+          </Grid.Col>
+          </div>
+
+          <Grid.Col span={{ base: 12 }}>
+            <Paper
+              withBorder
+              shadow="xs"
+              p="xl"
+              style={{ justifyContent: "center", alignItems: "center", height: "100%" }}
+            >
+              <Group justify="space-between">
+                <Text size="md" c="dimmed" fw={700}>
+                  Projected Cost
+                </Text>
+                <IconCoin size="1.4rem" stroke={1.5} />
+              </Group>
+              <Group align="flex-end" gap="xs" mt={25}>
+                <Text size="lg">{cost}</Text>
+                <Text c={diff > 0 ? "teal" : "red"} fz="sm" fw={500}>
+                  <span>{diff}%</span>
+                  <DiffIcon size="1rem" stroke={1.5} />
+                </Text>
+              </Group>
+              <Text fz="md" c="dimmed" mt={8}>
+                based on currently shown schedule
+              </Text>
+            </Paper>
+          </Grid.Col>
+
+          {/* Group 1 and 2 */}
+          <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart1}</div>
+            </Paper>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart2}</div>
+            </Paper>
+          </Grid.Col>
+
+          {/* Group 6 and 7 */}
+          <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart6}</div>
+            </Paper>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart7}</div>
+            </Paper>
+          </Grid.Col>
+
+          {/* Group 3, 4, 5 */}
+          <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart3}</div>
+            </Paper>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart4}</div>
+            </Paper>
+            <Paper withBorder shadow="xs" p="xl">
+              <div>{viewCharts[selectedView].chart5}</div>
+            </Paper>
+          </Grid.Col>
+        </Grid>
+      </Container>
+>>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
     </>
   )
 }
