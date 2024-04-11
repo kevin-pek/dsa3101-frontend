@@ -8,9 +8,9 @@ import {
   useDeleteBooking,
   useAddBooking,
   useUpdateBooking,
-} from "../hooks/use-bookings"
+} from "../hooks/use-events"
 
-export function Bookings() {
+export function Events() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
@@ -34,6 +34,15 @@ export function Bookings() {
         header: "Event Name",
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
+          required: true,
+        }),
+      },
+      {
+        accessorKey: "eventType",
+        header: "Event Type",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "select",
+          options: ["Wings of Time", "Others"],
           required: true,
         }),
       },
@@ -118,9 +127,9 @@ export function Bookings() {
 
     try {
       await deleteBooking(bookingToDelete)
-      console.log(`Booking with ID ${bookingToDelete} has been removed successfully.`)
+      console.log(`Event with ID ${bookingToDelete} has been removed successfully.`)
     } catch (error) {
-      console.error(`Error deleting booking with ID ${bookingToDelete}:`, error)
+      console.error(`Error deleting event with ID ${bookingToDelete}:`, error)
     }
 
     setDeleteModalOpen(false)
@@ -212,7 +221,7 @@ export function Bookings() {
             onClose={() => setDeleteModalOpen(false)}
             title="Confirm Deletion"
           >
-            <Text>Are you sure you want to remove this booking?</Text>
+            <Text>Are you sure you want to remove this event?</Text>
             <Group position="right" spacing="md" mt="md">
               <Button variant="outline" color="gray" onClick={() => setDeleteModalOpen(false)}>
                 Cancel

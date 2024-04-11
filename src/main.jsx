@@ -20,7 +20,7 @@ import { Dashboard } from "./pages/Dashboard"
 import { Login } from "./pages/Login"
 import { Planner } from "./pages/Planner"
 import { Employees } from "./pages/Employees"
-import { Bookings } from "./pages/Bookings"
+import { Events } from "./pages/Events"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
 import { Notifications, notifications } from "@mantine/notifications"
@@ -93,10 +93,10 @@ function InnerApp() {
               }
             />
             <Route
-              path="/bookings"
+              path="/events"
               element={
                 <RequireAuth>
-                  <Bookings />
+                  <Events />
                 </RequireAuth>
               }
             />
