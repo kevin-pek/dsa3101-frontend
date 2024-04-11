@@ -80,7 +80,7 @@ export const shiftToString = (shift: Shift, role: Role) => {
   } else if (shift === Shift.Night) {
     return `12pm - ${end}`
   }
-  return "Unselected"
+  return ""
 }
 
 export const stringToShift = (str: string) => {

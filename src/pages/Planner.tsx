@@ -21,7 +21,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
-import { IconPlus, IconShare2 } from "@tabler/icons-react"
+import { IconArrowBackUp, IconCheck, IconCirclePlus, IconPlus, IconShare2 } from "@tabler/icons-react"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AddScheduleModal } from "../components/AddScheduleModal"
@@ -131,18 +131,20 @@ export function Planner() {
 
   const handleGenerate = async () => {
     // TODO: create parameter object
-    const params: ScheduleParameters = {}
+    const params: ScheduleParameters = {
+
+    }
     await generateSchedule(params)
   }
 
   // build a new component from the associated elements and save it as an image
   const handleExport = async () => {
     const parent = document.createElement("div")
+    parent.style.width = `${(hours.length + 1) * 64}px`
     parent.style.padding = "var(--mantine-spacing-lg)"
     parent.style.position = "absolute"
     parent.style.left = "-9999px"
     parent.style.top = "-9999px"
-    console.log(colorScheme)
     parent.style.backgroundColor =
       colorScheme === "light" ? "var(--mantine-color-gray-0)" : "var(--mantine-color-dark-7)"
     document.body.appendChild(parent)
@@ -155,9 +157,9 @@ export function Planner() {
     container.style.padding = "var(--mantine-spacing-lg)"
 
     const legend = document.createElement("div")
-    legend.style.gridColumn = `span ${Math.round(ncols * 0.15)}`
+    legend.style.gridColumn = `span ${Math.round(ncols * 0.3)}`
     const header = document.createElement("div")
-    header.style.gridColumn = `span ${Math.round(ncols * 0.85)}`
+    header.style.gridColumn = `span ${Math.round(ncols * 0.7)}`
     header.style.display = "flex"
     header.style.justifyContent = "center"
     header.style.alignItems = "center"
@@ -267,6 +269,8 @@ export function Planner() {
 
       <Grid>
         <GridCol span={isMobile ? 12 : 4}>
+          <Space h="md" />
+
           <Stack>
             <Paper ref={legendRef} withBorder p="md" radius="md">
               <Text size="lg" fw={700}>
@@ -298,92 +302,79 @@ export function Planner() {
                 </ListItem>
               </List>
             </Paper>
-
-            <Button onClick={handleExport}>
-              <Group gap="sm">
-                Export as Image
-                <IconShare2 />
-              </Group>
-            </Button>
-
-            <Button disabled={!hasChanged} onClick={revertChanges}>
-              Revert Changes
-            </Button>
-
-            <Button onClick={handleSave} disabled={!hasChanged}>
-              Save Changes
-            </Button>
           </Stack>
         </GridCol>
 
-        <GridCol span={isMobile ? 12 : 8}>
-          <Grid>
+        <GridCol span={isMobile ? 12 : 4}>
+          <Stack gap="sm">
+            <Space h={isMobile ? "md" : "sm"} />
+            <Button onClick={handleSave} disabled={!hasChanged}>
+              <Group gap="sm">
+                Save Changes
+                <IconCheck />
+              </Group>
+            </Button>
+
+            <Button disabled={!hasChanged} onClick={revertChanges} variant="default">
+              <Group gap="sm">
+                Undo Changes
+                <IconArrowBackUp />
+              </Group>
+            </Button>
+
+            <Space />
+
+          </Stack>
+        </GridCol>
+
+        <GridCol span={isMobile ? 12 : 4}>
+          <Stack gap="sm">
+            <Space h={isMobile ? "md" : "sm"} />
+              <Button fullWidth onClick={handleGenerate}>
+                <Group gap="sm">
+                  Generate Schedule
+                  <IconPlus />
+                </Group>
+              </Button>
+
+              <Button fullWidth onClick={handleExport}>
+                <Group gap="sm">
+                  Export Schedule
+                  <IconShare2 />
+                </Group>
+              </Button>
+            <Space />
+
+          </Stack>
+          {/* <Grid>
             <GridCol>
               <Text size="xl" fw={700}>
-                Settings
+                Generate New Schedule
               </Text>
-              <Text>Adjust these inputs according to your current policy.</Text>
             </GridCol>
-            <GridCol span={6} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <GridCol style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "8px" }}>
               <NumberInput
-                label="Max Work Hours per Week (FT)"
-                defaultValue={60}
-                min={0}
+                label="Max Working Hours per Week (FT)"
+                defaultValue={44}
+                min={44}
                 allowDecimal={false}
               />
               <NumberInput
-                label="Weekly Salary (FT)"
-                placeholder="Dollars"
-                defaultValue={600.0}
-                decimalScale={2}
-                fixedDecimalScale
-                min={0}
-                prefix="$"
-              />
-              <NumberInput
-                label="Max Work Hours per Week (PT)"
-                defaultValue={48}
-                min={0}
-                allowDecimal={false}
-              />
-              <NumberInput
-                label="Hourly Rate (PT)"
-                placeholder="Dollars"
-                defaultValue={14.0}
-                decimalScale={2}
-                fixedDecimalScale
-                min={0}
-                prefix="$"
-              />
-            </GridCol>
-            <GridCol span={6} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <NumberInput
-                label="Min. Number of Chefs"
-                defaultValue={4}
-                min={0}
-                allowDecimal={false}
-              />
-              <NumberInput
-                label="Min. Number of Waiters"
-                defaultValue={3}
-                min={0}
-                allowDecimal={false}
-              />
-              <NumberInput
-                label="Min. Number of Dishwashers"
-                defaultValue={1}
-                min={0}
+                label="Max Working Hours per Week (PT)"
+                defaultValue={35}
+                min={35}
                 allowDecimal={false}
               />
             </GridCol>
-          </Grid>
+            <Button mt="lg" m="sm" fullWidth onClick={handleGenerate}>
+              Generate Schedule
+            </Button>
+          </Grid> */}
 
-          <Button mt="md" fullWidth onClick={handleGenerate}>
-            Generate Schedule
-          </Button>
         </GridCol>
       </Grid>
 
+      <Space h="xl" />
       <Space h="xl" />
     </Container>
   )

@@ -67,6 +67,8 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     }
   }, [empName, role, day, employees])
 
+  const addShiftTimes = useCallback((shift: Shift) => (`${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`), [role])
+
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
   return (
@@ -84,15 +86,14 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         error={empError}
       />
       <Select
-        required
-        label="Shift"
-        placeholder="Select shift..."
-        data={Object.values(Shift)}
-        value={shift}
-        onChange={(val) => setShift(val as Shift)}
         comboboxProps={{ withinPortal: false }}
-        nothingFoundMessage="No shifts available..."
-        error={shiftError}
+        required
+        label="Day"
+        placeholder="Select day of week..."
+        value={day}
+        onChange={(val) => setDay(val as DoW)}
+        data={Object.values(DoW)}
+        error={dayError}
       />
       <Select
         required
@@ -105,14 +106,15 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         error={roleError}
       />
       <Select
-        comboboxProps={{ withinPortal: false }}
         required
-        label="Day"
-        placeholder="Select day of week..."
-        value={day}
-        onChange={(val) => setDay(val as DoW)}
-        data={Object.values(DoW)}
-        error={dayError}
+        label="Shift"
+        placeholder="Select shift..."
+        data={Object.values(Shift).map(addShiftTimes)}
+        value={shift}
+        onChange={(val) => setShift(val as Shift)}
+        comboboxProps={{ withinPortal: false }}
+        nothingFoundMessage="No shifts available..."
+        error={shiftError}
       />
       <Space />
       <Button type="submit" onClick={handleSubmit}>
