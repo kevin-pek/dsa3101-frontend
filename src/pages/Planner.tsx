@@ -19,6 +19,7 @@ import {
   Box,
   Group,
   useMantineColorScheme,
+  ModalHeader,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
 import { IconArrowBackUp, IconCheck, IconCirclePlus, IconPlus, IconShare2 } from "@tabler/icons-react"
@@ -48,6 +49,9 @@ export function Planner() {
   const updateSchedule = useUpdateSchedule()
   const deleteSchedule = useDeleteSchedule()
   const generateSchedule = useGenerateSchedule()
+  const [maxHrFT, setMaxHrFT] = useState(44)
+  const [maxHrPT, setMaxHrPT] = useState(35)
+  const [genErrOpen, { open: openGenErr, close: closeGenErr }] = useDisclosure(false) // modal for adding new shift
   const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
   const scheduleRef = useRef<HTMLDivElement>()
   const legendRef = useRef<HTMLDivElement>()
@@ -130,11 +134,20 @@ export function Planner() {
   }, [localSched, currWeekSchedule])
 
   const handleGenerate = async () => {
-    // TODO: create parameter object
     const params: ScheduleParameters = {
-
+      maxHrFT,
+      maxHrPT
     }
-    await generateSchedule(params)
+
+    try {
+      await generateSchedule(params)
+      closeGenErr()
+    } catch (err) {
+      // TODO: Standardise error format for triggering output
+      if (err.msg === "Infeasible Problemn") {
+        openGenErr()
+      }
+    }
   }
 
   // build a new component from the associated elements and save it as an image
@@ -269,8 +282,6 @@ export function Planner() {
 
       <Grid>
         <GridCol span={isMobile ? 12 : 4}>
-          <Space h="md" />
-
           <Stack>
             <Paper ref={legendRef} withBorder p="md" radius="md">
               <Text size="lg" fw={700}>
@@ -344,38 +355,50 @@ export function Planner() {
                 </Group>
               </Button>
             <Space />
-
           </Stack>
-          {/* <Grid>
-            <GridCol>
-              <Text size="xl" fw={700}>
-                Generate New Schedule
-              </Text>
-            </GridCol>
-            <GridCol style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "8px" }}>
-              <NumberInput
-                label="Max Working Hours per Week (FT)"
-                defaultValue={44}
-                min={44}
-                allowDecimal={false}
-              />
-              <NumberInput
-                label="Max Working Hours per Week (PT)"
-                defaultValue={35}
-                min={35}
-                allowDecimal={false}
-              />
-            </GridCol>
-            <Button mt="lg" m="sm" fullWidth onClick={handleGenerate}>
-              Generate Schedule
-            </Button>
-          </Grid> */}
 
         </GridCol>
       </Grid>
 
       <Space h="xl" />
       <Space h="xl" />
+
+      <Modal centered fullScreen={isMobile} opened={genErrOpen} onClose={closeGenErr}>
+        <ModalHeader><Text fw={700} size="xl">Error Generating Schedule</Text></ModalHeader>
+        <ModalBody>
+          <Stack>
+            <Space h="md" />
+            <Text>Schedule could not be generated because max working hours for your staff are too low to meet the staffing requirements.</Text>
+            <Text>Please raise the maximum working hours for your staff to generate a schedule.</Text>
+            <Space h="md" />
+            <Box style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "8px" }}>
+              <NumberInput
+                label="Max Hours Full Time"
+                value={maxHrFT}
+                onChange={setMaxHrFT}
+                min={44}
+                suffix=" hrs per week"
+                clampBehavior="blur"
+                allowDecimal={false}
+              />
+              <NumberInput
+                label="Max Hours Part Time"
+                value={maxHrPT}
+                onChange={setMaxHrPT}
+                min={35}
+                suffix=" hrs per week"
+                clampBehavior="blur"
+                allowDecimal={false}
+              />
+            </Box>
+            <Space h="lg" />
+            <Button fullWidth onClick={handleGenerate}>
+              Generate Schedule
+            </Button>
+            <Space h="sm" />
+          </Stack>
+        </ModalBody>
+      </Modal>
     </Container>
   )
 }
