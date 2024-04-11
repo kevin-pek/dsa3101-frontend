@@ -216,8 +216,8 @@ export function Planner() {
   }
 
   return (
-    <Container fluid>
-      <Stack style={{ alignItems: "center" }}>
+    <Container fluid px={6}>
+      <Stack p="sm" style={{ alignItems: "center" }}>
         <Box p="md">
           <Text size="xl" fw={700}>
             Shift Planner
@@ -280,7 +280,7 @@ export function Planner() {
 
       <Space h="md" />
 
-      <Grid>
+      <Grid px="md">
         <GridCol span={isMobile ? 12 : 4}>
           <Stack>
             <Paper ref={legendRef} withBorder p="md" radius="md">

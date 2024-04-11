@@ -114,6 +114,11 @@ export const TimeRangeSlider = ({
         }
       }
       document.addEventListener("mousedown", handleClick)
+      rangeRef.current.querySelectorAll<HTMLElement>(".range-slider__thumb").forEach((c) => {
+        c.style.pointerEvents = "none"
+      })
+      rangeRef.current.querySelector<HTMLElement>(".range-slider__range").style.pointerEvents =
+        "none"
       setActive(false) // trigger active useEffect handler
       return () => document.removeEventListener("mousedown", handleClick)
     } else {

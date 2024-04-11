@@ -1,43 +1,40 @@
 import { Grid, Text, Box, GridCol, Divider } from "@mantine/core"
-import React from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import "react-range-slider-input/dist/style.css"
 import "./schedule.css"
 import { DoW, DoWShort, hours } from "../../types/constants"
 import { DayTimeline } from "./DayTimeline"
 
 export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
-  const sidebarCols = 3
-  const ncols = sidebarCols + hours.length * 2
+  const sidebarCols = 2
+  const ncols = sidebarCols + hours.length * 2 
   const minColWidth = 64
+  const tickers = useMemo(() => [...hours, "10pm"], [hours])
+  const [colWidth, setColWidth] = useState(0)
+  const colRef = useRef<HTMLDivElement>()
+
+  useEffect(() => {
+    if (colRef.current) {
+      setColWidth(colRef.current.offsetWidth)
+    }
+  }, [])
 
   return (
     <Grid
       ref={ref}
       columns={ncols}
-      py="lg"
-      px="sm"
-      style={{ overflowX: "auto", minWidth: `${hours.length * minColWidth}px` }}
+      pr="xl"
+      pb="md"
+      gutter={{ base: 5 }}
+      style={{ overflowX: "auto", minWidth: `${tickers.length * minColWidth}px` }}
     >
-      <GridCol
-        span={sidebarCols}
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box />
-        <Text size="lg">Day/Time</Text>
-        <Divider orientation="vertical" />
-      </GridCol>
-
-      {hours.map((hr, i) => (
+      {tickers.map((hr, i) => (
         <GridCol key={i} span={2} style={{ textAlign: "center" }} className="hour-col">
-          {hr}
+          <Text style={{ transform: `translateX(${colWidth / ncols}px)` }}>{hr}</Text>
         </GridCol>
       ))}
 
-      <GridCol span={ncols}>
+      <GridCol ref={colRef} span={ncols}>
         <Divider />
       </GridCol>
 
@@ -56,7 +53,7 @@ export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
             <Divider orientation="vertical" />
           </GridCol>
 
-          <GridCol span={hours.length * 2}>
+          <GridCol pr="4px" span={hours.length * 2} style={{ borderRight: "1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-8))"}}>
             <DayTimeline day={day} />
           </GridCol>
 
