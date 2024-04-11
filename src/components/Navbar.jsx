@@ -13,7 +13,7 @@ const data = [
   { link: "/", label: "Dashboard", icon: IconDashboard },
   { link: "/schedule", label: "Schedule", icon: IconCalendarWeek },
   { link: "/employees", label: "Employees", icon: IconUsers },
-  { link: "/bookings", label: "Bookings", icon: IconCalendarEvent },
+  { link: "/events", label: "Events", icon: IconCalendarEvent },
 ]
 
 export function Navbar({ onLinkClick }) {

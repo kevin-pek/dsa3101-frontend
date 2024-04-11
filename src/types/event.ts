@@ -1,8 +1,9 @@
-import { DoW } from "./constants"
+import { DoW, EType } from "./constants"
 
-export interface Booking {
+export interface Event {
   id: number
   eventName: string
+  eventType: EType
   eventDate: string
   eventDay: DoW
   eventSTime: string

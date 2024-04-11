@@ -8,6 +8,11 @@ export enum DoW {
   Sunday = "Sunday",
 }
 
+export enum EType {
+  WoT = "Wings of Time",
+  Others = "Others"
+}
+
 export enum DoWShort {
   Mon = "Mon",
   Tue = "Tue",
