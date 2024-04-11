@@ -23,8 +23,8 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
   const [shift, setShift] = useState<Shift>() // employee name
   const [shiftError, setShiftError] = useState("")
 
-  const addSchedule = useLocalSchedule(state => state.addItem)
-  const newId = useLocalSchedule(state => state.newId)
+  const addSchedule = useLocalSchedule((state) => state.addItem)
+  const newId = useLocalSchedule((state) => state.newId)
 
   const { employees } = useEmployees()
 
@@ -56,7 +56,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         role,
         shift,
         week: getStartOfWeek(new Date()),
-        id: newId 
+        id: newId,
       }
       addSchedule(newSchedule)
       setEmpName(null) // reset fields if successful creation

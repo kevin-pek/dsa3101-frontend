@@ -44,7 +44,8 @@ interface StoreActions {
 export const useLocalSchedule = create<Store & StoreActions>((set) => ({
   items: [],
   newId: -1,
-  addItem: (item: Schedule) => set((state) => ({ newId: state.newId - 1, items: [...state.items, item] })),
+  addItem: (item: Schedule) =>
+    set((state) => ({ newId: state.newId - 1, items: [...state.items, item] })),
   updateItem: (newItem: Schedule) =>
     set((state) => ({
       items: state.items.map((item) => (item.id === newItem.id ? { ...item, ...newItem } : item)),

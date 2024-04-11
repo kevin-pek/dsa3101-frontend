@@ -17,7 +17,7 @@
 
 .Manager .range-slider__range {
   background-color: var(--mantine-color-violet-light);
-  color: var(--mantine-color-violet-outline-color);
+  color: var(--mantine-color-violet-outline);
   border: 2px solid var(--mantine-color-violet-light-color);
 }
 
