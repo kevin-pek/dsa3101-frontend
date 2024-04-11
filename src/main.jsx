@@ -18,7 +18,7 @@ import {
 } from "@mantine/core"
 import { Dashboard } from "./pages/Dashboard"
 import { Login } from "./pages/Login"
-import { Schedule } from "./pages/Schedule"
+import { Planner } from "./pages/Planner"
 import { Employees } from "./pages/Employees"
 import { Bookings } from "./pages/Bookings"
 import { RequireAuth } from "./components/RequireAuth"
@@ -80,7 +80,7 @@ function InnerApp() {
               path="/schedule"
               element={
                 <RequireAuth>
-                  <Schedule />
+                  <Planner />
                 </RequireAuth>
               }
             />
@@ -142,7 +142,8 @@ function App() {
       }}
     >
       <AuthProvider>
-        <DatesProvider>
+        {/* Set Monday as first day of week, ensure time follows SG time */}
+        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC+8" }}>
           <SWRConfig
             value={{
               refreshInterval: 0, // disable automatic refetching

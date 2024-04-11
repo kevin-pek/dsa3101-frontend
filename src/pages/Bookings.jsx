@@ -1,108 +1,113 @@
-import React from 'react';
-import { useState, useMemo } from "react";
-import { MantineReactTable, useMantineReactTable,MRT_EditActionButtons } from 'mantine-react-table';
-import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from '@mantine/core';
-import { IconTrash, IconEdit } from "@tabler/icons-react";
-import { updateBooking } from '../api/booking';
-import { useBookings, useDeleteBooking, useAddBooking } from "../hooks/use-bookings"
+import React from "react"
+import { useState, useMemo } from "react"
+import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
+import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
+import { IconTrash, IconEdit } from "@tabler/icons-react"
+import {
+  useBookings,
+  useDeleteBooking,
+  useAddBooking,
+  useUpdateBooking,
+} from "../hooks/use-bookings"
 
 export function Bookings() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
   const addBooking = useAddBooking()
+  const updateBooking = useUpdateBooking()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [bookingToDelete, setBookingToDelete] = useState(null)
 
   const columns = useMemo(
-    () => [ 
-      // { 
+    () => [
+      // {
       //   accessorKey: 'bookingId',
-      //   header: 'Booking ID', 
-      //   mantineEditTextInputProps: ({ cell, row }) => ({ 
+      //   header: 'Booking ID',
+      //   mantineEditTextInputProps: ({ cell, row }) => ({
       //     type: 'number',
       //     required: true
       //   })
       // },
-      { 
-        accessorKey: 'eventName',
-        header: 'Event Name', 
-        mantineEditTextInputProps: ({ cell, row }) => ({ 
-          type: 'string',
-          required: true
-        })
+      {
+        accessorKey: "eventName",
+        header: "Event Name",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "string",
+          required: true,
+        }),
       },
       {
-        accessorKey: 'eventDate',
-        header: 'Event Date', 
-        mantineEditTextInputProps: ({ cell, row }) => ({ 
-          type: 'date', 
-          required: true
-        })
-      },
-      { // try and get this automated once you get the day
-        accessorKey: 'eventDay',
-        header: 'Event Day', 
-        mantineEditTextInputProps: ({ cell, row }) => ({  
-          type: 'select',
-          options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday', 'Sunday'],
-          required: true
-        })
+        accessorKey: "eventDate",
+        header: "Event Date",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "date",
+          required: true,
+        }),
       },
       {
-        accessorKey: 'eventSTime',
-        header: 'Start Time',
-        mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'time',
-          required: true
-        })
+        // try and get this automated once you get the day
+        accessorKey: "eventDay",
+        header: "Event Day",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "select",
+          options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          required: true,
+        }),
       },
       {
-        accessorKey: 'eventETime',
-        header: 'End Time',
-        mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'time',
-          required: true
-        })
+        accessorKey: "eventSTime",
+        header: "Start Time",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "time",
+          required: true,
+        }),
       },
       {
-        accessorKey: 'numPax',
-        header: 'Number of Pax',
-        mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'number',
-          required: true
-        })
+        accessorKey: "eventETime",
+        header: "End Time",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "time",
+          required: true,
+        }),
       },
       {
-        accessorKey: 'staffReq',
-        header: 'Number of Staff Required',
-        mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'number',
-          required: true
-        })
+        accessorKey: "numPax",
+        header: "Number of Pax",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "number",
+          required: true,
+        }),
       },
       {
-        accessorKey: 'remark',
-        header: 'Remarks (if any)',
-        mantineEditTextInputProps: ({cell,row}) => ({
-          type: 'string',
-          required: false
-        })
-      }
+        accessorKey: "staffReq",
+        header: "Number of Staff Required",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "number",
+          required: true,
+        }),
+      },
+      {
+        accessorKey: "remark",
+        header: "Remarks (if any)",
+        mantineEditTextInputProps: ({ cell, row }) => ({
+          type: "string",
+          required: false,
+        }),
+      },
     ],
     [validationErrors],
   )
-  
-// UPDATE action
+
+  // UPDATE action
   const handleUpdateBooking = async ({ row, values, table }) => {
-    const updatedBooking = {...values, bookingId: row.original.bookingId}
+    const updatedBooking = { ...values, id: row.original.bookingId }
     await updateBooking(updatedBooking)
     setValidationErrors({})
     table.setEditingRow(null)
   }
 
-
-// DELETE action
+  // DELETE action
   const handleDeleteBooking = (bookingId) => {
     setBookingToDelete(bookingId)
     setDeleteModalOpen(true)
@@ -122,33 +127,33 @@ export function Bookings() {
     setBookingToDelete(null)
   }
 
-// ADD action
+  // ADD action
   const handleAddBooking = async ({ values, exitCreatingMode }) => {
-    setValidationErrors({});  
+    setValidationErrors({})
     await addBooking(values)
-    exitCreatingMode();
+    exitCreatingMode()
     // table.setCreatingRow(true)
-    }
+  }
 
-    // const handleCreateUser = async ({ values, exitCreatingMode }) => {
-    //   const newValidationErrors = validateUser(values);
-    //   if (Object.values(newValidationErrors).some((error) => !!error)) {
-    //     setValidationErrors(newValidationErrors);
-    //     return;
-    //   }
-    //   setValidationErrors({});
-    //   await createUser(values);
-    //   exitCreatingMode();
-    // };
+  // const handleCreateUser = async ({ values, exitCreatingMode }) => {
+  //   const newValidationErrors = validateUser(values);
+  //   if (Object.values(newValidationErrors).some((error) => !!error)) {
+  //     setValidationErrors(newValidationErrors);
+  //     return;
+  //   }
+  //   setValidationErrors({});
+  //   await createUser(values);
+  //   exitCreatingMode();
+  // };
 
   const table = useMantineReactTable({
     columns,
     data: bookings,
-    createDisplayMode: 'modal',
-    editDisplayMode: 'modal',
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     enableRowActions: true,
-    positionActionsColumn: 'last',
+    positionActionsColumn: "last",
     enableBottomToolbar: false,
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleAddBooking,
@@ -172,7 +177,7 @@ export function Bookings() {
         </Flex>
       </Stack>
     ),
-    renderRowActions: ({ row,table }) => (
+    renderRowActions: ({ row, table }) => (
       <Flex gap="md">
         <Tooltip label="Edit">
           <ActionIcon onClick={() => table.setEditingRow(row)}>
@@ -180,26 +185,26 @@ export function Bookings() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}> 
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
       </Flex>
-    ), 
+    ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
-      onClick={() =>
-      {table.setCreatingRow(true);
-      }}
+        onClick={() => {
+          table.setCreatingRow(true)
+        }}
       >
         Add New Event
       </Button>
-    )
-  });
+    ),
+  })
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table}/>
+      <MantineReactTable table={table} />
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <Modal
@@ -217,8 +222,8 @@ export function Bookings() {
               </Button>
             </Group>
           </Modal>
-          </Group>
+        </Group>
       </div>
     </div>
-  );
+  )
 }

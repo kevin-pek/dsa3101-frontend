@@ -1,4 +1,4 @@
-import { Employee } from "./api/employee";
+import { Employee } from "./api/employee"
 
 export let fakeEmployees: Employee[] = [
   {

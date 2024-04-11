@@ -3,17 +3,16 @@ import {
   TextInput,
   PasswordInput,
   Text,
-  Paper,
   Group,
   Button,
   Stack,
-  Center,
   Container,
   Space,
 } from "@mantine/core"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/use-auth"
 import { notifications } from "@mantine/notifications"
+import React from "react"
 
 /**
  * When user is not logged in, they will be redirected to this page. Once they enter

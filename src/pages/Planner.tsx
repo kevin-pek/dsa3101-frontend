@@ -1,13 +1,8 @@
 import {
   Button,
-  ActionIcon,
   Divider,
-  Popover,
-  PopoverTarget,
-  PopoverDropdown,
   Text,
   Paper,
-  Select,
   Stack,
   Group,
   Container,
@@ -19,128 +14,53 @@ import {
   ListItem,
   ColorSwatch,
   ScrollArea,
+  ActionIcon,
+  ModalBody,
+  Modal,
 } from "@mantine/core"
-import { WeeklySchedule } from "../components/WeeklySchedule"
-import { IconPlus, IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
-import { useCallback, useMemo, useState } from "react"
-import { useSWRConfig } from "swr"
-import { useEmployees } from "../hooks/use-employees"
-import { useSchedule } from "../hooks/use-schedule"
-import { roles, daysOfWeek } from "../utils/constants"
-import { useMediaQuery } from "@mantine/hooks"
+import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
+import { IconCoin, IconArrowUpRight, IconArrowDownRight, IconPlus } from "@tabler/icons-react"
+import { useDisclosure, useMediaQuery } from "@mantine/hooks"
+import React, { useEffect, useState } from "react"
+import { AddScheduleModal } from "../components/AddSchedulePopover"
+import { useSchedules } from "../hooks/use-schedules"
+import { getStartOfWeek } from "@mantine/dates"
+import { Schedule } from "../types/schedule"
 
-const AddSchedulePopover = () => {
-  const [role, setRole] = useState()
-  const [roleError, setRoleError] = useState("")
-  const [selectedDay, setSelectedDay] = useState()
-  const [dayError, setDayError] = useState("")
-  const [selectedEmployee, setSelectedEmployee] = useState()
-  const [employeeError, setEmployeeError] = useState("")
-  const { employees } = useEmployees()
-  const { schedule } = useSchedule()
-  const { mutate } = useSWRConfig()
-  const [open, setOpen] = useState(false)
-
-  const handleSubmit = useCallback(() => {
-    let valid = true
-    const employee = employees.find((e) => e.name === selectedEmployee)?.id
-    if (!employee) {
-      setEmployeeError("Invalid employee selected!")
-      valid = false
-    } else setEmployeeError("")
-    if (!role || !roles.includes(role)) {
-      setRoleError("Invalid role selected!")
-      valid = false
-    } else setRoleError("")
-    if (!selectedDay || !daysOfWeek.includes(selectedDay)) {
-      setDayError("Invalid day selected!")
-      valid = false
-    } else setDayError("")
-    if (valid) {
-      const newSchedule = {
-        employeeId: employee,
-        start: "1000", // give new schedules default values
-        end: "2200",
-        day: selectedDay,
-        role: role,
-      }
-      console.debug("Inserting schedule: ", newSchedule)
-      // mutate("Schedule", [...schedule, newSchedule])
-      setOpen(false)
-      setSelectedEmployee() // reset fields if successful creation
-      setRole()
-      setSelectedDay()
-    }
-  }, [schedule, selectedEmployee, role, selectedDay, employees])
-
-  const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
-
-  return (
-    <Popover shadow="md" position="bottom" offset={-100} opened={open} onChange={setOpen}>
-      <PopoverTarget>
-        <ActionIcon onClick={() => setOpen(true)} variant="subtle" w="fit-content" px="xs">
-          <IconPlus />
-          Assign New Shift
-        </ActionIcon>
-      </PopoverTarget>
-      <PopoverDropdown>
-        <Stack miw="16em">
-          <Select
-            required
-            label="Employee:"
-            placeholder="Select employee..."
-            data={employeeData}
-            value={selectedEmployee}
-            onChange={setSelectedEmployee}
-            comboboxProps={{ withinPortal: false }}
-            searchable
-            nothingFoundMessage="No employees found..."
-            error={employeeError}
-          />
-          <Select
-            required
-            label="Role:"
-            placeholder="Select role..."
-            data={roles}
-            value={role}
-            onChange={setRole}
-            comboboxProps={{ withinPortal: false }}
-            error={roleError}
-          />
-          <Select
-            comboboxProps={{ withinPortal: false }}
-            required
-            label="Day"
-            placeholder="Select day of week..."
-            value={selectedDay}
-            onChange={setSelectedDay}
-            data={daysOfWeek}
-            error={dayError}
-          />
-          <Space />
-          <Button type="submit" onClick={handleSubmit}>
-            Add
-          </Button>
-        </Stack>
-      </PopoverDropdown>
-    </Popover>
-  )
-}
-
-export function Schedule() {
+export function Planner() {
+  const { schedules } = useSchedules()
+  const [opened, { open, close }] = useDisclosure(false) // modal for adding shift open
   const cost = 1000
   const diff = -10
   const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight
 
   const isMobile = useMediaQuery("(max-width: 50em)")
 
+  // schedules to display are those that fall within the current week
+  const [currSched, setCurrSched] = useState<Schedule[]>([])
+  useEffect(() => {
+    const weekStart = getStartOfWeek(new Date())
+    const sched = schedules.filter((s) => weekStart === getStartOfWeek(s.week))
+    setCurrSched(sched.length > 0 ? sched : [])
+  }, [schedules])
+
   return (
     <Container fluid>
       <ScrollArea>
-        <WeeklySchedule />
+        <WeeklySchedule schedule={currSched} setSchedule={setCurrSched} />
       </ScrollArea>
 
-      <Divider label={<AddSchedulePopover />} labelPosition="center" />
+      <Divider label={
+        <ActionIcon onClick={open} variant="subtle" w="fit-content" px="xs">
+          <IconPlus />
+          Assign New Shift
+        </ActionIcon>
+      } labelPosition="center" />
+    <Modal title="Add New Shift" centered fullScreen={isMobile} opened={opened} onClose={close}>
+      <ModalBody>
+        <AddScheduleModal onSubmit={close} />
+      </ModalBody>
+    </Modal>
 
       <Space h="md" />
 

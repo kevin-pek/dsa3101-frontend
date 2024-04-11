@@ -4,17 +4,33 @@ import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
-import { updateEmployee, saveEmployeesData } from "../api/employee"
-import { useEmployees, useDeleteEmployee } from "../hooks/use-employees"
+import { notifications } from "@mantine/notifications"
+import {
+  useEmployees,
+  useDeleteEmployee,
+  useUpdateEmployee,
+  useUploadEmployee,
+  useAddEmployee,
+} from "../hooks/use-employees"
 
 export function Employees() {
+  // State and custom hooks for managing employees
   const { employees } = useEmployees()
   const deleteEmployee = useDeleteEmployee()
+  const addEmployee = useAddEmployee()
+  const updateEmployee = useUpdateEmployee()
+  const uploadEmployee = useUploadEmployee()
+
+  // Ref for opening the Dropzone 
   const openRef = useRef(null)
+
+  // State management for UI elements and validations
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [employeeToDelete, setEmployeeToDelete] = useState(null)
-  const [validationErrors, setValidationErrors] = useState({}) // to add validation
-  const [file, setFile] = useState(null)
+  const [validationErrors, setValidationErrors] = useState({}) // Store validation errors
+  const [file, setFile] = useState(null) // Store the file for upload
+
+  // Define table columns 
   const columns = useMemo(
     () => [
       {
@@ -26,11 +42,11 @@ export function Employees() {
         }),
       },
       {
-        accessorKey: "type",
+        accessorKey: "employmentType",
         header: "FT/PT",
         editVariant: "select",
         mantineEditSelectProps: ({ cell, row }) => ({
-          data: ["FT", "PT"], // to change
+          data: ["Full Time", "Part Time"], // to change
           required: true,
         }),
       },
@@ -49,6 +65,15 @@ export function Employees() {
         mantineEditSelectProps: ({ cell, row }) => ({
           data: ["Manager", "Server", "Cook", "Dishwasher"], // to change
           required: true,
+        }),
+      },
+      {
+        accessorKey: "secondaryRole",
+        header: "Secondary Role",
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: ["Manager", "Server", "Cook", "Dishwasher"], // to change
+          required: false,
         }),
       },
       {
@@ -111,20 +136,95 @@ export function Employees() {
     [validationErrors],
   )
 
-  // UPDATE action
+  // Function to display validation errors using notifications
+  function handleValidationErrors(errors) {
+    let errorMessage = '';
+
+    if (errors.name) {
+      errorMessage = 'Name is required.';
+    } else if (errors.employmentType) {
+      errorMessage = 'Type is required.';
+    } else if (errors.wage) {
+      errorMessage = 'Wage is required.';
+    } else if (errors.role) {
+      errorMessage = 'Role is required.';
+    }
+    
+    if (errorMessage) {
+      notifications.show({
+        message: errorMessage,
+        color: 'red',
+        withBorder: true,
+      });
+    }
+  }
+
+  // Handler for adding a new employee 
+  const handleAddEmployee = async ({ values, exitCreatingMode }) => {
+    let errors = {};
+
+    // Add employee validation
+    if (!values.name) {
+      errors.name = "Name is required";
+    } else if (!values.employmentType) {
+      errors.name = 'Type is required.';
+    } else if (!values.wage) {
+      errors.name = 'Wage is required.';
+    } else if (!values.role) {
+      errors.name = 'Role is required.';
+    }
+    // Update state with any found errors
+    setValidationErrors(errors);
+
+    // If there are errors, show notifications and do not proceed
+    if (Object.keys(errors).length > 0) {
+      handleValidationErrors(errors);
+      return;  
+    }
+
+    // If validation passes, add the employee
+    await addEmployee(values)
+    setValidationErrors({});  // Clear any existing errors
+    exitCreatingMode()
+  }
+
+  // Handler for updating employee 
   const handleUpdateEmployee = async ({ row, values, table }) => {
     const updatedEmployee = { ...values, id: row.original.id }
+    let errors = {};
+
+    // Add employee validation
+    if (!values.name) {
+      errors.name = "Name is required";
+    } else if (!values.type) {
+      errors.name = 'Type is required.';
+    } else if (!values.wage) {
+      errors.name = 'Wage is required.';
+    } else if (!values.role) {
+      errors.name = 'Role is required.';
+    }
+    // Update state with any found errors
+    setValidationErrors(errors);
+
+    // If there are errors, show notifications and do not proceed
+    if (Object.keys(errors).length > 0) {
+      handleValidationErrors(errors);
+      return;  
+    }
+
+    // If validation passes, update the employee
     await updateEmployee(updatedEmployee)
     setValidationErrors({})
     table.setEditingRow(null)
   }
 
-  // DELETE action
+  // Handler for deleting employee 
   const handleDeleteEmployee = (employeeId) => {
     setEmployeeToDelete(employeeId)
     setDeleteModalOpen(true)
   }
 
+  // Confirm delete action
   const confirmDeleteEmployee = async () => {
     if (!employeeToDelete) return
 
@@ -139,12 +239,13 @@ export function Employees() {
     setEmployeeToDelete(null)
   }
 
-  // For CSV upload
+  // Handle CSV upload
   const handleUpload = async (selectedFile) => {
-    await saveEmployeesData(selectedFile)
+    await uploadEmployee(selectedFile)
     setFile(selectedFile)
   }
 
+  // Table configuration with MantineReactTable
   const table = useMantineReactTable({
     columns,
     data: employees,
@@ -164,6 +265,8 @@ export function Employees() {
         tableLayout: "fixed",
       },
     },
+    onCreatingRowCancel: () => setValidationErrors({}),
+    onCreatingRowSave: handleAddEmployee,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleUpdateEmployee,
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
@@ -190,10 +293,18 @@ export function Employees() {
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button leftSection={<IconPlus size={20} />}>Create New Employee</Button>
+      <Button
+        onClick={() => {
+          table.setCreatingRow(true)
+        }}
+        leftSection={<IconPlus size={20} />}
+      >
+        Create New Employee
+      </Button>
     ),
   })
 
+  // JSX structure for the Employees component
   return (
     <div style={{ overflowX: "auto" }}>
       <MantineReactTable table={table} />
