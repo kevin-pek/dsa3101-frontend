@@ -1,6 +1,6 @@
 import useSWR, { mutate } from "swr"
 import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
-import { Schedule } from "../types/schedule"
+import { Schedule, ScheduleParameters } from "../types/schedule"
 import { create } from "zustand"
 
 export const useSchedules = () => {
@@ -8,24 +8,28 @@ export const useSchedules = () => {
   return { schedules: data || [], isLoading }
 }
 
+/**
+ * We don't use mutate for schedule requests since these are done in bulk.
+ */
 export const useDeleteSchedule = () => {
-  return (id: number) =>
-    mutate("/schedule", async () => await deleteRequest("/schedule", id), {
-      optimisticData: (prev: Schedule[] | undefined) => prev?.filter((b) => b.id !== id) || [],
-    })
+  return async (id: number) => await deleteRequest("/schedule", id)
 }
 
 export const useUpdateSchedule = () => {
-  return (data: Schedule) =>
-    mutate("/schedule", async () => await putRequest("/schedule", data.id, data), {
-      optimisticData: (prev: Schedule[] | undefined) =>
-        prev?.map((b) => (b.id === data.id ? data : b)) || [],
-    })
+  return async (data: Schedule) => await putRequest("/schedule", data.id, data)
 }
 
 export const useAddSchedule = () => {
-  return (data: Omit<Schedule, "id">) =>
-    mutate("/schedule", async () => await postRequest("/schedule", data), false)
+  return async (data: Omit<Schedule, "id">) => {
+    await postRequest("/schedule", data)
+  }
+}
+
+export const useGenerateSchedule = () => {
+  return async (params: ScheduleParameters) => {
+    await postRequest("/schedule/generate", params)
+    mutate("/schedule") // trigger a refetch after schedule is generated
+  }
 }
 
 interface Store {

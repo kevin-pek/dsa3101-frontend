@@ -22,7 +22,7 @@ export const DayTimeline = ({ day }: { day: DoW }) => {
       const color1 = darkMode ? "var(--mantine-color-dark-6)" : "var(--mantine-color-gray-0)"
       const color2 = darkMode ? "var(--mantine-color-dark-7)" : "var(--mantine-color-gray-2)"
       const partitions = hours.length
-      const gradientParts = []
+      const gradientParts: string[] = []
       for (let i = 0; i < partitions; i++) {
         const color = i % 2 === 0 ? color1 : color2
         const start = (i / partitions) * 100

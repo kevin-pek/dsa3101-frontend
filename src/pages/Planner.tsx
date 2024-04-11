@@ -24,14 +24,21 @@ import { IconPlus } from "@tabler/icons-react"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { AddScheduleModal } from "../components/AddScheduleModal"
-import { useLocalSchedule, useSchedules, useUpdateSchedule } from "../hooks/use-schedules"
+import { useDeleteSchedule, useLocalSchedule, useSchedules, useUpdateSchedule } from "../hooks/use-schedules"
 import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
 import { compareDates } from "../utils/time"
 import { isObjectEqual } from "../utils/object"
+import { useGenerateSchedule } from "../hooks/use-schedules"
+import { ScheduleParameters } from "../types/schedule"
+import { useAddSchedule } from "../hooks/use-schedules"
+import { mutate } from "swr"
 
 export function Planner() {
   const { schedules, isLoading } = useSchedules()
+  const addSchedule = useAddSchedule()
   const updateSchedule = useUpdateSchedule()
+  const deleteSchedule = useDeleteSchedule()
+  const generateSchedule = useGenerateSchedule()
   const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
 
   const isMobile = useMediaQuery("(max-width: 50em)")
@@ -74,7 +81,7 @@ export function Planner() {
       }
     }
     setHasChanged(false)
-  }, [localSched])
+  }, [localSched, currWeekSchedule])
 
   // revert schedule to value that was retrieved in the database
   const revertChanges = useCallback(() => {
@@ -82,17 +89,34 @@ export function Planner() {
   }, [currWeekSchedule])
 
   const handleSave = useCallback(async () => {
-    // Change this to handle both update and delete
-    const newSchedules = localSched.filter(
-      (s) =>
-        s.id === -1 ||
-        !isObjectEqual(
-          s,
-          currWeekSchedule.find((t) => t.id === s.id),
-        ),
-    )
-    await Promise.all(newSchedules.map((s) => updateSchedule(s)))
+    const requests = []
+    const ids = new Set(currWeekSchedule.map(s => s.id))
+    for (let i = 0; i < localSched.length; i++) {
+      if (localSched[i].id < 0) {
+        // negative id value means it is a newly created schedule
+        const newSched = localSched[i]
+        delete newSched.id
+        requests.push(addSchedule(newSched))
+      } else {
+        if (!isObjectEqual(currWeekSchedule.find(s => s.id === localSched[i].id), localSched[i])) {
+          requests.push(updateSchedule(localSched[i]))
+        }
+        ids.delete(localSched[i].id)
+      }
+    }
+    // delete schedule objects that are no longer in the client version of the schedule
+    for (const id of ids.values()) {
+      requests.push(deleteSchedule(id))
+    }
+    const results = await Promise.allSettled(requests)
+    mutate("/schedule") // trigger refetch only after all requests have been settled
   }, [localSched, currWeekSchedule])
+
+  const handleGenerate = async () => {
+    // TODO: create parameter object
+    const params: ScheduleParameters = {}
+    await generateSchedule(params)
+  }
 
   const formatDate = (date: Date) => {
     const months = [
@@ -286,7 +310,7 @@ export function Planner() {
             </GridCol>
           </Grid>
 
-          <Button mt="md" fullWidth>
+          <Button mt="md" fullWidth onClick={handleGenerate}>
             Generate Schedule
           </Button>
         </GridCol>
