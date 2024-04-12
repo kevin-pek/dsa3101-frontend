@@ -32,19 +32,19 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     let valid = true
     const employee = employees.find((e) => e.name === empName)?.id
     if (!employee) {
-      setEmpError("Invalid employee selected!")
+      setEmpError("Please select an employee.")
       valid = false
     } else setEmpError("")
     if (!shift || !Object.values(Shift).includes(shift)) {
-      setShiftError("Invalid role selected!")
+      setShiftError("Please select a shift.")
       valid = false
     } else setShiftError("")
     if (!role || !Object.values(Role).includes(role)) {
-      setRoleError("Invalid role selected!")
+      setRoleError("Please select a role.")
       valid = false
     } else setRoleError("")
     if (!day || !Object.values(DoW).includes(day)) {
-      setDayError("Invalid day selected!")
+      setDayError("Please select a day.")
       valid = false
     } else setDayError("")
     if (valid) {
@@ -65,9 +65,9 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
       setShift(null)
       onSubmit()
     }
-  }, [empName, role, day, employees])
+  }, [empName, role, day, employees, shift])
 
-  const addShiftTimes = useCallback((shift: Shift) => (`${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`), [role])
+  const addShiftTimes = useCallback((shift: Shift) => ({ label: `${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`, value: shift }), [role])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
