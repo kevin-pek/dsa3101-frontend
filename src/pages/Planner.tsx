@@ -20,9 +20,12 @@ import {
   Group,
   useMantineColorScheme,
   ModalHeader,
+  LoadingOverlay,
+  Loader,
+  Center,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
-import { IconArrowBackUp, IconCheck, IconCirclePlus, IconPlus, IconShare2 } from "@tabler/icons-react"
+import { IconArrowBackUp, IconCheck, IconPlus, IconShare2 } from "@tabler/icons-react"
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AddScheduleModal } from "../components/AddScheduleModal"
@@ -46,13 +49,14 @@ export function Planner() {
   const { schedules, isLoading } = useSchedules()
   const { colorScheme } = useMantineColorScheme()
   const addSchedule = useAddSchedule()
+  const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
   const updateSchedule = useUpdateSchedule()
   const deleteSchedule = useDeleteSchedule()
   const generateSchedule = useGenerateSchedule()
   const [maxHrFT, setMaxHrFT] = useState(44)
   const [maxHrPT, setMaxHrPT] = useState(35)
   const [genErrOpen, { open: openGenErr, close: closeGenErr }] = useDisclosure(false) // modal for adding new shift
-  const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
+  const [loader, { open: openLoader, close: closeLoader }] = useDisclosure(false)
   const scheduleRef = useRef<HTMLDivElement>()
   const legendRef = useRef<HTMLDivElement>()
   const headerRef = useRef<HTMLDivElement>()
@@ -140,6 +144,7 @@ export function Planner() {
     }
 
     try {
+      openLoader()
       await generateSchedule(params)
       closeGenErr()
     } catch (err) {
@@ -148,6 +153,7 @@ export function Planner() {
         openGenErr()
       }
     }
+    closeLoader()
   }
 
   // build a new component from the associated elements and save it as an image
@@ -217,6 +223,7 @@ export function Planner() {
 
   return (
     <Container fluid px={6}>
+      <LoadingOverlay pos="fixed" visible={loader} overlayProps={{ blur: 2 }} loaderProps={{ children: <Center display="flex" style={{ flexDirection: "column", gap: 8 }}><Loader />Generating Schedule...</Center> }} />
       <Stack p="sm" style={{ alignItems: "center" }}>
         <Box p="md">
           <Text size="xl" fw={700}>
