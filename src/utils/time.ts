@@ -1,5 +1,3 @@
-// Adapted from NUSmods https://github.com/nusmodifications/nusmods/blob/master/website/src/utils/timify.ts
-
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
@@ -7,7 +5,7 @@ export function convertTimeToIndex(timeStr: string): number {
   const isHalfHour = timeStr.includes(":30")
   const normalizedTimeStr = timeStr.replace(":30", "")
   let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
-  let hour = parseInt(hourPart, 10)
+  let hour = parseInt(hourPart)
   if (hour === 12) {
     hour = 0
   }
@@ -71,12 +69,12 @@ export function compareDates(date1, date2) {
 }
 
 export const shiftToString = (shift: Shift, role: Role) => {
-  const start = role === Role.Kitchen ? "8am" : "10pm"
-  const end = role === Role.Server ? "10am" : "10pm"
+  const start = role === Role.Kitchen ? "8am" : "10am"
+  const end = "10pm"
   if (shift === Shift.Full) {
     return `${start} - ${end}`
   } else if (shift === Shift.Morning) {
-    return `${start} -  6pm`
+    return `${start} - 6pm`
   } else if (shift === Shift.Night) {
     return `12pm - ${end}`
   }

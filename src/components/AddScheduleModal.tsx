@@ -48,10 +48,11 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
       valid = false
     } else setDayError("")
     if (valid) {
+      const timings = shiftToString(shift, role).split(" - ")
       const newSchedule: Schedule = {
         employeeId: employee,
-        start: shiftToString(shift, role).substring(0, 3), // give new schedules default values
-        end: shiftToString(shift, role).slice(-3),
+        start: timings[0], // give new schedules default values
+        end: timings[1],
         day,
         role,
         shift,
