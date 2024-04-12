@@ -12,23 +12,17 @@
 .Server .range-slider__range {
   background-color: var(--mantine-color-green-light);
   color: var(--mantine-color-green-light-color);
-  border: 2px solid var(--mantine-color-green-light-color);
+  border: 1px solid var(--mantine-color-green-outline);
 }
 
 .Manager .range-slider__range {
-  background-color: var(--mantine-color-green-light);
-  color: var(--mantine-color-green-light-color);
-  border: 2px solid var(--mantine-color-green-light-color);
+  background-color: var(--mantine-color-violet-light);
+  color: var(--mantine-color-violet-light-color);
+  border: 1px solid var(--mantine-color-violet-outline);
 }
 
-.Dishwasher .range-slider__range {
-  background-color: var(--mantine-color-green-light);
-  color: var(--mantine-color-green-light-color);
-  border: 2px solid var(--mantine-color-green-light-color);
-}
-
-.Chef .range-slider__range {
-  background-color: var(--mantine-color-green-light);
-  color: var(--mantine-color-green-light-color);
-  border: 2px solid var(--mantine-color-green-light-color);
+.Kitchen .range-slider__range {
+  background-color: var(--mantine-color-orange-light);
+  color: var(--mantine-color-orange-light-color);
+  border: 1px solid var(--mantine-color-orange-outline);
 }
