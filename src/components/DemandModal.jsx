@@ -1,41 +1,7 @@
-<<<<<<< HEAD
-import { useDisclosure, useCounter } from "@mantine/hooks"
-import { Modal, Button, Group, Text, Badge } from "@mantine/core"
-import DatePicker from "./DatePicker.jsx"
-
-function DemandModal() {
-  const [opened, { close, open }] = useDisclosure(false)
-  const [count, { increment, decrement }] = useCounter(3, { min: 0 })
-
-  const badges = Array(count)
-    .fill(0)
-    .map((_, index) => <Badge key={index}>Badge {index}</Badge>)
-
-  return (
-    <>
-      <div></div>
-      <Modal
-        opened={opened}
-        onClose={close}
-        size="auto"
-        fontWeight="bold"
-        title=" Demand Forecast Figures"
-      >
-        <Text>Select Date</Text>
-
-        <div
-          style={{
-            display: "inline-block",
-            textAlign: "center",
-            margin: "0 auto",
-          }}
-        >
-          <DatePicker />
-=======
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDisclosure, useCounter } from '@mantine/hooks';
 import { Modal, Button, Group, Text, TextInput } from '@mantine/core';
-import DateRange from './DateRange.jsx';
+import DateRange from './DateRange';
 
 function DemandModal() {
   const [opened, { close, open }] = useDisclosure(false);
@@ -64,7 +30,7 @@ function DemandModal() {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} size="auto" fontWeight="bold" title=" Demand Forecast Figures">
+      <Modal opened={opened} onClose={close} size="auto" fw="bold" title=" Demand Forecast Figures">
 
         <DateRange />
 
@@ -96,7 +62,6 @@ function DemandModal() {
             <Button onClick={decrementByTen}>Decrease by 10</Button>
 
           </Group>
->>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
         </div>
       </Modal>
 
@@ -105,8 +70,4 @@ function DemandModal() {
   )
 }
 
-<<<<<<< HEAD
 export default DemandModal
-=======
-export default DemandModal;
->>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807

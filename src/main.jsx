@@ -143,7 +143,7 @@ function App() {
     >
       <AuthProvider>
         {/* Set Monday as first day of week, ensure time follows SG time */}
-        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC+8" }}>
+        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC" }}>
           <SWRConfig
             value={{
               refreshInterval: 0, // disable automatic refetching

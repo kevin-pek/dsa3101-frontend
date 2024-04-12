@@ -1,10 +1,7 @@
+import React from "react"
 import { LineChart, BarChart, AreaChart, RadarChart } from "@mantine/charts"
-<<<<<<< HEAD
-import { Text } from "@mantine/core"
-=======
 import { Text, Grid, Paper, Group, Container } from "@mantine/core"
 import { IconCoin, IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react"
->>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
 import {
   empAvailability,
   hiringExpenditure,
@@ -16,18 +13,7 @@ import {
 } from "../sampleDashboard.jsx"
 import Dropdown from "../components/Dropdown.jsx"
 import DemandModal from "../components/DemandModal.jsx"
-<<<<<<< HEAD
-import DatePicker from "../components/DatePicker.jsx"
-import "../components/dropdown.css"
-import { useState } from "react"
-import React from "react"
-
-export function Dashboard() {
-  const [selectedView, setSelectedView] = useState("Monthly") //Default state/view to be weekly
-  const [dropdownActive, setDropdownActive] = useState(false)
-
-=======
-import DateRange from "../components/DateRange.jsx"
+import DateRange from "../components/DateRange"
 import "../components/dropdown.css"
 import { useState } from "react"
 import "@mantine/charts/styles.css"
@@ -38,7 +24,6 @@ export function Dashboard() {
   const cost = 1000
   const diff = -10
   const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight
->>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
   //Define chart components for each view type
   const viewCharts = {
     Weekly: {
@@ -60,9 +45,7 @@ export function Dashboard() {
               data={empAvailability}
               dataKey="day"
               type="stacked"
-              xAxisLabel="Day"
               orientation="vertical"
-              xAxisProps={{ padding: { left: 30, right: 30 } }}
               //withLegend
               //legendProps={{ horizontalAlign: 'bottom', height: 5 }}
               withTooltip={true}
@@ -122,9 +105,7 @@ export function Dashboard() {
               data={empRoles}
               dataKey="month"
               type="stacked"
-              xAxisLabel="Day"
               orientation="vertical"
-              xAxisProps={{ padding: { left: 30, right: 30 } }}
               //withLegend
               //legendProps={{ layout: 'horizontal', verticalAlign: 'top' }}
               withTooltip={true}
@@ -176,13 +157,10 @@ export function Dashboard() {
               h={300}
               data={hiringExpenditure}
               dataKey="month"
-              yAxisLabel="Expenditure"
-              xAxisProps={{ padding: { left: 30, right: 30 } }}
-              xAxisLabel="Date"
               series={[{ name: "Total", color: "rgb(47, 173, 102)" }]}
               curveType="linear"
               tickLine="xy"
-              connectNulls="false"
+              connectNulls={false}
             />
           </div>
         </div>
@@ -253,7 +231,7 @@ export function Dashboard() {
               series={[{ name: "Bookings", color: "rgb(47, 173, 102)" }]}
               curveType="linear"
               tickLine="xy"
-              connectNulls="false"
+              connectNulls={false}
             />
           </div>
         </div>
@@ -273,7 +251,7 @@ export function Dashboard() {
             series={[{ name: "Customers", color: "rgb(47, 173, 102)" }]}
             curveType="linear"
             tickLine="xy"
-            connectNulls="false"
+            connectNulls={false}
           />
         </div>
       ),
@@ -286,77 +264,6 @@ export function Dashboard() {
 
   return (
     <>
-<<<<<<< HEAD
-      <div style={{ marginTop: "50px", position: "relative" }}>
-        <Dropdown selected={selectedView} setSelected={setSelectedView} />
-
-        <div style={{ padding: "20px" }}></div>
-
-        <div style={{ textAlign: "center" }}>
-          <div style={{ textAlign: "center" }}>
-            <Text mb="md" pl="md" style={{ fontWeight: "bold", fontSize: "20px" }}>
-              Select Date Range
-            </Text>
-          </div>
-
-          <div
-            style={{
-              display: "inline-block",
-              textAlign: "center",
-              margin: "0 auto",
-            }}
-          >
-            <DatePicker />
-          </div>
-        </div>
-
-        <div style={{ padding: "20px" }}></div>
-
-        <div style={{ textAlign: "center" }}>
-          <Text mb="md" pl="md" style={{ fontWeight: "bold", fontSize: "30px" }}>
-            Dashboard
-          </Text>
-        </div>
-
-        <div style={{ padding: "20px" }}></div>
-
-        <div
-          style={{
-            position: "relative",
-            left: "50%",
-            textAlign: "center",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <DemandModal />
-        </div>
-      </div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart1}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart2}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart3}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart4}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart5}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart6}</div>
-
-      <div style={{ padding: "20px" }}>{viewCharts[selectedView].chart7}</div>
-
-      <LineChart
-        h={300}
-        data={demandForecast}
-        dataKey="date"
-        xAxisProps={{ padding: { left: 30, right: 30 } }}
-        series={[{ name: "Customers", color: "rgb(47, 173, 102)" }]}
-        curveType="linear"
-        tickLine="xy"
-        connectNulls="false"
-      />
-=======
       <Container fluid style={{ padding: "1rem" }}>
         <Grid grow>
         <div style={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
@@ -431,7 +338,6 @@ export function Dashboard() {
           </Grid.Col>
         </Grid>
       </Container>
->>>>>>> e47f55199ee188698d74f7fc52a5258b90d1c807
     </>
   )
 }

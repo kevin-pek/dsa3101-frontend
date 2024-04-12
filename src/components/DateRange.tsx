@@ -3,10 +3,10 @@ import { DatePickerInput } from '@mantine/dates';
 import '@mantine/dates/styles.css'
 
 function DateRange() {
-  const [value, setValue] = useState([null, null]);
-
+  const [value, setValue] = useState<[Date | null, Date | null]>([null, null]);
+  console.log(value)
   return (
-        <DatePickerInput 
+        <DatePickerInput
             label="Pick Date Range"
             type="range" 
             value={value} 
