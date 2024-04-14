@@ -7,16 +7,19 @@ import { DayTimeline } from "./DayTimeline"
 
 export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
   const sidebarCols = 2
-  const ncols = sidebarCols + hours.length * 2 
+  const ncols = sidebarCols + hours.length * 2
   const minColWidth = 64
   const tickers = useMemo(() => [...hours, "10pm"], [hours])
   const [colWidth, setColWidth] = useState(0)
   const colRef = useRef<HTMLDivElement>()
 
   useEffect(() => {
-    if (colRef.current) {
+    const handleResize = () => {
       setColWidth(colRef.current.offsetWidth)
     }
+    handleResize()
+    window.addEventListener("resize", handleResize) // change the offset width whenever the window width changes
+    return () => { window.removeEventListener("resize", handleResize)}
   }, [])
 
   return (
@@ -26,7 +29,7 @@ export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
       pr="xl"
       pb="md"
       gutter={{ base: 5 }}
-      style={{ overflowX: "auto", minWidth: `${tickers.length * minColWidth}px` }}
+      style={{ overflowX: "hidden", minWidth: `${hours.length * minColWidth}px` }}
     >
       {tickers.map((hr, i) => (
         <GridCol key={i} span={2} style={{ textAlign: "center" }} className="hour-col">

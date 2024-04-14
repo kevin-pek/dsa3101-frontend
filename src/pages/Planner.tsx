@@ -23,6 +23,7 @@ import {
   LoadingOverlay,
   Loader,
   Center,
+  Title,
 } from "@mantine/core"
 import { WeeklySchedule } from "../components/schedule/WeeklySchedule"
 import { IconArrowBackUp, IconCheck, IconPlus, IconShare2 } from "@tabler/icons-react"
@@ -223,16 +224,18 @@ export function Planner() {
 
   return (
     <Container fluid px={6}>
-      <LoadingOverlay pos="fixed" visible={loader} overlayProps={{ blur: 2 }} loaderProps={{ children: <Center display="flex" style={{ flexDirection: "column", gap: 8 }}><Loader />Generating Schedule...</Center> }} />
+      <LoadingOverlay pos="fixed" visible={isLoading || loader} overlayProps={{ blur: 2 }} loaderProps={{ children: <Center display="flex" style={{ flexDirection: "column", gap: 8 }}><Loader />Generating Schedule...</Center> }} />
       <Stack p="sm" style={{ alignItems: "center" }}>
         <Box p="md">
-          <Text size="xl" fw={700}>
+          <Title order={2}>
             Shift Planner
-          </Text>
+          </Title>
+          <Space h="md" />
           <Text>
             Use this interface to automatically assign shifts among your staff on a weekly basis.
             Here's a list of things of what you can do on this page:
           </Text>
+          <Space h="md" />
           <List>
             <ListItem>
               Click the button at the bottom of the page to generate a new schedule based on the
@@ -256,12 +259,12 @@ export function Planner() {
         </Box>
 
         <Stack ref={headerRef} gap="sm" style={{ textAlign: "center" }}>
-          <Text size="lg" fw={700}>
+          <Title order={3}>
             Staff schedule for the week:
-          </Text>
-          <Text size="xl" fw={700}>
+          </Title>
+          <Title order={2}>
             {formatDate(weekStart)} — {formatDate(weekEnd)}
-          </Text>
+          </Title>
         </Stack>
       </Stack>
 
