@@ -68,7 +68,13 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     }
   }, [empName, role, day, employees, shift])
 
-  const addShiftTimes = useCallback((shift: Shift) => ({ label: `${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`, value: shift }), [role])
+  const addShiftTimes = useCallback(
+    (shift: Shift) => ({
+      label: `${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`,
+      value: shift,
+    }),
+    [role],
+  )
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 

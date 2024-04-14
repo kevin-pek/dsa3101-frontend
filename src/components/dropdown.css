@@ -4,15 +4,15 @@
   font-family: Helvetica;
 }
 
-.container{
-    width: 100%;
-    height: 100vh;
+.container {
+  width: 100%;
+  height: 100vh;
 }
-.dropdown{
-    width: 400px;
-    user-select: none;
-    margin: 40px auto;
-    position: relative;
+.dropdown {
+  width: 400px;
+  user-select: none;
+  margin: 40px auto;
+  position: relative;
 }
 
 .dropdown .dropdown-content {

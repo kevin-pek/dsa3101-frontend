@@ -10,7 +10,7 @@ export enum DoW {
 
 export enum EType {
   WoT = "Wings of Time",
-  Others = "Others"
+  Others = "Others",
 }
 
 export enum DoWShort {

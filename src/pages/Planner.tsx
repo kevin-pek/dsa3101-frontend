@@ -141,7 +141,7 @@ export function Planner() {
   const handleGenerate = async () => {
     const params: ScheduleParameters = {
       maxHrFT,
-      maxHrPT
+      maxHrPT,
     }
 
     try {
@@ -224,12 +224,22 @@ export function Planner() {
 
   return (
     <Container fluid px={6}>
-      <LoadingOverlay pos="fixed" visible={isLoading || loader} overlayProps={{ blur: 2 }} loaderProps={{ children: <Center display="flex" style={{ flexDirection: "column", gap: 8 }}><Loader />Generating Schedule...</Center> }} />
+      <LoadingOverlay
+        pos="fixed"
+        visible={isLoading || loader}
+        overlayProps={{ blur: 2 }}
+        loaderProps={{
+          children: (
+            <Center display="flex" style={{ flexDirection: "column", gap: 8 }}>
+              <Loader />
+              Generating Schedule...
+            </Center>
+          ),
+        }}
+      />
       <Stack p="sm" style={{ alignItems: "center" }}>
         <Box p="md">
-          <Title order={2}>
-            Shift Planner
-          </Title>
+          <Title order={2}>Shift Planner</Title>
           <Space h="md" />
           <Text>
             Use this interface to automatically assign shifts among your staff on a weekly basis.
@@ -259,9 +269,7 @@ export function Planner() {
         </Box>
 
         <Stack ref={headerRef} gap="sm" style={{ textAlign: "center" }}>
-          <Title order={3}>
-            Staff schedule for the week:
-          </Title>
+          <Title order={3}>Staff schedule for the week:</Title>
           <Title order={2}>
             {formatDate(weekStart)} — {formatDate(weekEnd)}
           </Title>
@@ -344,29 +352,27 @@ export function Planner() {
             </Button>
 
             <Space />
-
           </Stack>
         </GridCol>
 
         <GridCol span={isMobile ? 12 : 4}>
           <Stack gap="sm">
             <Space h={isMobile ? "md" : "sm"} />
-              <Button fullWidth onClick={handleGenerate}>
-                <Group gap="sm">
-                  Generate Schedule
-                  <IconPlus />
-                </Group>
-              </Button>
+            <Button fullWidth onClick={handleGenerate}>
+              <Group gap="sm">
+                Generate Schedule
+                <IconPlus />
+              </Group>
+            </Button>
 
-              <Button fullWidth onClick={handleExport}>
-                <Group gap="sm">
-                  Export Schedule
-                  <IconShare2 />
-                </Group>
-              </Button>
+            <Button fullWidth onClick={handleExport}>
+              <Group gap="sm">
+                Export Schedule
+                <IconShare2 />
+              </Group>
+            </Button>
             <Space />
           </Stack>
-
         </GridCol>
       </Grid>
 
@@ -374,14 +380,30 @@ export function Planner() {
       <Space h="xl" />
 
       <Modal centered fullScreen={isMobile} opened={genErrOpen} onClose={closeGenErr}>
-        <ModalHeader><Text fw={700} size="xl">Error Generating Schedule</Text></ModalHeader>
+        <ModalHeader>
+          <Text fw={700} size="xl">
+            Error Generating Schedule
+          </Text>
+        </ModalHeader>
         <ModalBody>
           <Stack>
             <Space h="md" />
-            <Text>Schedule could not be generated because max working hours for your staff are too low to meet the staffing requirements.</Text>
-            <Text>Please raise the maximum working hours for your staff to generate a schedule.</Text>
+            <Text>
+              Schedule could not be generated because max working hours for your staff are too low
+              to meet the staffing requirements.
+            </Text>
+            <Text>
+              Please raise the maximum working hours for your staff to generate a schedule.
+            </Text>
             <Space h="md" />
-            <Box style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "8px" }}>
+            <Box
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "8px",
+              }}
+            >
               <NumberInput
                 label="Max Hours Full Time"
                 value={maxHrFT}
