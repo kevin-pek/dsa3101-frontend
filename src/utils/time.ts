@@ -1,58 +1,84 @@
-// Adapted from NUSmods https://github.com/nusmodifications/nusmods/blob/master/website/src/utils/timify.ts
-
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
-export function getLessonTimeHours(time: string): number {
-  return parseInt(time.substring(0, 2), 10)
-}
-
-export function getLessonTimeMinutes(time: string): number {
-  return parseInt(time.substring(2), 10)
+export function convertTimeToIndex(timeStr: string): number {
+  const isHalfHour = timeStr.includes(":30")
+  const normalizedTimeStr = timeStr.replace(":30", "")
+  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
+  let hour = parseInt(hourPart)
+  if (hour === 12) {
+    hour = 0
+  }
+  if (period === "pm") {
+    hour += 12
+  }
+  // Calculate the number (0 to 47)
+  let number = hour * 2
+  if (isHalfHour) {
+    number += 1
+  }
+  return number
 }
 
 // Converts a 24-hour format time string to an index.
 // Each index corresponds to one cell of each timetable row.
-// Each row may not start from index 0, it depends on the config's starting time.
-// 0000 -> 0, 0030 -> 1, 0100 -> 2, ...
-export function convertTimeToIndex(time: string): number {
-  const hour = getLessonTimeHours(time)
-  const minute = getLessonTimeMinutes(time)
-
-  // TODO: Expose incorrect offsets to user via UI
-  // Currently we round up in half hour blocks, but the actual time is not shown
-  let minuteOffset
-  if (minute === 0) {
-    minuteOffset = 0
-  } else if (minute <= 30) {
-    minuteOffset = 1
-  } else {
-    minuteOffset = 2
+export function convertIndexToTime(number: number): string {
+  if (number < 0 || number > 47) {
+    throw new Error("Number must be between 0 and 47")
   }
-
-  return hour * 2 + minuteOffset
+  const isHalfHour = number % 2 !== 0
+  let hour = Math.floor(number / 2)
+  let period = "am"
+  if (hour >= 12) {
+    period = "pm"
+    if (hour > 12) hour -= 12
+  }
+  if (hour === 0) hour = 12
+  let time = `${hour}`
+  if (isHalfHour) {
+    time += ":30"
+  }
+  time += period
+  return time
 }
 
-// Reverse of convertTimeToIndex.
-// 0 -> 0000, 1 -> 0030, 2 -> 0100, ... , 48 -> 2400
-export function convertIndexToTime(index: number): string {
-  const timeIndex = Math.min(index, 48)
-  const hour: number = Math.floor(timeIndex / 2)
-  const minute: string = timeIndex % 2 === 0 ? "00" : "30"
-  return (hour < 10 ? `0${hour}` : hour.toString()) + minute
+/**
+ * Compares 2 dates only using the year month and date. Returns -1 if first is
+ * before the other, 0 if they are the same day, and 1 if first is after the
+ * second date.
+ */
+export function compareDates(date1, date2) {
+  const year1 = date1.getFullYear()
+  const month1 = date1.getMonth()
+  const day1 = date1.getDate()
+
+  const year2 = date2.getFullYear()
+  const month2 = date2.getMonth()
+  const day2 = date2.getDate()
+
+  if (year1 < year2) return -1
+  if (year1 > year2) return 1
+
+  if (month1 < month2) return -1
+  if (month1 > month2) return 1
+
+  if (day1 < day2) return -1
+  if (day1 > day2) return 1
+
+  return 0
 }
 
 export const shiftToString = (shift: Shift, role: Role) => {
-  const start = role === Role.Kitchen ? "8am" : "10pm"
-  const end = role === Role.Server ? "10am" : "10pm"
+  const start = role === Role.Kitchen ? "8am" : "10am"
+  const end = "10pm"
   if (shift === Shift.Full) {
     return `${start} - ${end}`
   } else if (shift === Shift.Morning) {
-    return `${start} -  6pm`
+    return `${start} - 6pm`
   } else if (shift === Shift.Night) {
     return `12pm - ${end}`
   }
-  return "Unselected"
+  return ""
 }
 
 export const stringToShift = (str: string) => {
