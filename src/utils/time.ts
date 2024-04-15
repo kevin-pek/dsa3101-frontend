@@ -93,6 +93,20 @@ export const stringToShift = (str: string) => {
   }
 }
 
+export const stringToTimeString = (str: string) => {
+  const isHalfHour = str.includes(":30")
+  const normalizedTimeStr = str.replace(":30", "")
+  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
+  let hour = parseInt(hourPart)
+  if (hour === 12) {
+    hour = 0
+  }
+  if (period === "pm") {
+    hour += 12
+  }
+  return `${hour.toString().padStart(2, '0')}:${isHalfHour ? "30" : "00"}:00`
+}
+
 export const getPastTwelveMonths = () => {
   const today = new Date()
   today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date

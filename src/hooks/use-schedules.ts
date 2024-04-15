@@ -2,6 +2,8 @@ import useSWR, { mutate } from "swr"
 import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
 import { Schedule, ScheduleParameters } from "../types/schedule"
 import { create } from "zustand"
+import dayjs from "dayjs"
+import { stringToTimeString } from "../utils/time"
 
 export const useSchedules = () => {
   const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
@@ -21,7 +23,13 @@ export const useUpdateSchedule = () => {
 
 export const useAddSchedule = () => {
   return async (data: Omit<Schedule, "id">) => {
-    await postRequest("/schedule", data)
+    const sched = {
+      ...data,
+      start: stringToTimeString(data.start),
+      end: stringToTimeString(data.end),
+      week: dayjs(data.week).format("YYYY-MM-DD")
+    }
+    await postRequest("/schedule", sched)
   }
 }
 

@@ -1,4 +1,4 @@
-import { Stack, Select, Button, Space } from "@mantine/core"
+import { Stack, Select, Button, Space, ComboboxItem } from "@mantine/core"
 import React, { useCallback, useState, useMemo } from "react"
 import { useEmployees } from "../hooks/use-employees"
 import { useLocalSchedule } from "../hooks/use-schedules"
@@ -13,15 +13,14 @@ interface SwapEmployeeModalProps {
 export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps) => {
   const { employees } = useEmployees()
   const updateSchedule = useLocalSchedule((state) => state.updateItem)
-  const [selectedEmployee, setSelectedEmployee] = useState<string>()
+  const [emp, setEmp] = useState<ComboboxItem>()
   const [employeeError, setEmployeeError] = useState("")
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
 
   const handleSwap = useCallback(async () => {
     let valid = true
-    const employee = employees.find((e) => e.name === selectedEmployee)?.id
-    if (!employee) {
+    if (!emp || !employees.some((e) => e.id === parseInt(emp.value))) {
       setEmployeeError("Invalid employee selected!")
       valid = false
     } else setEmployeeError("")
@@ -32,15 +31,15 @@ export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps
     if (valid) {
       const newSchedule = {
         ...schedule,
-        employeeId: employee,
+        employeeId: parseInt(emp.value),
         role: role,
       }
       updateSchedule(newSchedule)
       onSubmit()
     }
-  }, [selectedEmployee, employees, role])
+  }, [emp, employees, role])
 
-  const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
+  const employeeData = useMemo<ComboboxItem[]>(() => employees.map((e) => ({ label: e.name, value: e.id.toString() })), [employees])
 
   return (
     <Stack>
@@ -49,8 +48,7 @@ export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps
         label="Swap with:"
         placeholder="Select another employee..."
         data={employeeData}
-        value={selectedEmployee}
-        onChange={(val) => setSelectedEmployee(val)}
+        onChange={(_, opt) => setEmp(opt)}
         comboboxProps={{ withinPortal: false }}
         searchable
         nothingFoundMessage="No employees found..."

@@ -180,11 +180,12 @@ function App() {
                 setTimeout(() => revalidate({ retryCount }), backoff)
               },
               onSuccess: (data, key) => {
+                const label = key === "/schedule" ? "Schedule" : key === "/employee" ? "Employee" : "Event"
                 notifications.show({
                   id: key,
                   color: "teal",
                   title: "Success",
-                  message: `${key} data fetched successfully.`,
+                  message: `${label} data fetched successfully.`,
                   icon: <IconCheck />,
                   loading: false,
                   autoClose: 2000,

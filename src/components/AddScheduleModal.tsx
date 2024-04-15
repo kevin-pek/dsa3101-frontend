@@ -1,5 +1,5 @@
-import { Button, Select, Stack, Space } from "@mantine/core"
-import { useCallback, useMemo, useState } from "react"
+import { Button, Select, Stack, Space, ComboboxItem } from "@mantine/core"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useEmployees } from "../hooks/use-employees"
 import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
@@ -18,9 +18,10 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
   const [roleError, setRoleError] = useState("")
   const [day, setDay] = useState<DoW>()
   const [dayError, setDayError] = useState("")
-  const [empName, setEmpName] = useState<string>() // employee name
+  const [emp, setEmp] = useState<ComboboxItem>() // selected employee combobox
+
   const [empError, setEmpError] = useState("")
-  const [shift, setShift] = useState<Shift>() // employee name
+  const [shift, setShift] = useState<Shift>()
   const [shiftError, setShiftError] = useState("")
 
   const addSchedule = useLocalSchedule((state) => state.addItem)
@@ -30,8 +31,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
 
   const handleSubmit = useCallback(async () => {
     let valid = true
-    const employee = employees.find((e) => e.name === empName)?.id
-    if (!employee) {
+    if (!emp || !employees.some((e) => e.id === parseInt(emp.value))) {
       setEmpError("Please select an employee.")
       valid = false
     } else setEmpError("")
@@ -50,7 +50,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     if (valid) {
       const timings = shiftToString(shift, role).split(" - ")
       const newSchedule: Schedule = {
-        employeeId: employee,
+        employeeId: parseInt(emp.value),
         start: timings[0], // give new schedules default values
         end: timings[1],
         day,
@@ -60,13 +60,13 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         id: newId,
       }
       addSchedule(newSchedule)
-      setEmpName(null) // reset fields if successful creation
+      setEmp(null) // reset fields if successful creation
       setRole(null)
       setDay(null)
       setShift(null)
       onSubmit()
     }
-  }, [empName, role, day, employees, shift])
+  }, [emp, role, day, employees, shift])
 
   const addShiftTimes = useCallback(
     (shift: Shift) => ({
@@ -76,7 +76,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     [role],
   )
 
-  const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
+  const employeeData = useMemo<ComboboxItem[]>(() => employees.map((e) => ({ label: e.name, value: e.id.toString() })), [employees])
 
   return (
     <Stack miw="16em">
@@ -85,8 +85,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         label="Employee:"
         placeholder="Select employee..."
         data={employeeData}
-        value={empName}
-        onChange={(val) => setEmpName(val)}
+        onChange={(_, opt) => setEmp(opt)}
         comboboxProps={{ withinPortal: false }}
         searchable
         nothingFoundMessage="No employees found..."
@@ -116,7 +115,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         required
         label="Shift"
         placeholder="Select shift..."
-        data={Object.values(Shift).map(addShiftTimes)}
+        data={Object.values(Shift).filter(s => s !== Shift.None).map(addShiftTimes)}
         value={shift}
         onChange={(val) => setShift(val as Shift)}
         comboboxProps={{ withinPortal: false }}

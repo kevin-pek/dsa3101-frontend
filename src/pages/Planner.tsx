@@ -76,7 +76,6 @@ export function Planner() {
         .sort((a, b) => a.id - b.id) ?? []
     )
   }, [schedules])
-  console.log(currWeekSchedule)
 
   // store local values of the schedule before we update or revert changes
   const localSched = useLocalSchedule((state) => state.items)
@@ -103,7 +102,7 @@ export function Planner() {
       }
     }
     setHasChanged(false)
-  }, [localSched])
+  }, [localSched, currWeekSchedule])
 
   // revert schedule to value that was retrieved in the database
   const revertChanges = useCallback(() => {
