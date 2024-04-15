@@ -8,6 +8,12 @@ export enum DoW {
   Sunday = "Sunday",
 }
 
+export enum ESession {
+  Morning = "Morning",
+  Night = "Night",
+  Fullday = "Fullday"
+}
+
 export enum EType {
   WoT = "Wings of Time",
   Others = "Others"

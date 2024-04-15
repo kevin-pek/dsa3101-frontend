@@ -74,46 +74,17 @@ export function Events() {
         }),
       },
       {
-        // try and get this automated once you get the day
-        accessorKey: "eventDay",
-        header: "Event Day",
+        accessorKey: "eventSession",
+        header: "Event Session",
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "select",
-          options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          options: ["Morning", "Night", "Fullday"],
           required: true,
-          error: validationErrors?.eventDay,
+          error: validationErrors?.eventSession,
           onFocus: () =>
           setValidationErrors({
             ...validationErrors,
-            eventDay: undefined,
-          })
-        }),
-      },
-      {
-        accessorKey: "eventSTime",
-        header: "Start Time",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "time",
-          required: true,
-          error: validationErrors?.eventSTime,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventSTime: undefined,
-          })
-        }),
-      },
-      {
-        accessorKey: "eventETime",
-        header: "End Time",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "time",
-          required: true,
-          error: validationErrors?.eventETime,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventETime: undefined,
+            eventSession: undefined,
           })
         }),
       },
