@@ -166,7 +166,7 @@ export function Planner() {
     parent.style.left = "-9999px"
     parent.style.top = "-9999px"
     parent.style.backgroundColor =
-      colorScheme === "light" ? "var(--mantine-color-gray-0)" : "var(--mantine-color-dark-7)"
+      colorScheme === "light" ? "white" : "var(--mantine-color-dark-7)"
     document.body.appendChild(parent)
     const container = document.createElement("div")
     const ncols = 3 + hours.length * 2

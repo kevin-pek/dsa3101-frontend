@@ -37,7 +37,6 @@ export const handleError = (error: unknown) => {
 export const fetcher = async (url: string) => {
   try {
     if (url === "/schedule") return generateSchedules()
-    if (url === "/employee") return fakeEmployees
     const response = await apiClient.get(url)
     return response.data
   } catch (error) {

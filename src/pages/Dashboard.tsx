@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { LineChart, BarChart, AreaChart, RadarChart } from "@mantine/charts"
-import { Text, Grid, Paper, Group, Container, Title, Select } from "@mantine/core"
+import { Text, Grid, Paper, Group, Container, Title, Select, Stack, Space, List, ListItem, ColorSwatch } from "@mantine/core"
 import {
   empAvailability,
   hiringExpenditure,
@@ -21,6 +21,7 @@ import {
 } from "../utils/time.js"
 import { useMediaQuery } from "@mantine/hooks"
 import { useDemand } from "../hooks/use-demand"
+import { IconArrowDownRight, IconArrowUpRight, IconCoin, IconUsers } from "@tabler/icons-react"
 
 enum DateInterval {
   Daily = "Daily",
@@ -57,6 +58,10 @@ export function Dashboard() {
   const [timeRange, setTimeRange] = useState<[Date | null, Date | null]>()
 
   const isMobile = useMediaQuery("(max-width: 50em)")
+
+  const cost = 1000
+  const diff = -10
+  const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight
 
   useEffect(() => {
     // @ts-ignore
@@ -101,43 +106,135 @@ export function Dashboard() {
           )}
         </Grid.Col>
 
-        <Grid.Col span={9}>
-          <Paper withBorder p="md">
+        <Grid.Col span={6} style={{ alignItems: "stretch" }}>
+          <Paper withBorder p="md" h="100%">
             <Title order={4} p="md">
-              Number of Customers:
+              Today's Forecast (Hourly):
             </Title>
-            <Text pl="md">
-              Number of customers and the predicted numbers, up until the next 7 days.
-            </Text>
-            <LineChart
+            <BarChart
               h={300}
               data={demand}
               dataKey="date"
               series={[
                 { name: "predicted", label: "Forecasted", color: "orange.6" },
-                { name: "actual", label: "Actual", color: "teal.6" },
               ]}
-              curveType="linear"
               tickLine="xy"
               gridAxis="y"
-              connectNulls={false}
-              withLegend
-              referenceLines={[{ x: formatDate(new Date()), label: "Today", color: "red" }]}
             />
           </Paper>
         </Grid.Col>
-        <Grid.Col span={3} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <InputDemandForm />
+
+        <Grid.Col span={3}>
+          <Stack gap="xl" h="100%" justify="space-between">
+            <InputDemandForm />
+
+            <Paper
+              withBorder
+              p="md"
+            >
+              <Group justify="space-between">
+                <Text size="md" c="dimmed" fw={700}>
+                  Manpower Cost
+                </Text>
+                <IconCoin size="1.4rem" stroke={1.5} />
+              </Group>
+              <Group align="flex-end" gap="xs" mt={25}>
+                <Text size="lg">{cost}</Text>
+                <Text c={diff > 0 ? "teal" : "red"} fz="sm" fw={500}>
+                  <span>{diff}%</span>
+                  <DiffIcon size="1rem" stroke={1.5} />
+                </Text>
+              </Group>
+              <Text c="dimmed">compared to last {view === DateInterval.Daily ? "week" : "month"}.</Text>
+            </Paper>
+          </Stack>
+        </Grid.Col>
+
+        <Grid.Col span={3}>
+          <Stack h="100%" justify="space-between">
+            <Paper withBorder p="md" radius="md">
+              <Title order={5} c="dimmed">
+                No. Employees by Role
+              </Title>
+              <Space h="sm" />
+              <List
+                withPadding
+                center
+                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+              >
+                <ListItem
+                  component="span"
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-violet-light-color)" />}
+                >
+                  Manager
+                </ListItem>
+                <ListItem
+                  component="span"
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-orange-light-color)" />}
+                >
+                  Kitchen
+                </ListItem>
+                <ListItem
+                  component="span"
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-green-light-color)" />}
+                >
+                  Server
+                </ListItem>
+              </List>
+            </Paper>
+
+            <Paper withBorder p="md" radius="md">
+              <Title order={5} c="dimmed">
+                No. Employees by Type
+              </Title>
+              <Space h="sm" />
+              <List
+                withPadding
+                center
+                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+              >
+                <ListItem
+                  component="span"
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-orange-light-color)" />}
+                >
+                  Part Time
+                </ListItem>
+                <ListItem
+                  component="span"
+                  icon={<ColorSwatch size="1em" color="var(--mantine-color-green-light-color)" />}
+                >
+                  Full Time
+                </ListItem>
+              </List>
+            </Paper>
+
+            <Paper
+              withBorder
+              p="md"
+            >
+              <Group justify="space-between">
+                <Text size="md" c="dimmed" fw={700}>
+                  No. of Customers
+                </Text>
+                <IconUsers size="1.4rem" stroke={1.5} />
+              </Group>
+              <Group align="flex-end" gap="xs" mt={25}>
+                <Text size="lg">{cost}</Text>
+                <Text c={diff > 0 ? "teal" : "red"} fz="sm" fw={500}>
+                  <span>{diff}%</span>
+                  <DiffIcon size="1rem" stroke={1.5} />
+                </Text>
+              </Group>
+              <Text c="dimmed">compared to last {view === DateInterval.Daily ? "week" : "month"}.</Text>
+            </Paper>
+          </Stack>
         </Grid.Col>
 
         <Grid.Col span={6}>
-          <Paper withBorder p="md">
+          <Paper withBorder p="md" h="100%">
             <Title order={4} mb="md" p="md">
               Total Manpower Expenditure:
             </Title>
-            <Text pl="md">
-              Shows number of customers and the predicted customers for the next 7 days.
-            </Text>
             {/* TODO: Add expenditure breakdown by role filter */}
             <LineChart
               h={300}
@@ -153,22 +250,44 @@ export function Dashboard() {
         </Grid.Col>
 
         <Grid.Col span={6}>
-          <Paper withBorder p="md">
+          <Paper withBorder p="md" h="100%">
             <Title order={4}p="md">
               Upcoming Events:
             </Title>
             <Text pl="md">
               Number of upcoming events.
             </Text>
-            <LineChart
+            <BarChart
               h={300}
               data={monthlyBookings}
               dataKey="month"
               series={[{ name: "Bookings", color: "rgb(47, 173, 102)" }]}
+              tickLine="xy"
+              withLegend
+            />
+          </Paper>
+        </Grid.Col>
+
+
+        <Grid.Col span={12}>
+          <Paper withBorder p="md">
+            <Title order={4} p="md">
+              Number of Customers:
+            </Title>
+            <LineChart
+              h={300}
+              data={demand}
+              dataKey="date"
+              series={[
+                { name: "predicted", label: "Forecasted", color: "orange.6" },
+                { name: "actual", label: "Actual", color: "teal.6" },
+              ]}
               curveType="linear"
               tickLine="xy"
+              gridAxis="y"
               connectNulls={false}
               withLegend
+              referenceLines={[{ x: formatDate(new Date()), label: "Today", color: "red" }]}
             />
           </Paper>
         </Grid.Col>

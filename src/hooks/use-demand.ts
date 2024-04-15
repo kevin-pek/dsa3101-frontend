@@ -1,10 +1,11 @@
 import useSWR, { mutate } from "swr"
 import { fetcher, postRequest } from "../api"
 import { Demand } from "../types/demand"
+import { demand } from "../sampleDashboard"
 
 export const useDemand = () => {
   const { data, isLoading } = useSWR<Demand[]>("/demand", fetcher)
-  return { demand: data || [], isLoading }
+  return { demand: demand || [], isLoading }
 }
 
 export const useAddActualDemand = () => {

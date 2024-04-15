@@ -97,7 +97,7 @@ export const getPastTwelveMonths = () => {
   const today = new Date()
   today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
   const sixMonthsAgo = new Date()
-  sixMonthsAgo.setMonth(today.getMonth() - 12)
+  sixMonthsAgo.setMonth(today.getMonth() - 11)
 
   return [sixMonthsAgo, today]
 }
@@ -105,7 +105,7 @@ export const getPastTwelveMonths = () => {
 export const getPastFourteenDays = () => {
   const today = new Date()
   today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
-  today.setDate(today.getDate() + 1)
+  today.setDate(today.getDate())
   const fourteenDaysAgo = new Date(today)
   fourteenDaysAgo.setDate(today.getDate() - 13)
 

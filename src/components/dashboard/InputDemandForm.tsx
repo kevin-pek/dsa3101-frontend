@@ -57,7 +57,7 @@ function InputDemandForm() {
           />
         </Grid.Col>
         <Grid.Col span={4} style={{ alignContent: "flex-end" }}>
-          <ActionIconGroup style={{ gap: 8 }}>
+          <ActionIconGroup>
             <ActionIcon p="md" variant="default" onClick={incrementByTen}>
               +10
             </ActionIcon>
