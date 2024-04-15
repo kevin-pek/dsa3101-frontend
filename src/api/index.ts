@@ -3,7 +3,6 @@ import axios from "axios"
 import { Schedule, Shift } from "../types/schedule"
 import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
-import { fakeEmployees } from "../sampleEmployees"
 
 const BASE_URL = "http://localhost:5001"
 
