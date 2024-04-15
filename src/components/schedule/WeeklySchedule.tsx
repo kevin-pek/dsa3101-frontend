@@ -19,7 +19,9 @@ export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
     }
     handleResize()
     window.addEventListener("resize", handleResize) // change the offset width whenever the window width changes
-    return () => { window.removeEventListener("resize", handleResize)}
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
   }, [])
 
   return (
@@ -56,7 +58,14 @@ export const WeeklySchedule = React.forwardRef<HTMLDivElement>((props, ref) => {
             <Divider orientation="vertical" />
           </GridCol>
 
-          <GridCol pr="4px" span={hours.length * 2} style={{ borderRight: "1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-8))"}}>
+          <GridCol
+            pr="4px"
+            span={hours.length * 2}
+            style={{
+              borderRight:
+                "1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-8))",
+            }}
+          >
             <DayTimeline day={day} />
           </GridCol>
 

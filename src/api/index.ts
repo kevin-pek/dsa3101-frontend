@@ -120,6 +120,6 @@ function generateSchedules(): Schedule[] {
       schedules.push(schedule)
     })
   })
-
+  console.log(schedules)
   return schedules
 }

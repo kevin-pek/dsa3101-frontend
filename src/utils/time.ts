@@ -92,3 +92,35 @@ export const stringToShift = (str: string) => {
     return Shift.Night
   }
 }
+
+export const getPastTwelveMonths = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(today.getMonth() - 11)
+
+  return [sixMonthsAgo, today]
+}
+
+export const getPastFourteenDays = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+  today.setDate(today.getDate())
+  const fourteenDaysAgo = new Date(today)
+  fourteenDaysAgo.setDate(today.getDate() - 13)
+
+  return [fourteenDaysAgo, today]
+}
+
+export const getSevenDaysBeforeAndAfter = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(today.getDate() - 7)
+
+  const sevenDaysAfter = new Date(today)
+  sevenDaysAfter.setDate(today.getDate() + 7)
+
+  return [sevenDaysAgo, sevenDaysAfter]
+}

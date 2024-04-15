@@ -27,7 +27,7 @@ export const useAddSchedule = () => {
 
 export const useGenerateSchedule = () => {
   return async (params: ScheduleParameters) => {
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     await postRequest("/schedule/generate", params)
     mutate("/schedule") // trigger a refetch after schedule is generated
   }
