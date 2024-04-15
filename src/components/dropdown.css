@@ -4,27 +4,15 @@
   font-family: Helvetica;
 }
 
-.container {
-  width: 100%;
-  height: 100vh;
+.container{
+    width: 100%;
+    height: 100vh;
 }
-.dropdown {
-  width: 400px;
-  user-select: none;
-  margin: 40px auto;
-  position: relative;
-}
-
-.dropdown .dropdown-btn {
-  padding: 15px 20px;
-  background: #fff;
-  box-shadow: 3px 3px 10px 6px rgba(0, 0, 0, 0.06);
-  font-weight: bold;
-  color: #333;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  justify-content: space-between;
+.dropdown{
+    width: 400px;
+    user-select: none;
+    margin: 40px auto;
+    position: relative;
 }
 
 .dropdown .dropdown-content {

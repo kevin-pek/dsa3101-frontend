@@ -12,6 +12,18 @@ import {
   useUploadEmployee,
   useAddEmployee,
 } from "../hooks/use-employees"
+import { Role } from "../types/employee"
+import { Shift } from "../types/schedule"
+
+/**
+ * @typedef {import('../types/employee').Employee} Employee
+ * @typedef {import('../types/employee').Role} Role
+ * @typedef {import('../types/schedule').Shift} Shift
+ */
+
+/**
+ * @type {import('mantine-react-table').MRT_ColumnDef<Employee>[]}
+ */
 
 export function Employees() {
   // State and custom hooks for managing employees
@@ -46,7 +58,7 @@ export function Employees() {
         header: "FT/PT",
         editVariant: "select",
         mantineEditSelectProps: ({ cell, row }) => ({
-          data: ["Full Time", "Part Time"], // to change
+          data: ["Full Time", "Part Time"],
           required: true,
         }),
       },
@@ -54,7 +66,7 @@ export function Employees() {
         accessorKey: "wage",
         header: "Wage",
         mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "int",
+          type: "number",
           required: true,
         }),
       },
@@ -63,7 +75,7 @@ export function Employees() {
         header: "Role",
         editVariant: "select",
         mantineEditSelectProps: ({ cell, row }) => ({
-          data: ["Manager", "Server", "Cook", "Dishwasher"], // to change
+          data: Object.values(Role),
           required: true,
         }),
       },
@@ -72,64 +84,71 @@ export function Employees() {
         header: "Secondary Role",
         editVariant: "select",
         mantineEditSelectProps: ({ cell, row }) => ({
-          data: ["Manager", "Server", "Cook", "Dishwasher"], // to change
+          data: Object.values(Role),
           required: false,
         }),
       },
       {
         accessorKey: "mon",
         header: "Monday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "tues",
         header: "Tuesday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "wed",
         header: "Wednesday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "thurs",
         header: "Thursday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "fri",
         header: "Friday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "sat",
         header: "Saturday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
       {
         accessorKey: "sun",
         header: "Sunday",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "string",
-          required: true,
+        editVariant: "select",
+        mantineEditSelectProps: ({ cell, row }) => ({
+          data: Object.values(Shift),
+          required: false,
         }),
       },
     ],
@@ -141,13 +160,13 @@ export function Employees() {
     let errorMessage = '';
 
     if (errors.name) {
-      errorMessage = 'Name is required.';
+      errorMessage = errors.name;
     } else if (errors.employmentType) {
-      errorMessage = 'Type is required.';
+      errorMessage = errors.employmentType;
     } else if (errors.wage) {
-      errorMessage = 'Wage is required.';
+      errorMessage = errors.wage;
     } else if (errors.role) {
-      errorMessage = 'Role is required.';
+      errorMessage = errors.role;
     }
     
     if (errorMessage) {
@@ -165,13 +184,15 @@ export function Employees() {
 
     // Add employee validation
     if (!values.name) {
-      errors.name = "Name is required";
+      errors.name = "Name is required.";
     } else if (!values.employmentType) {
-      errors.name = 'Type is required.';
+      errors.employmentType = 'Employment type is required.';
     } else if (!values.wage) {
-      errors.name = 'Wage is required.';
+      errors.wage = 'Wage is required.';
+    } else if (values.wage < 0) {
+      errors.wage = 'Invalid Wage.';
     } else if (!values.role) {
-      errors.name = 'Role is required.';
+      errors.role = 'Role is required.';
     }
     // Update state with any found errors
     setValidationErrors(errors);
@@ -195,13 +216,15 @@ export function Employees() {
 
     // Add employee validation
     if (!values.name) {
-      errors.name = "Name is required";
-    } else if (!values.type) {
-      errors.name = 'Type is required.';
+      errors.name = "Name is required.";
+    } else if (!values.employmentType) {
+      errors.employmentType = 'Employment type is required.';
     } else if (!values.wage) {
-      errors.name = 'Wage is required.';
+      errors.wage = 'Wage is required.';
+    } else if (values.wage < 0) {
+      errors.wage = 'Invalid Wage.';
     } else if (!values.role) {
-      errors.name = 'Role is required.';
+      errors.role = 'Role is required.';
     }
     // Update state with any found errors
     setValidationErrors(errors);
