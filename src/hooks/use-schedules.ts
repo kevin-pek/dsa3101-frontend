@@ -6,13 +6,6 @@ import { create } from "zustand"
 import dayjs from "dayjs"
 import { stringToTimeString } from "../utils/time"
 
-export const useSchedules = () => {
-  const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
-  const schedules = data?.map((s) => ({...s, start: timeStringToString(s.start), end: timeStringToString(s.end), week: dayjs(s.week) })) ?? []
-  console.log("SCHDEULE", schedules)
-  return { schedules, isLoading }
-}
-
 /**
  * We don't use mutate for schedule requests since these are done in bulk.
  */
@@ -21,19 +14,14 @@ export const useDeleteSchedule = () => {
 }
 
 export const useUpdateSchedule = () => {
-  return async (data: Schedule) => await putRequest("/schedule", data.id, data)
+  return async (data: Schedule) => {
+    const sched = { ...data, week: dayjs(data.week).format("YYYY-MM-DD") }
+    await putRequest("/schedule", data.id, sched)
+  }
 }
 
 export const useAddSchedule = () => {
-  return async (data: Omit<Schedule, "id">) => {
-    const sched = {
-      ...data,
-      start: stringToTimeString(data.start),
-      end: stringToTimeString(data.end),
-      week: dayjs(data.week).format("YYYY-MM-DD")
-    }
-    await postRequest("/schedule", sched)
-  }
+  return async (data: Omit<Schedule, "id">) => await postRequest("/schedule", data)
 }
 
 export const useGenerateSchedule = () => {

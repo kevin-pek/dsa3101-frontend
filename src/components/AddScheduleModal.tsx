@@ -1,13 +1,14 @@
 import { Button, Select, Stack, Space, ComboboxItem } from "@mantine/core"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useEmployees } from "../hooks/use-employees"
 import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
 import { Schedule, Shift } from "../types/schedule"
 import { getStartOfWeek } from "@mantine/dates"
-import { shiftToString } from "../utils/time"
+import { shiftToString, stringToTimeString } from "../utils/time"
 import React from "react"
 import { useLocalSchedule } from "../hooks/use-schedules"
+import dayjs from "dayjs"
 
 interface AddScheduleModalProps {
   onSubmit: CallableFunction
@@ -51,12 +52,12 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
       const timings = shiftToString(shift, role).split(" - ")
       const newSchedule: Schedule = {
         employeeId: parseInt(emp.value),
-        start: timings[0], // give new schedules default values
-        end: timings[1],
+        start: stringToTimeString(timings[0]), // give new schedules default values
+        end: stringToTimeString(timings[1]),
         day,
         role,
         shift,
-        week: getStartOfWeek(new Date()),
+        week: dayjs(getStartOfWeek(new Date())).format("YYYY-MM-DD"),
         id: newId,
       }
       addSchedule(newSchedule)
@@ -68,6 +69,7 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     }
   }, [emp, role, day, employees, shift])
 
+  // shifts with start end times added
   const addShiftTimes = useCallback(
     (shift: Shift) => ({
       label: `${shift.toString()} ${role ? "(" + shiftToString(shift, role) + ")" : ""}`,

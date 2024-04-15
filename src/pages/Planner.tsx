@@ -33,11 +33,10 @@ import { AddScheduleModal } from "../components/AddScheduleModal"
 import {
   useDeleteSchedule,
   useLocalSchedule,
-  useSchedules,
   useUpdateSchedule,
 } from "../hooks/use-schedules"
 import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
-import { compareDates, timeStringToString } from "../utils/time"
+import { compareDates } from "../utils/time"
 import { isObjectEqual } from "../utils/object"
 import { useGenerateSchedule } from "../hooks/use-schedules"
 import { Schedule, ScheduleParameters } from "../types/schedule"
@@ -46,11 +45,9 @@ import useSWR, { mutate } from "swr"
 import html2canvas from "html2canvas"
 import { hours } from "../types/constants"
 import { fetcher } from "../api"
-import dayjs from "dayjs"
 
 export function Planner() {
-  const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
-  const schedules = useMemo(() => data?.map((s) => ({...s, start: timeStringToString(s.start), end: timeStringToString(s.end), week: dayjs(s.week) })) ?? [], [data])
+  const { data: schedules, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
   const { colorScheme } = useMantineColorScheme()
   const addSchedule = useAddSchedule()
   const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift
@@ -75,8 +72,8 @@ export function Planner() {
   const currWeekSchedule = useMemo(() => {
     return (
       schedules
-        .filter((s) => compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0)
-        .sort((a, b) => a.id - b.id) ?? []
+        ?.filter((s) => compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0)
+        ?.sort((a, b) => a.id - b.id) ?? []
     )
   }, [schedules])
 

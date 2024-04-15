@@ -1,46 +1,24 @@
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
-// converts 1pm 1:30pm string to index
+// Converts 'HH:MM:SS' string to index in half hour intervals
 export function convertTimeToIndex(timeStr: string): number {
-  const isHalfHour = timeStr.includes(":30")
-  const normalizedTimeStr = timeStr.replace(":30", "")
-  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
-  let hour = parseInt(hourPart)
-  if (hour === 12) {
-    hour = 0
-  }
-  if (period === "pm") {
-    hour += 12
-  }
-  // Calculate the number (0 to 47)
-  let number = hour * 2
-  if (isHalfHour) {
-    number += 1
-  }
-  return number
+  const [hoursStr, minutesStr] = timeStr.split(':')
+  const hours = parseInt(hoursStr)
+  const minutes = parseInt(minutesStr)
+  return hours * 2 + (minutes === 30 ? 1 : 0)
 }
 
-// Converts a 24-hour format time string to an index.
-// Each index corresponds to one cell of each timetable row.
-export function convertIndexToTime(number: number): string {
-  if (number < 0 || number > 47) {
-    throw new Error("Number must be between 0 and 47")
+// Converts index (0-47) back to 'HH:MM:SS' time string
+export function convertIndexToTime(index: number): string {
+  if (index < 0 || index > 47) {
+    throw new Error("Index must be between 0 and 47")
   }
-  const isHalfHour = number % 2 !== 0
-  let hour = Math.floor(number / 2)
-  let period = "am"
-  if (hour >= 12) {
-    period = "pm"
-    if (hour > 12) hour -= 12
-  }
-  if (hour === 0) hour = 12
-  let time = `${hour}`
-  if (isHalfHour) {
-    time += ":30"
-  }
-  time += period
-  return time
+  let hour = Math.floor(index / 2)
+  const minutes = (index % 2) * 30
+  const hourStr = hour.toString().padStart(2, '0')
+  const minutesStr = minutes.toString().padStart(2, '0')
+  return `${hourStr}:${minutesStr}:00`
 }
 
 /**

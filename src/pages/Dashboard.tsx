@@ -1,16 +1,12 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import { LineChart, BarChart, AreaChart, RadarChart } from "@mantine/charts"
-import { Text, Grid, Paper, Group, Container, Title, Select, Stack, Space, List, ListItem, ColorSwatch } from "@mantine/core"
+import { Text, Grid, Paper, Group, Container, Title, Select, Stack, Space, List, ListItem, ColorSwatch, LoadingOverlay, Loader, Center } from "@mantine/core"
 import {
-  empAvailability,
   hiringExpenditure,
-  empRoles,
-  hoursWorked,
-  weeklyBookings,
   monthlyBookings,
   demand,
 } from "../sampleDashboard.jsx"
-import InputDemandForm from "../components/dashboard/InputDemandForm.jsx"
+import InputDemandForm from "../components/dashboard/InputDemandForm"
 import { useState } from "react"
 import "@mantine/charts/styles.css"
 import { DatePickerInput, MonthPickerInput } from "@mantine/dates"
@@ -20,8 +16,10 @@ import {
   getSevenDaysBeforeAndAfter,
 } from "../utils/time.js"
 import { useMediaQuery } from "@mantine/hooks"
-import { useDemand } from "../hooks/use-demand"
 import { IconArrowDownRight, IconArrowUpRight, IconCoin, IconUsers } from "@tabler/icons-react"
+import useSWR from "swr"
+import { fetcher } from "../api/index"
+import { ActualDemand, Demand, PredictedDemand } from "../types/demand"
 
 enum DateInterval {
   Daily = "Daily",
@@ -51,7 +49,33 @@ function formatDate(date) {
 }
 
 export function Dashboard() {
-  const { demand } = useDemand()
+  const { data: actualDemand } = useSWR<ActualDemand[]>("/get_past_demand", fetcher)
+  const { data: predictedDemand, isLoading } = useSWR<PredictedDemand[]>("/get_demand_forecast", fetcher)
+  const mergedData = useMemo<Demand[]>(() => {
+    if (!actualDemand && !predictedDemand) return []
+    const merged = predictedDemand.map(pred => ({
+      ...pred,
+      predicted: pred.customers,
+      actual: actualDemand.find(act => act.date === pred.date && act.time === pred.time)?.customers
+    }));
+  
+    // Example of setting the view
+    const view = 'daily'; // Can also be 'monthly'
+  
+    if (view === 'daily' || view === 'monthly') {
+      const aggregatedData = merged.reduce((acc, cur) => {
+        const key = view === 'daily' ? cur.date : cur.date.slice(0, 7); // 'YYYY-MM-DD' for daily, 'YYYY-MM' for monthly
+        if (!acc[key]) {
+          acc[key] = { ...cur, predicted: 0, actual: 0 };
+        }
+        acc[key].predicted += cur.predicted;
+        if (cur.actual) acc[key].actual += cur.actual;
+        return acc;
+      }, {} as Record<string, Demand>);
+      return Object.values(aggregatedData);
+    }
+  }, [actualDemand, predictedDemand])
+
   const [view, setView] = useState<DateInterval>(DateInterval.Daily)
   // timeRange will either be month range or day range depending on selectedView
   // @ts-ignore
@@ -74,6 +98,11 @@ export function Dashboard() {
 
   return (
     <Container fluid p="md">
+      <LoadingOverlay
+        pos="fixed"
+        visible={isLoading}
+        overlayProps={{ blur: 2 }}
+      />
       <Grid>
         <Grid.Col span={6}>
           <Title order={2}>Dashboard</Title>

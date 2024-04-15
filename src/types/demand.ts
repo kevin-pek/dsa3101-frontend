@@ -7,3 +7,17 @@ export interface Demand {
   predicted: number
   actual?: number
 }
+
+export interface PredictedDemand {
+  date: string
+  time: string
+  day: DoW
+  customers: number
+}
+
+export interface ActualDemand {
+  date: string
+  time: string
+  day: DoW
+  customers: number
+}
