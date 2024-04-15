@@ -1,3 +1,4 @@
+import { timeStringToString } from './../utils/time';
 import useSWR, { mutate } from "swr"
 import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
 import { Schedule, ScheduleParameters } from "../types/schedule"
@@ -7,7 +8,9 @@ import { stringToTimeString } from "../utils/time"
 
 export const useSchedules = () => {
   const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
-  return { schedules: data || [], isLoading }
+  const schedules = data?.map((s) => ({...s, start: timeStringToString(s.start), end: timeStringToString(s.end), week: dayjs(s.week) })) ?? []
+  console.log("SCHDEULE", schedules)
+  return { schedules, isLoading }
 }
 
 /**

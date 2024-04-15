@@ -1,6 +1,7 @@
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
+// converts 1pm 1:30pm string to index
 export function convertTimeToIndex(timeStr: string): number {
   const isHalfHour = timeStr.includes(":30")
   const normalizedTimeStr = timeStr.replace(":30", "")
@@ -105,6 +106,20 @@ export const stringToTimeString = (str: string) => {
     hour += 12
   }
   return `${hour.toString().padStart(2, '0')}:${isHalfHour ? "30" : "00"}:00`
+}
+
+export const timeStringToString = (time: string) => {
+  // Extract hours and minutes from the time string
+  const [hours, minutes] = time.split(':').map(Number)
+  // Determine if the time is AM or PM
+  const period = hours >= 12 ? 'pm' : 'am'
+  // Convert hour from 24-hour to 12-hour format
+  let hour = hours % 12
+  if (hour === 0) hour = 12 // If hour is 0, it means it's 12 AM
+  // If minutes are 00, we don't need to include them in the final output
+  const minutePart = minutes === 30 ? ':30' : ''
+  // Construct the final string
+  return `${hour}${minutePart}${period}`
 }
 
 export const getPastTwelveMonths = () => {

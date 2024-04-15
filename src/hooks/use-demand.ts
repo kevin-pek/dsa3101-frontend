@@ -5,7 +5,8 @@ import { demand } from "../sampleDashboard"
 
 export const useDemand = () => {
   const { data, isLoading } = useSWR<Demand[]>("/demand", fetcher)
-  return { demand: demand || [], isLoading }
+
+  return { demand: data || [], isLoading }
 }
 
 export const useAddActualDemand = () => {

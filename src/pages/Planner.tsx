@@ -37,17 +37,20 @@ import {
   useUpdateSchedule,
 } from "../hooks/use-schedules"
 import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
-import { compareDates } from "../utils/time"
+import { compareDates, timeStringToString } from "../utils/time"
 import { isObjectEqual } from "../utils/object"
 import { useGenerateSchedule } from "../hooks/use-schedules"
-import { ScheduleParameters } from "../types/schedule"
+import { Schedule, ScheduleParameters } from "../types/schedule"
 import { useAddSchedule } from "../hooks/use-schedules"
-import { mutate } from "swr"
+import useSWR, { mutate } from "swr"
 import html2canvas from "html2canvas"
 import { hours } from "../types/constants"
+import { fetcher } from "../api"
+import dayjs from "dayjs"
 
 export function Planner() {
-  const { schedules, isLoading } = useSchedules()
+  const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
+  const schedules = useMemo(() => data?.map((s) => ({...s, start: timeStringToString(s.start), end: timeStringToString(s.end), week: dayjs(s.week) })) ?? [], [data])
   const { colorScheme } = useMantineColorScheme()
   const addSchedule = useAddSchedule()
   const [opened, { open, close }] = useDisclosure(false) // modal for adding new shift

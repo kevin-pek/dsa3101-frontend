@@ -34,6 +34,7 @@ export const handleError = (error: unknown) => {
 }
 
 export const fetcher = async (url: string) => {
+  console.log("GET")
   try {
     const response = await apiClient.get(url)
     return response.data
