@@ -198,7 +198,6 @@ export function Events() {
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: "last",
-    enableBottomToolbar: false,
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleAddBooking,
     onEditingRowCancel: () => setValidationErrors({}),
