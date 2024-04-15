@@ -14,10 +14,6 @@ export enum ESession {
   Fullday = "Fullday"
 }
 
-export enum EType {
-  WoT = "Wings of Time",
-  Others = "Others"
-}
 
 export enum DoWShort {
   Mon = "Mon",

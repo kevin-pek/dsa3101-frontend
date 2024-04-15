@@ -8,55 +8,28 @@ import {
   useDeleteBooking,
   useAddBooking,
   useUpdateBooking,
-  validateEvent
 } from "../hooks/use-events"
 
 export function Events() {
-  const [validationErrors, setValidationErrors] = useState({}) // to add validation - useState<Record<string, string | undefined>>({});
+  // State and custon hooks for managing events
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
   const addBooking = useAddBooking()
   const updateBooking = useUpdateBooking()
+
+  // State management for UI elements and validations
+  const [validationErrors, setValidationErrors] = useState({}) 
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [bookingToDelete, setBookingToDelete] = useState(null)
 
   const columns = useMemo(
     () => [
-      // {
-      //   accessorKey: 'bookingId',
-      //   header: 'Booking ID',
-      //   mantineEditTextInputProps: ({ cell, row }) => ({
-      //     type: 'number',
-      //     required: true
-      //   })
-      // },
       {
         accessorKey: "eventName",
         header: "Event Name",
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
           required: true,
-          error: validationErrors?.eventName,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventName: undefined,
-          })
-        }),
-      },
-      {
-        accessorKey: "eventType",
-        header: "Event Type",
-        editVariant: "select",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          data: ["Wings of Time", "Others"],
-          required: true,
-          error: validationErrors?.eventType,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventType: undefined,
-          })
         }),
       },
       {
@@ -65,27 +38,15 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "date",
           required: true,
-          error: validationErrors?.eventDate,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventDate: undefined,
-          })
         }),
       },
       {
         accessorKey: "eventSession",
         header: "Event Session",
         editVariant: "select",
-        mantineEditTextInputProps: ({ cell, row }) => ({
+        mantineEditSelectProps: ({ cell, row }) => ({
           data: ["Morning", "Night", "Fullday"],
           required: true,
-          error: validationErrors?.eventSession,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventSession: undefined,
-          })
         }),
       },
       {
@@ -94,12 +55,6 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "number",
           required: true,
-          error: validationErrors?.numPax,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            numPax: undefined,
-          })
         }),
       },
       {
@@ -108,12 +63,6 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "number",
           required: true,
-          error: validationErrors?.staffReq,
-          onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            staffReq: undefined,
-          })
         }),
       },
       {
@@ -122,24 +71,68 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
           required: false,
-          error: validationErrors?.remark
         }),
       },
     ],
     [validationErrors],
   )
 
+  // Function to display validation errors using notifications
+  function handleValidationErrors(errors) {
+    let errorMessage = '';
+
+    if (errors.eventName) {
+      errorMessage = errors.eventName;
+    } else if (errors.eventDate) {
+      errorMessage = errors.eventDate;
+    } else if (errors.eventSession) {
+      errorMessage = errors.eventSession;
+    } else if (errors.numPax) {
+      errorMessage = errors.numPax;
+    } else if (errors.staffReq) {
+      errorMessage = errors.staffReq;
+    }
+    
+    if (errorMessage) {
+      notifications.show({
+        message: errorMessage,
+        color: 'red',
+        withBorder: true,
+      });
+    }
+  }
+
   // UPDATE action
   const handleUpdateBooking = async ({ row, values, table }) => {
-    const newValidationErrors = validateEvent(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({})
-
+    // const newValidationErrors = validateEvent(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+    // setValidationErrors({})
     const updatedBooking = { ...values, id: row.original.bookingId }
+
+    let errors = {};
+    if (!values.eventName) {
+      errors.eventName = "Event Name is required.";
+    } else if (!values.eventDate) {
+      errors.eventDate = 'Please input the date of Event';
+    } else if (!values.eventSession) {
+      errors.eventSession = 'Please select an Event Session';
+    } else if (!values.numPax) {
+      errors.numPax = 'Please input the Number of Pax'
+    } else if (!values.staffReq) {
+      errors.staffReq = 'Please input the number of Staff Required';
+    }
+    setValidationErrors(errors);
+    // If there are errors, show notifications and do not proceed
+    if (Object.keys(errors).length > 0) {
+      handleValidationErrors(errors);
+      return;  
+    }
+    // If validation passes, update the employee
     await updateBooking(updatedBooking)
+    setValidationErrors({})
     table.setEditingRow(null)
   }
 
@@ -165,27 +158,36 @@ export function Events() {
 
   // ADD action
   const handleAddBooking = async ({ values, exitCreatingMode }) => {
-    const newValidationErrors = validateEvent(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
+    // const newValidationErrors = validateEvent(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+    let errors = {};
+    if (!values.eventName) {
+      errors.eventName = "Event Name is required.";
+    } else if (!values.eventDate) {
+      errors.eventDate = 'Please input the date of Event';
+    } else if (!values.eventSession) {
+      errors.eventSession = 'Please select an Event Session';
+    } else if (!values.numPax) {
+      errors.numPax = 'Please input the Number of Pax'
+    } else if (!values.staffReq) {
+      errors.staffReq = 'Please input the number of Staff Required';
     }
-    setValidationErrors({})
+    setValidationErrors(errors);
+
+    // If there are errors, show notifications and do not proceed
+    if (Object.keys(errors).length > 0) {
+      handleValidationErrors(errors);
+      return;  
+    }
+
     await addBooking(values)
+    setValidationErrors({})
     exitCreatingMode()
-    // table.setCreatingRow(true)
   }
 
-  // const handleCreateUser = async ({ values, exitCreatingMode }) => {
-  //   const newValidationErrors = validateEvent(values);
-  //   if (Object.values(newValidationErrors).some((error) => !!error)) {
-  //     setValidationErrors(newValidationErrors);
-  //     return;
-  //   }
-  //   setValidationErrors({});
-  //   await createUser(values);
-  //   exitCreatingMode();
-  // };
 
   const table = useMantineReactTable({
     columns,
