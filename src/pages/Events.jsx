@@ -8,10 +8,11 @@ import {
   useDeleteBooking,
   useAddBooking,
   useUpdateBooking,
+  validateEvent
 } from "../hooks/use-events"
 
 export function Events() {
-  const [validationErrors, setValidationErrors] = useState({}) // to add validation
+  const [validationErrors, setValidationErrors] = useState({}) // to add validation - useState<Record<string, string | undefined>>({});
   const { bookings } = useBookings()
   const deleteBooking = useDeleteBooking()
   const addBooking = useAddBooking()
@@ -35,6 +36,12 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
           required: true,
+          error: validationErrors?.eventName,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            eventName: undefined,
+          })
         }),
       },
       {
@@ -44,6 +51,12 @@ export function Events() {
           type: "select",
           options: ["Wings of Time", "Others"],
           required: true,
+          error: validationErrors?.eventType,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            eventType: undefined,
+          })
         }),
       },
       {
@@ -52,32 +65,27 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "date",
           required: true,
+          error: validationErrors?.eventDate,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            eventDate: undefined,
+          })
         }),
       },
       {
-        // try and get this automated once you get the day
-        accessorKey: "eventDay",
-        header: "Event Day",
+        accessorKey: "eventSession",
+        header: "Event Session",
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "select",
-          options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          options: ["Morning", "Night", "Fullday"],
           required: true,
-        }),
-      },
-      {
-        accessorKey: "eventSTime",
-        header: "Start Time",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "time",
-          required: true,
-        }),
-      },
-      {
-        accessorKey: "eventETime",
-        header: "End Time",
-        mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "time",
-          required: true,
+          error: validationErrors?.eventSession,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            eventSession: undefined,
+          })
         }),
       },
       {
@@ -86,6 +94,12 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "number",
           required: true,
+          error: validationErrors?.numPax,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            numPax: undefined,
+          })
         }),
       },
       {
@@ -94,6 +108,12 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "number",
           required: true,
+          error: validationErrors?.staffReq,
+          onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            staffReq: undefined,
+          })
         }),
       },
       {
@@ -102,6 +122,7 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
           required: false,
+          error: validationErrors?.remark
         }),
       },
     ],
@@ -110,9 +131,15 @@ export function Events() {
 
   // UPDATE action
   const handleUpdateBooking = async ({ row, values, table }) => {
+    const newValidationErrors = validateEvent(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
+    setValidationErrors({})
+
     const updatedBooking = { ...values, id: row.original.bookingId }
     await updateBooking(updatedBooking)
-    setValidationErrors({})
     table.setEditingRow(null)
   }
 
@@ -138,6 +165,11 @@ export function Events() {
 
   // ADD action
   const handleAddBooking = async ({ values, exitCreatingMode }) => {
+    const newValidationErrors = validateEvent(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({})
     await addBooking(values)
     exitCreatingMode()
@@ -145,7 +177,7 @@ export function Events() {
   }
 
   // const handleCreateUser = async ({ values, exitCreatingMode }) => {
-  //   const newValidationErrors = validateUser(values);
+  //   const newValidationErrors = validateEvent(values);
   //   if (Object.values(newValidationErrors).some((error) => !!error)) {
   //     setValidationErrors(newValidationErrors);
   //     return;
