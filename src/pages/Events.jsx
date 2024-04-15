@@ -1,14 +1,26 @@
 import React from "react"
 import { useState, useMemo } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
-import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
-import { IconTrash, IconEdit } from "@tabler/icons-react"
+import {
+  ActionIcon,
+  Button,
+  Tooltip,
+  Text,
+  Group,
+  Flex,
+  Title,
+  Stack,
+  Modal,
+  Box,
+  Space,
+} from "@mantine/core"
+import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
 import {
   useBookings,
   useDeleteBooking,
   useAddBooking,
   useUpdateBooking,
-  validateEvent
+  validateEvent,
 } from "../hooks/use-events"
 
 export function Events() {
@@ -38,10 +50,10 @@ export function Events() {
           required: true,
           error: validationErrors?.eventName,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventName: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              eventName: undefined,
+            }),
         }),
       },
       {
@@ -53,10 +65,10 @@ export function Events() {
           required: true,
           error: validationErrors?.eventType,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventType: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              eventType: undefined,
+            }),
         }),
       },
       {
@@ -67,10 +79,10 @@ export function Events() {
           required: true,
           error: validationErrors?.eventDate,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventDate: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              eventDate: undefined,
+            }),
         }),
       },
       {
@@ -82,10 +94,10 @@ export function Events() {
           required: true,
           error: validationErrors?.eventSession,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            eventSession: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              eventSession: undefined,
+            }),
         }),
       },
       {
@@ -96,10 +108,10 @@ export function Events() {
           required: true,
           error: validationErrors?.numPax,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            numPax: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              numPax: undefined,
+            }),
         }),
       },
       {
@@ -110,10 +122,10 @@ export function Events() {
           required: true,
           error: validationErrors?.staffReq,
           onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            staffReq: undefined,
-          })
+            setValidationErrors({
+              ...validationErrors,
+              staffReq: undefined,
+            }),
         }),
       },
       {
@@ -122,7 +134,7 @@ export function Events() {
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: "string",
           required: false,
-          error: validationErrors?.remark
+          error: validationErrors?.remark,
         }),
       },
     ],
@@ -131,10 +143,10 @@ export function Events() {
 
   // UPDATE action
   const handleUpdateBooking = async ({ row, values, table }) => {
-    const newValidationErrors = validateEvent(values);
+    const newValidationErrors = validateEvent(values)
     if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
+      setValidationErrors(newValidationErrors)
+      return
     }
     setValidationErrors({})
 
@@ -165,10 +177,10 @@ export function Events() {
 
   // ADD action
   const handleAddBooking = async ({ values, exitCreatingMode }) => {
-    const newValidationErrors = validateEvent(values);
+    const newValidationErrors = validateEvent(values)
     if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
+      setValidationErrors(newValidationErrors)
+      return
     }
     setValidationErrors({})
     await addBooking(values)
@@ -195,7 +207,6 @@ export function Events() {
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: "last",
-    enableBottomToolbar: false,
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleAddBooking,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -237,6 +248,7 @@ export function Events() {
         onClick={() => {
           table.setCreatingRow(true)
         }}
+        leftSection={<IconPlus size={20} />}
       >
         Add New Event
       </Button>
@@ -245,7 +257,12 @@ export function Events() {
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table} />
+      <Box p="md">
+        <Title order={2}>Events</Title>
+        <Space h="md" />
+        <MantineReactTable table={table} />
+      </Box>
+
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <Modal
