@@ -47,9 +47,9 @@ export function Events() {
       {
         accessorKey: "eventType",
         header: "Event Type",
+        editVariant: "select",
         mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "select",
-          options: ["Wings of Time", "Others"],
+          data: ["Wings of Time", "Others"],
           required: true,
           error: validationErrors?.eventType,
           onFocus: () =>
@@ -76,9 +76,9 @@ export function Events() {
       {
         accessorKey: "eventSession",
         header: "Event Session",
+        editVariant: "select",
         mantineEditTextInputProps: ({ cell, row }) => ({
-          type: "select",
-          options: ["Morning", "Night", "Fullday"],
+          data: ["Morning", "Night", "Fullday"],
           required: true,
           error: validationErrors?.eventSession,
           onFocus: () =>
