@@ -3,7 +3,6 @@ import axios from "axios"
 import { Schedule, Shift } from "../types/schedule"
 import { Role } from "../types/employee"
 import { DoW } from "../types/constants"
-import { fakeEmployees } from "../sampleEmployees"
 
 const BASE_URL = "http://localhost:5001"
 
@@ -36,8 +35,6 @@ export const handleError = (error: unknown) => {
 
 export const fetcher = async (url: string) => {
   try {
-    if (url === "/schedule") return generateSchedules()
-    if (url === "/employee") return fakeEmployees
     const response = await apiClient.get(url)
     return response.data
   } catch (error) {
