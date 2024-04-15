@@ -36,7 +36,7 @@ export function validateEvent(event) {
   return {
     eventName: !validateRequired(event.eventName) ? 'Event Name is Required': '',
     eventType: !validateRequired(event.eventType) ? 'Event Type is Required': '',
-    eventDate: !validateRequired(event.eventDate) ? 'Event Date is Required': '',,
+    eventDate: !validateRequired(event.eventDate) ? 'Event Date is Required': '',
     eventETime: !validateRequired(event.eventSession) ? 'Please Choose an Event Session': '',
     numPax: !validateNum(event.numPax) ? 'Please input a number' : '',
     staffReq: !validateNum(event.staffReq) ? 'Please input a number' : '',
