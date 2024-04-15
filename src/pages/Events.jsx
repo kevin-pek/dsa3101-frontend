@@ -3,6 +3,7 @@ import { useState, useMemo } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
 import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
 import { IconTrash, IconEdit } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 import {
   useBookings,
   useDeleteBooking,
@@ -110,7 +111,7 @@ export function Events() {
     //   return;
     // }
     // setValidationErrors({})
-    const updatedBooking = { ...values, id: row.original.bookingId }
+    const updatedBooking = { ...values, id: row.original.id }
 
     let errors = {};
     if (!values.eventName) {
@@ -137,8 +138,8 @@ export function Events() {
   }
 
   // DELETE action
-  const handleDeleteBooking = (bookingId) => {
-    setBookingToDelete(bookingId)
+  const handleDeleteBooking = (eventId) => {
+    setBookingToDelete(eventId)
     setDeleteModalOpen(true)
   }
 
@@ -228,7 +229,7 @@ export function Events() {
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
-          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.bookingId)}>
+          <ActionIcon color="red" onClick={() => handleDeleteBooking(row.original.id)}>
             <IconTrash />
           </ActionIcon>
         </Tooltip>
