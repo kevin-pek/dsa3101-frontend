@@ -15,13 +15,15 @@ export const useDeleteSchedule = () => {
 
 export const useUpdateSchedule = () => {
   return async (data: Schedule) => {
-    const sched = { ...data, week: dayjs(data.week).format("YYYY-MM-DD") }
+    const sched = { ...data, week: dayjs(data.week).format("YYYY-MM-DD").toString() }
     await putRequest("/schedule", data.id, sched)
   }
 }
 
 export const useAddSchedule = () => {
-  return async (data: Omit<Schedule, "id">) => await postRequest("/schedule", data)
+  return async (data: Omit<Schedule, "id">) => {
+    await postRequest("/schedule", data)
+  }
 }
 
 export const useGenerateSchedule = () => {
