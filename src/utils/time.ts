@@ -48,7 +48,9 @@ export function convertIndexToTime(number: number): string {
  * before the other, 0 if they are the same day, and 1 if first is after the
  * second date.
  */
-export function compareDates(date1, date2) {
+export function compareDates(d1, d2) {
+  const date1 = new Date(d1)
+  const date2 = new Date(d2)
   const year1 = date1.getFullYear()
   const month1 = date1.getMonth()
   const day1 = date1.getDate()
