@@ -1,19 +1,24 @@
-import { Stack, Select, Button } from "@mantine/core"
+import { Stack, Select, Button, Space } from "@mantine/core"
 import React, { useCallback, useState, useMemo } from "react"
 import { useEmployees } from "../hooks/use-employees"
-import { useSchedules } from "../hooks/use-schedules"
+import { useLocalSchedule } from "../hooks/use-schedules"
 import { Role } from "../types/employee"
+import { Schedule } from "../types/schedule"
 
-export const SwapEmployeeModal = ({ onSubmit }) => {
+interface SwapEmployeeModalProps {
+  onSubmit: CallableFunction
+  schedule: Schedule
+}
+
+export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps) => {
   const { employees } = useEmployees()
-  const { schedules } = useSchedules()
+  const updateSchedule = useLocalSchedule((state) => state.updateItem)
   const [selectedEmployee, setSelectedEmployee] = useState<string>()
   const [employeeError, setEmployeeError] = useState("")
   const [role, setRole] = useState<Role>()
   const [roleError, setRoleError] = useState("")
 
-  const handleSwap = useCallback(() => {
-    console.log("Swap!")
+  const handleSwap = useCallback(async () => {
     let valid = true
     const employee = employees.find((e) => e.name === selectedEmployee)?.id
     if (!employee) {
@@ -25,10 +30,15 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
       valid = false
     } else setRoleError("")
     if (valid) {
-      // mutate("Schedule", [...schedule])
+      const newSchedule = {
+        ...schedule,
+        employeeId: employee,
+        role: role,
+      }
+      updateSchedule(newSchedule)
       onSubmit()
     }
-  }, [selectedEmployee, employees, role, schedules])
+  }, [selectedEmployee, employees, role])
 
   const employeeData = useMemo(() => employees.map((e) => e.name), [employees])
 
@@ -40,7 +50,7 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
         placeholder="Select another employee..."
         data={employeeData}
         value={selectedEmployee}
-        onChange={val => setSelectedEmployee(val)}
+        onChange={(val) => setSelectedEmployee(val)}
         comboboxProps={{ withinPortal: false }}
         searchable
         nothingFoundMessage="No employees found..."
@@ -52,10 +62,11 @@ export const SwapEmployeeModal = ({ onSubmit }) => {
         placeholder="Change role..."
         data={Object.values(Role)}
         value={role}
-        onChange={val => setRole(val as Role)}
+        onChange={(val) => setRole(val as Role)}
         comboboxProps={{ withinPortal: false }}
         error={roleError}
       />
+      <Space h="md" />
       <Button type="submit" onClick={handleSwap}>
         Swap
       </Button>

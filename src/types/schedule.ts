@@ -5,6 +5,7 @@ export enum Shift {
   Morning = "Morning",
   Night = "Night",
   Full = "Full",
+  None = "None"
 }
 
 export interface Schedule {
@@ -17,3 +18,5 @@ export interface Schedule {
   role: Role
   week: Date // make sure this corresponds to date from mantine's getStartOfWeek function
 }
+
+export interface ScheduleParameters {}

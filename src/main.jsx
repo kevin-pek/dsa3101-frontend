@@ -143,7 +143,7 @@ function App() {
     >
       <AuthProvider>
         {/* Set Monday as first day of week, ensure time follows SG time */}
-        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC+8" }}>
+        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC" }}>
           <SWRConfig
             value={{
               refreshInterval: 0, // disable automatic refetching
@@ -157,8 +157,8 @@ function App() {
                   message: error.message || "Failed to fetch data.",
                   color: "red",
                   withBorder: true,
-                  autoClose: false,
-                  withCloseButton: false,
+                  autoClose: true,
+                  withCloseButton: true,
                 })
               },
               onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
@@ -169,8 +169,8 @@ function App() {
                   color: "red",
                   withBorder: true,
                   loading: true,
-                  autoClose: false,
-                  withCloseButton: false,
+                  autoClose: true,
+                  withCloseButton: true,
                 })
                 if (error.status === 404) return // dont retry on not found
                 if (retryCount >= 5) return // only retry up to 5 times
