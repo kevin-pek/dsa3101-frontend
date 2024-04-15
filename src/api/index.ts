@@ -36,7 +36,6 @@ export const handleError = (error: unknown) => {
 
 export const fetcher = async (url: string) => {
   try {
-    if (url === "/schedule") return generateSchedules()
     const response = await apiClient.get(url)
     return response.data
   } catch (error) {
@@ -122,6 +121,6 @@ function generateSchedules(): Schedule[] {
       schedules.push(schedule)
     })
   })
-
+  console.log(schedules)
   return schedules
 }
