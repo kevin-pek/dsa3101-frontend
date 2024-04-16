@@ -12,12 +12,9 @@ import {
   Space,
   List,
   ListItem,
-  ColorSwatch,
   LoadingOverlay,
-  Loader,
-  Center,
 } from "@mantine/core"
-import { hiringExpenditure, monthlyBookings, demand } from "../sampleDashboard.jsx"
+import { hiringExpenditure } from "../sampleDashboard.jsx"
 import InputDemandForm from "../components/dashboard/InputDemandForm"
 import { useState } from "react"
 import "@mantine/charts/styles.css"
@@ -146,7 +143,7 @@ export function Dashboard() {
     return mergedDemand?.filter(
       (d) =>
         compareDates(d.date, timeRange[0]) >= 0 &&
-        compareDates(d.date, getSevenDaysBeforeAndAfter()[1]) <= 0,
+        compareDates(d.date, timeRange[1]) <= 0,
     )
   }, [mergedDemand, timeRange])
   // calculate data to display on demand charts
@@ -201,14 +198,16 @@ export function Dashboard() {
     }
   }, [filteredDemand])
 
+  // event data filtered into the chosen time range by the user
   const filteredEvents = useMemo(() => {
     if (isEventsLoading || !timeRange) return []
     return events?.filter(
       (e) =>
         compareDates(e.eventDate, timeRange[0]) >= 0 &&
-        compareDates(e.eventDate, getSevenDaysAfter()) <= 0,
+        compareDates(e.eventDate, timeRange[1]) <= 0,
     )
   }, [events, timeRange])
+  // filtered event data that is aggregated into daily basis
   const groupedEvents = useMemo(() => {
     const data = filteredEvents?.reduce((acc, event) => {
       const dateStr = dayjs(event.eventDate).format("D MMM")
@@ -231,10 +230,12 @@ export function Dashboard() {
     return Array.from(data)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map((v) => v[1])
-  }, [events])
+  }, [filteredEvents])
+  // data for bar chart showing number of events
   const upcomingEventData = useMemo(() => {
-    const start = dayjs(new Date())
-    const end = getSevenDaysAfter()
+    if (!timeRange) return []
+    const start = dayjs(timeRange[0])
+    const end = dayjs(timeRange[1])
     const res = []
     let curr = start
     while (curr.isBefore(end) || curr.isSame(end, "day")) {
@@ -243,8 +244,9 @@ export function Dashboard() {
       curr = curr.add(1, "day")
     }
     return res
-  }, [groupedEvents])
+  }, [groupedEvents, timeRange])
 
+  // returns array [diff, pct diff] for walk-in traffic
   const demandDiff = useMemo(() => {
     const [start, end] = getPastFourteenDays().map(dayjs)
     const mid = dayjs(getSevenDaysBeforeAndAfter()[0])
@@ -267,7 +269,7 @@ export function Dashboard() {
     // @ts-ignore
     if (view === DateInterval.Monthly) setTimeRange(getPastTwelveMonths())
     // @ts-ignore
-    else if (view === DateInterval.Daily) setTimeRange(getPastFourteenDays())
+    else if (view === DateInterval.Daily) setTimeRange([getPastFourteenDays()[0], getSevenDaysAfter()])
   }, [view])
 
   return (
