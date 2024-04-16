@@ -1,4 +1,6 @@
 import axios from "axios"
+import faker from "faker";
+import { ActualDemand, PredictedDemand } from "../types/demand"
 
 const BASE_URL = "http://localhost:5001"
 
@@ -63,4 +65,36 @@ export const deleteRequest = async (url: string, id: number) => {
   } catch (error) {
     handleError(error)
   }
+}
+
+export function generatePredictedDemand (dateRange: [Date, Date], numRecords: number): PredictedDemand[] {
+  const [startDate, endDate] = dateRange;
+  const predictedDemand : PredictedDemand[] = [];
+
+  for (let i = 0; i < numRecords; i++) {
+    const randomDate = faker.date.between(startDate, endDate).toISOString().slice(0,10);
+    const time = faker.time.recent();
+    const day = faker.date.day();
+    const customers = faker.datatype.number({min: 1, max: 1000});
+
+    predictedDemand.push({date : randomDate, time, day, customers});
+  }
+
+  return predictedDemand;
+}
+
+export function generateActualDemand (dateRange: [Date, Date], numRecords: number): ActualDemand[] {
+  const [startDate, endDate] = dateRange;
+  const actualDemand : ActualDemand[] = [];
+
+  for (let i = 0; i < numRecords; i++) {
+    const randomDate = faker.date.between(startDate, endDate).toISOString().slice(0,10);
+    const time = faker.time.recent();
+    const day = faker.date.day();
+    const customers = faker.datatype.number({min: 1, max: 1000});
+
+    actualDemand.push({date : randomDate, time, day, customers});
+  }
+
+  return actualDemand;
 }
