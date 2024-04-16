@@ -179,20 +179,6 @@ function App() {
                 const backoff = Math.min(1000 * 2 ** retryCount, 30000)
                 setTimeout(() => revalidate({ retryCount }), backoff)
               },
-              onSuccess: (data, key) => {
-                const label =
-                  key === "/schedule" ? "Schedule" : key === "/employee" ? "Employee" : "Event"
-                notifications.show({
-                  id: key,
-                  color: "teal",
-                  title: "Success",
-                  message: `${label} data fetched successfully.`,
-                  icon: <IconCheck />,
-                  loading: false,
-                  autoClose: 2000,
-                  withCloseButton: true,
-                })
-              },
             }}
           >
             <InnerApp />

@@ -14,7 +14,7 @@ import {
   Box,
   Space,
 } from "@mantine/core"
-import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
+import { IconTrash, IconEdit, IconPlus, IconCheck } from "@tabler/icons-react"
 import {
   useBookings,
   useDeleteBooking,
@@ -22,6 +22,7 @@ import {
   useUpdateBooking,
   validateEvent,
 } from "../hooks/use-events"
+import { notifications } from "@mantine/notifications"
 
 export function Events() {
   const [validationErrors, setValidationErrors] = useState({}) // to add validation - useState<Record<string, string | undefined>>({});
@@ -152,6 +153,15 @@ export function Events() {
 
     const updatedBooking = { ...values, id: row.original.bookingId }
     await updateBooking(updatedBooking)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event updated successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     table.setEditingRow(null)
   }
 
@@ -172,6 +182,15 @@ export function Events() {
     }
 
     setDeleteModalOpen(false)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event deleted successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setBookingToDelete(null)
   }
 
@@ -184,6 +203,15 @@ export function Events() {
     }
     setValidationErrors({})
     await addBooking(values)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event added successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     exitCreatingMode()
     // table.setCreatingRow(true)
   }

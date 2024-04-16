@@ -15,7 +15,7 @@ import {
   Space,
 } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
-import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
+import { IconPlus, IconTrash, IconUpload, IconEdit, IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 import {
   useEmployees,
@@ -217,6 +217,16 @@ export function Employees() {
 
     // If validation passes, add the employee
     await addEmployee(values)
+
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee added successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setValidationErrors({}) // Clear any existing errors
     exitCreatingMode()
   }
@@ -250,6 +260,15 @@ export function Employees() {
     // If validation passes, update the employee
     await updateEmployee(updatedEmployee)
     setValidationErrors({})
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee updated successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     table.setEditingRow(null)
   }
 
@@ -271,6 +290,15 @@ export function Employees() {
     }
 
     setDeleteModalOpen(false)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee deleted successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setEmployeeToDelete(null)
   }
 
