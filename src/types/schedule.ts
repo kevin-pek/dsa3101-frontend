@@ -16,7 +16,10 @@ export interface Schedule {
   shift: Shift
   day: DoW
   role: Role
-  week: Date // make sure this corresponds to date from mantine's getStartOfWeek function
+  week: string // make sure this corresponds to date from mantine's getStartOfWeek function
 }
 
-export interface ScheduleParameters {}
+export interface ScheduleParameters {
+  maxHrFT: number
+  maxHrPT: number
+}

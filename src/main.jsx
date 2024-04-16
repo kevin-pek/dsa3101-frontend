@@ -2,9 +2,6 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { AuthProvider, useAuth } from "./hooks/use-auth"
-import "@mantine/core/styles.css"
-import "@mantine/notifications/styles.css"
-import "@mantine/nprogress/styles.css"
 import {
   AppShell,
   AppShellNavbar,
@@ -24,7 +21,6 @@ import { Events } from "./pages/Events"
 import { RequireAuth } from "./components/RequireAuth"
 import { Navbar } from "./components/Navbar"
 import { Notifications, notifications } from "@mantine/notifications"
-import "mantine-react-table/styles.css"
 import { useDisclosure } from "@mantine/hooks"
 import { ActionIcon } from "@mantine/core"
 import { IconSun, IconMoon } from "@tabler/icons-react"
@@ -32,6 +28,11 @@ import { NavigationProgress } from "@mantine/nprogress"
 import { DatesProvider } from "@mantine/dates"
 import { SWRConfig } from "swr"
 import { IconCheck } from "@tabler/icons-react"
+import "@mantine/core/styles.css"
+import "@mantine/notifications/styles.css"
+import "@mantine/nprogress/styles.css"
+import "mantine-react-table/styles.css"
+import '@mantine/dates/styles.css'
 
 function InnerApp() {
   const auth = useAuth()
@@ -143,7 +144,7 @@ function App() {
     >
       <AuthProvider>
         {/* Set Monday as first day of week, ensure time follows SG time */}
-        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "UTC" }}>
+        <DatesProvider settings={{ locale: "sg", firstDayOfWeek: 1, timezone: "Asia/Singapore" }}>
           <SWRConfig
             value={{
               refreshInterval: 0, // disable automatic refetching
@@ -179,11 +180,12 @@ function App() {
                 setTimeout(() => revalidate({ retryCount }), backoff)
               },
               onSuccess: (data, key) => {
+                const label = key === "/schedule" ? "Schedule" : key === "/employee" ? "Employee" : "Event"
                 notifications.show({
                   id: key,
                   color: "teal",
                   title: "Success",
-                  message: `${key} data fetched successfully.`,
+                  message: `${label} data fetched successfully.`,
                   icon: <IconCheck />,
                   loading: false,
                   autoClose: 2000,

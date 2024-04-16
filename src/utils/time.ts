@@ -1,45 +1,24 @@
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
+// Converts 'HH:MM:SS' string to index in half hour intervals
 export function convertTimeToIndex(timeStr: string): number {
-  const isHalfHour = timeStr.includes(":30")
-  const normalizedTimeStr = timeStr.replace(":30", "")
-  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
-  let hour = parseInt(hourPart)
-  if (hour === 12) {
-    hour = 0
-  }
-  if (period === "pm") {
-    hour += 12
-  }
-  // Calculate the number (0 to 47)
-  let number = hour * 2
-  if (isHalfHour) {
-    number += 1
-  }
-  return number
+  const [hoursStr, minutesStr] = timeStr.split(':')
+  const hours = parseInt(hoursStr)
+  const minutes = parseInt(minutesStr)
+  return hours * 2 + (minutes === 30 ? 1 : 0)
 }
 
-// Converts a 24-hour format time string to an index.
-// Each index corresponds to one cell of each timetable row.
-export function convertIndexToTime(number: number): string {
-  if (number < 0 || number > 47) {
-    throw new Error("Number must be between 0 and 47")
+// Converts index (0-47) back to 'HH:MM:SS' time string
+export function convertIndexToTime(index: number): string {
+  if (index < 0 || index > 47) {
+    throw new Error("Index must be between 0 and 47")
   }
-  const isHalfHour = number % 2 !== 0
-  let hour = Math.floor(number / 2)
-  let period = "am"
-  if (hour >= 12) {
-    period = "pm"
-    if (hour > 12) hour -= 12
-  }
-  if (hour === 0) hour = 12
-  let time = `${hour}`
-  if (isHalfHour) {
-    time += ":30"
-  }
-  time += period
-  return time
+  let hour = Math.floor(index / 2)
+  const minutes = (index % 2) * 30
+  const hourStr = hour.toString().padStart(2, '0')
+  const minutesStr = minutes.toString().padStart(2, '0')
+  return `${hourStr}:${minutesStr}:00`
 }
 
 /**
@@ -47,7 +26,9 @@ export function convertIndexToTime(number: number): string {
  * before the other, 0 if they are the same day, and 1 if first is after the
  * second date.
  */
-export function compareDates(date1, date2) {
+export function compareDates(d1, d2) {
+  const date1 = new Date(d1)
+  const date2 = new Date(d2)
   const year1 = date1.getFullYear()
   const month1 = date1.getMonth()
   const day1 = date1.getDate()
@@ -91,4 +72,64 @@ export const stringToShift = (str: string) => {
   } else if (night) {
     return Shift.Night
   }
+}
+
+export const stringToTimeString = (str: string) => {
+  const isHalfHour = str.includes(":30")
+  const normalizedTimeStr = str.replace(":30", "")
+  let [hourPart, period] = normalizedTimeStr.split(/(am|pm)/)
+  let hour = parseInt(hourPart)
+  if (hour === 12) {
+    hour = 0
+  }
+  if (period === "pm") {
+    hour += 12
+  }
+  return `${hour.toString().padStart(2, '0')}:${isHalfHour ? "30" : "00"}:00`
+}
+
+export const timeStringToString = (time: string) => {
+  // Extract hours and minutes from the time string
+  const [hours, minutes] = time.split(':').map(Number)
+  // Determine if the time is AM or PM
+  const period = hours >= 12 ? 'pm' : 'am'
+  // Convert hour from 24-hour to 12-hour format
+  let hour = hours % 12
+  if (hour === 0) hour = 12 // If hour is 0, it means it's 12 AM
+  // If minutes are 00, we don't need to include them in the final output
+  const minutePart = minutes === 30 ? ':30' : ''
+  // Construct the final string
+  return `${hour}${minutePart}${period}`
+}
+
+export const getPastTwelveMonths = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(today.getMonth() - 11)
+
+  return [sixMonthsAgo, today]
+}
+
+export const getPastFourteenDays = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+  today.setDate(today.getDate())
+  const fourteenDaysAgo = new Date(today)
+  fourteenDaysAgo.setDate(today.getDate() - 13)
+
+  return [fourteenDaysAgo, today]
+}
+
+export const getSevenDaysBeforeAndAfter = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(today.getDate() - 7)
+
+  const sevenDaysAfter = new Date(today)
+  sevenDaysAfter.setDate(today.getDate() + 7)
+
+  return [sevenDaysAgo, sevenDaysAfter]
 }

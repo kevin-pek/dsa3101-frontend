@@ -1,12 +1,10 @@
+import { timeStringToString } from './../utils/time';
 import useSWR, { mutate } from "swr"
 import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
 import { Schedule, ScheduleParameters } from "../types/schedule"
 import { create } from "zustand"
-
-export const useSchedules = () => {
-  const { data, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
-  return { schedules: data || [], isLoading }
-}
+import dayjs from "dayjs"
+import { stringToTimeString } from "../utils/time"
 
 /**
  * We don't use mutate for schedule requests since these are done in bulk.
@@ -16,7 +14,10 @@ export const useDeleteSchedule = () => {
 }
 
 export const useUpdateSchedule = () => {
-  return async (data: Schedule) => await putRequest("/schedule", data.id, data)
+  return async (data: Schedule) => {
+    const sched = { ...data, week: dayjs(data.week).format("YYYY-MM-DD").toString() }
+    await putRequest("/schedule", data.id, sched)
+  }
 }
 
 export const useAddSchedule = () => {
@@ -27,7 +28,7 @@ export const useAddSchedule = () => {
 
 export const useGenerateSchedule = () => {
   return async (params: ScheduleParameters) => {
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     await postRequest("/schedule/generate", params)
     mutate("/schedule") // trigger a refetch after schedule is generated
   }

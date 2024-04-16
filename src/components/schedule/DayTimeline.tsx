@@ -12,7 +12,7 @@ export const DayTimeline = ({ day }: { day: DoW }) => {
   const theme = useMantineColorScheme()
   const updateSched = useLocalSchedule((state) => state.updateItem)
   const schedule = useLocalSchedule((state) => state.items).filter((s) => s.day === day)
-  const timeIdxOffset = convertTimeToIndex(hours[0])
+  const timeIdxOffset = convertTimeToIndex("08:00:00") // hours[0])
 
   // Generate alternating background color based on number of partitions
   useEffect(() => {

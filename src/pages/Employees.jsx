@@ -1,7 +1,19 @@
 import React from "react"
 import { useState, useMemo, useRef } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
-import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
+import {
+  ActionIcon,
+  Button,
+  Tooltip,
+  Text,
+  Group,
+  Flex,
+  Title,
+  Stack,
+  Modal,
+  Box,
+  Space
+} from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
@@ -33,7 +45,7 @@ export function Employees() {
   const updateEmployee = useUpdateEmployee()
   const uploadEmployee = useUploadEmployee()
 
-  // Ref for opening the Dropzone 
+  // Ref for opening the Dropzone
   const openRef = useRef(null)
 
   // State management for UI elements and validations
@@ -42,7 +54,7 @@ export function Employees() {
   const [validationErrors, setValidationErrors] = useState({}) // Store validation errors
   const [file, setFile] = useState(null) // Store the file for upload
 
-  // Define table columns 
+  // Define table columns
   const columns = useMemo(
     () => [
       {
@@ -157,82 +169,82 @@ export function Employees() {
 
   // Function to display validation errors using notifications
   function handleValidationErrors(errors) {
-    let errorMessage = '';
+    let errorMessage = ""
 
     if (errors.name) {
-      errorMessage = errors.name;
+      errorMessage = errors.name
     } else if (errors.employmentType) {
-      errorMessage = errors.employmentType;
+      errorMessage = errors.employmentType
     } else if (errors.wage) {
-      errorMessage = errors.wage;
+      errorMessage = errors.wage
     } else if (errors.role) {
-      errorMessage = errors.role;
+      errorMessage = errors.role
     }
-    
+
     if (errorMessage) {
       notifications.show({
         message: errorMessage,
-        color: 'red',
+        color: "red",
         withBorder: true,
-      });
+      })
     }
   }
 
-  // Handler for adding a new employee 
+  // Handler for adding a new employee
   const handleAddEmployee = async ({ values, exitCreatingMode }) => {
-    let errors = {};
+    let errors = {}
 
     // Add employee validation
     if (!values.name) {
-      errors.name = "Name is required.";
+      errors.name = "Name is required."
     } else if (!values.employmentType) {
-      errors.employmentType = 'Employment type is required.';
+      errors.employmentType = "Employment type is required."
     } else if (!values.wage) {
-      errors.wage = 'Wage is required.';
+      errors.wage = "Wage is required."
     } else if (values.wage < 0) {
-      errors.wage = 'Invalid Wage.';
+      errors.wage = "Invalid Wage."
     } else if (!values.role) {
-      errors.role = 'Role is required.';
+      errors.role = "Role is required."
     }
     // Update state with any found errors
-    setValidationErrors(errors);
+    setValidationErrors(errors)
 
     // If there are errors, show notifications and do not proceed
     if (Object.keys(errors).length > 0) {
-      handleValidationErrors(errors);
-      return;  
+      handleValidationErrors(errors)
+      return
     }
 
     // If validation passes, add the employee
     await addEmployee(values)
-    setValidationErrors({});  // Clear any existing errors
+    setValidationErrors({}) // Clear any existing errors
     exitCreatingMode()
   }
 
-  // Handler for updating employee 
+  // Handler for updating employee
   const handleUpdateEmployee = async ({ row, values, table }) => {
     const updatedEmployee = { ...values, id: row.original.id }
-    let errors = {};
+    let errors = {}
 
     // Add employee validation
     if (!values.name) {
-      errors.name = "Name is required.";
+      errors.name = "Name is required."
     } else if (!values.employmentType) {
-      errors.employmentType = 'Employment type is required.';
+      errors.employmentType = "Employment type is required."
     } else if (!values.wage) {
-      errors.wage = 'Wage is required.';
+      errors.wage = "Wage is required."
     } else if (values.wage < 0) {
-      errors.wage = 'Invalid Wage.';
+      errors.wage = "Invalid Wage."
     } else if (!values.role) {
-      errors.role = 'Role is required.';
+      errors.role = "Role is required."
     }
     // Update state with any found errors
-    setValidationErrors(errors);
+    setValidationErrors(errors)
 
     // If there are errors, show notifications and do not proceed
     if (Object.keys(errors).length > 0) {
-      handleValidationErrors(errors);
-      return;  
+      handleValidationErrors(errors)
+      return
     }
 
     // If validation passes, update the employee
@@ -241,7 +253,7 @@ export function Employees() {
     table.setEditingRow(null)
   }
 
-  // Handler for deleting employee 
+  // Handler for deleting employee
   const handleDeleteEmployee = (employeeId) => {
     setEmployeeToDelete(employeeId)
     setDeleteModalOpen(true)
@@ -277,21 +289,19 @@ export function Employees() {
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: "last",
-    enableBottomToolbar: false,
-    defaultColumn: {
-      minSize: 30,
-      maxSize: 9001,
-      size: 120,
-    },
-    mantineTableProps: {
-      sx: {
-        tableLayout: "fixed",
-      },
-    },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleAddEmployee,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleUpdateEmployee,
+    renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
+      <Stack>
+        <Title order={3}>Add New Employee</Title>
+        {internalEditComponents}
+        <Flex justify="flex-end" mt="xl">
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </Flex>
+      </Stack>
+    ),
     renderEditRowModalContent: ({ table, row, internalEditComponents }) => (
       <Stack>
         <Title order={3}>Edit Employee</Title>
@@ -322,7 +332,7 @@ export function Employees() {
         }}
         leftSection={<IconPlus size={20} />}
       >
-        Create New Employee
+        Add New Employee
       </Button>
     ),
   })
@@ -330,7 +340,12 @@ export function Employees() {
   // JSX structure for the Employees component
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table} />
+      <Box p="md">
+        <Title order={2}>Employees</Title>
+        <Space h="md" />
+        <MantineReactTable table={table} />
+      </Box>
+
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <Modal

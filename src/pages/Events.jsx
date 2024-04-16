@@ -1,9 +1,20 @@
 import React from "react"
 import { useState, useMemo } from "react"
 import { MantineReactTable, useMantineReactTable, MRT_EditActionButtons } from "mantine-react-table"
-import { ActionIcon, Button, Tooltip, Text, Group, Flex, Title, Stack, Modal } from "@mantine/core"
-import { IconTrash, IconEdit } from "@tabler/icons-react"
-import { notifications } from "@mantine/notifications"
+import {
+  ActionIcon,
+  Button,
+  Tooltip,
+  Text,
+  Group,
+  Flex,
+  Title,
+  Stack,
+  Modal,
+  Box,
+  Space,
+} from "@mantine/core"
+import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
 import {
   useBookings,
   useDeleteBooking,
@@ -239,6 +250,7 @@ export function Events() {
         onClick={() => {
           table.setCreatingRow(true)
         }}
+        leftSection={<IconPlus size={20} />}
       >
         Add New Event
       </Button>
@@ -247,7 +259,12 @@ export function Events() {
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <MantineReactTable table={table} />
+      <Box p="md">
+        <Title order={2}>Events</Title>
+        <Space h="md" />
+        <MantineReactTable table={table} />
+      </Box>
+
       <div style={{ overflowX: "auto", padding: "25px" }}>
         <Group justify="right">
           <Modal
