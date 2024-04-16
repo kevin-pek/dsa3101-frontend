@@ -1,9 +1,8 @@
-import { ESession, EType } from "./constants"
+import { ESession } from "./constants"
 
 export interface Event {
   id: number
   eventName: string
-  eventType: EType
   eventDate: string
   eventSession: ESession
   numPax: number
