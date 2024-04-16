@@ -20,7 +20,6 @@ import { useState } from "react"
 import "@mantine/charts/styles.css"
 import { DatePickerInput, MonthPickerInput } from "@mantine/dates"
 import {
-  compareDates,
   getPastFourteenDays,
   getPastTwelveMonths,
   getSevenDaysAfter,
@@ -141,9 +140,11 @@ export function Dashboard() {
   const filteredDemand = useMemo(() => {
     if (!timeRange) return []
     return mergedDemand?.filter(
-      (d) =>
-        compareDates(d.date, timeRange[0]) >= 0 &&
-        compareDates(d.date, timeRange[1]) <= 0,
+      (d) => {
+        const date = dayjs(d.date)
+        return (date.isAfter(timeRange[0]) || date.isSame(timeRange[0], view === DateInterval.Daily ? "day" : "month")) &&
+          (date.isBefore(timeRange[1]) || date.isSame(timeRange[1], view === DateInterval.Daily ? "day" : "month"))
+      }
     )
   }, [mergedDemand, timeRange])
   // calculate data to display on demand charts
@@ -202,31 +203,53 @@ export function Dashboard() {
   const filteredEvents = useMemo(() => {
     if (isEventsLoading || !timeRange) return []
     return events?.filter(
-      (e) =>
-        compareDates(e.eventDate, timeRange[0]) >= 0 &&
-        compareDates(e.eventDate, timeRange[1]) <= 0,
+      (e) => {
+        const date = dayjs(e.eventDate)
+        return (date.isAfter(timeRange[0]) || date.isSame(timeRange[0]), view === DateInterval.Daily ? "day" : "month") &&
+          (date.isBefore(timeRange[1]) || date.isSame(timeRange[1], view === DateInterval.Daily ? "day" : "month"))
+      }
     )
   }, [events, timeRange])
   // filtered event data that is aggregated into daily basis
   const groupedEvents = useMemo(() => {
-    const data = filteredEvents?.reduce((acc, event) => {
-      const dateStr = dayjs(event.eventDate).format("D MMM")
-      const entry = acc.get(event.eventDate)
-      if (entry) {
-        entry.numPax += event.numPax
-        entry.staffReq += event.staffReq
-        entry.count += 1 // Count the number of events
-      } else {
-        acc.set(event.eventDate, {
-          date: dateStr,
-          numPax: event.numPax,
-          staffReq: event.staffReq,
-          count: 1,
-        })
-      }
-      return acc
-    }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
-    if (!data) return []
+    let data: Map<string, { date: string; numPax: number; staffReq: number; count: number }>
+    if (view === DateInterval.Daily) {
+      data = filteredEvents?.reduce((acc, event) => {
+        const dateStr = dayjs(event.eventDate).format("D MMM")
+        const entry = acc.get(dateStr)
+        if (entry) {
+          entry.numPax += event.numPax
+          entry.staffReq += event.staffReq
+          entry.count += 1 // Count the number of events
+        } else {
+          acc.set(dateStr, {
+            date: dateStr,
+            numPax: event.numPax,
+            staffReq: event.staffReq,
+            count: 1,
+          })
+        }
+        return acc
+      }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
+    } else if (view === DateInterval.Monthly) {
+      data = filteredEvents?.reduce((acc, event) => {
+        const dateStr = dayjs(event.eventDate).format("MMM YY")
+        const entry = acc.get(dateStr)
+        if (entry) {
+          entry.numPax += event.numPax
+          entry.staffReq += event.staffReq
+          entry.count += 1 // Count the number of events
+        } else {
+          acc.set(dateStr, {
+            date: dateStr,
+            numPax: event.numPax,
+            staffReq: event.staffReq,
+            count: 1,
+          })
+        }
+        return acc
+      }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
+    }
     return Array.from(data)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map((v) => v[1])
@@ -238,10 +261,18 @@ export function Dashboard() {
     const end = dayjs(timeRange[1])
     const res = []
     let curr = start
-    while (curr.isBefore(end) || curr.isSame(end, "day")) {
-      const dateStr = curr.format("D MMM")
-      res.push({ date: dateStr, count: groupedEvents.find((e) => e.date === dateStr)?.count ?? 0 })
-      curr = curr.add(1, "day")
+    if (view === DateInterval.Daily) {
+      while (curr.isBefore(end) || curr.isSame(end, "day")) {
+        const dateStr = curr.format("D MMM")
+        res.push({ date: dateStr, count: groupedEvents.find((e) => e.date === dateStr)?.count ?? 0 })
+        curr = curr.add(1, "day")
+      }
+    } else {
+      while (curr.isBefore(end) || curr.isSame(end, "month")) {
+        const dateStr = curr.format("MMM YY")
+        res.push({ date: dateStr, count: groupedEvents.find((e) => e.date === dateStr)?.count ?? 0 })
+        curr = curr.add(1, "month")
+      }
     }
     return res
   }, [groupedEvents, timeRange])
