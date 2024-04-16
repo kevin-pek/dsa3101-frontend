@@ -12,7 +12,7 @@ import {
   Stack,
   Modal,
   Box,
-  Space
+  Space,
 } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
 import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"

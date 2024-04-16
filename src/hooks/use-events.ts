@@ -40,4 +40,3 @@ export const useAddBooking = () => {
 //     staffReq: !validateNum(event.staffReq) ? 'Please input a number' : '',
 //   };
 // }
-

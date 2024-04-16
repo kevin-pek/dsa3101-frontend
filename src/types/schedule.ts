@@ -5,7 +5,7 @@ export enum Shift {
   Morning = "Morning",
   Night = "Night",
   Full = "Full",
-  None = "None"
+  None = "None",
 }
 
 export interface Schedule {
