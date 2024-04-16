@@ -14,6 +14,8 @@ import {
   Box,
   Space,
 } from "@mantine/core"
+import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 import { IconTrash, IconEdit, IconPlus, IconCheck } from "@tabler/icons-react"
 import {
   useBookings,
@@ -21,7 +23,6 @@ import {
   useAddBooking,
   useUpdateBooking,
 } from "../hooks/use-events"
-import { notifications } from "@mantine/notifications"
 
 export function Events() {
   // State and custon hooks for managing events
