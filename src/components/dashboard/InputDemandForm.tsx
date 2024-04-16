@@ -14,6 +14,8 @@ import { DateTimePicker } from "@mantine/dates"
 import { useAddActualDemand } from "../../hooks/use-demand"
 import { DoW } from "../../types/constants"
 import dayjs from "dayjs"
+import { IconCheck } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 
 // use this array since the getDay() function starts from Sunday
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -39,6 +41,15 @@ function InputDemandForm() {
       time: date.toLocaleTimeString(),
     }
     await addDemand(demand)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Demand data uploaded successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     handlers.reset()
   }
 

@@ -41,6 +41,7 @@ import useSWR, { mutate } from "swr"
 import html2canvas from "html2canvas"
 import { hours } from "../types/constants"
 import { fetcher } from "../api"
+import { notifications } from "@mantine/notifications"
 
 export function Planner() {
   const { data: schedules, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
@@ -131,6 +132,15 @@ export function Planner() {
       requests.push(deleteSchedule(id))
     }
     const results = await Promise.allSettled(requests)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Schedule saved successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     mutate("/schedule") // trigger refetch only after all requests have been settled
   }, [localSched, currWeekSchedule])
 
