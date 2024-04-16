@@ -15,6 +15,7 @@ import {
   Space,
 } from "@mantine/core"
 import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 import {
   useBookings,
   useDeleteBooking,
