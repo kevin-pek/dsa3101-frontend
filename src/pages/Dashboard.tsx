@@ -104,10 +104,10 @@ export function Dashboard() {
         overlayProps={{ blur: 2 }}
       />
       <Grid>
-        <Grid.Col span={6}>
+        <Grid.Col span={isMobile? 12: 6}>
           <Title order={2}>Dashboard</Title>
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col span={isMobile? 12 : 3}>
           <Select
             value={view}
             onChange={(val) => setView(val as DateInterval)}
@@ -117,7 +117,7 @@ export function Dashboard() {
             width={200}
           />
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col span={isMobile? 12: 3}>
           {view === DateInterval.Daily ? (
             <DatePickerInput
               label="Pick Date Range"
@@ -135,7 +135,7 @@ export function Dashboard() {
           )}
         </Grid.Col>
 
-        <Grid.Col span={6} style={{ alignItems: "stretch" }}>
+        <Grid.Col span={isMobile ? 12 : 6} style={{ alignItems: "stretch" }}>
           <Paper withBorder p="md" h="100%">
             <Title order={4} p="md">
               Today's Forecast (Hourly):
@@ -153,7 +153,7 @@ export function Dashboard() {
           </Paper>
         </Grid.Col>
 
-        <Grid.Col span={3}>
+        <Grid.Col span={isMobile? 12 : 3}>
           <Stack gap="xl" h="100%" justify="space-between">
             <InputDemandForm />
 
@@ -179,7 +179,7 @@ export function Dashboard() {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span={3}>
+        <Grid.Col span={isMobile? 12 : 3}>
           <Stack h="100%" justify="space-between">
             <Paper withBorder p="md" radius="md">
               <Title order={5} c="dimmed">
@@ -259,7 +259,7 @@ export function Dashboard() {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span={6}>
+        <Grid.Col span={isMobile? 12 : 6}>
           <Paper withBorder p="md" h="100%">
             <Title order={4} mb="md" p="md">
               Total Manpower Expenditure:
@@ -278,7 +278,7 @@ export function Dashboard() {
           </Paper>
         </Grid.Col>
 
-        <Grid.Col span={6}>
+        <Grid.Col span={isMobile? 12: 6}>
           <Paper withBorder p="md" h="100%">
             <Title order={4}p="md">
               Upcoming Events:
