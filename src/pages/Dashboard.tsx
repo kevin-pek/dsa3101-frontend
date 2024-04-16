@@ -167,6 +167,7 @@ export function Dashboard() {
         }
         return acc
       }, new Map<string, Omit<Demand, "time" | "day">>())
+      if (!data) return []
       return Array.from(data)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map((v) => v[1])
@@ -193,6 +194,7 @@ export function Dashboard() {
         }
         return acc
       }, new Map<string, Omit<Demand, "time" | "day">>())
+      if (!data) return []
       return Array.from(data)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map((v) => v[1])
@@ -250,6 +252,7 @@ export function Dashboard() {
         return acc
       }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
     }
+    if (!data) return []
     return Array.from(data)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map((v) => v[1])
