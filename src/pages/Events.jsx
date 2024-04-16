@@ -16,7 +16,6 @@ import {
 } from "@mantine/core"
 import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
-import { IconTrash, IconEdit, IconPlus, IconCheck } from "@tabler/icons-react"
 import {
   useBookings,
   useDeleteBooking,
