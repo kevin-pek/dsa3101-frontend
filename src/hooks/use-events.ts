@@ -26,18 +26,17 @@ export const useAddBooking = () => {
   return (data: Event) => mutate("/event", async () => await postRequest("/event", data), false)
 }
 
-const validateRequired = (event) => !!event.length
-const validateNum = (value) => Number.isInteger(Number(value))
+// const validateRequired = (event) => !!event.length;
+// const validateNum = (value) => Number.isInteger(Number(value));
 
-// more validate functions
+// // more validate functions
 
-export function validateEvent(event) {
-  return {
-    eventName: !validateRequired(event.eventName) ? "Event Name is Required" : "",
-    eventType: !validateRequired(event.eventType) ? "Event Type is Required" : "",
-    eventDate: !validateRequired(event.eventDate) ? "Event Date is Required" : "",
-    eventETime: !validateRequired(event.eventSession) ? "Please Choose an Event Session" : "",
-    numPax: !validateNum(event.numPax) ? "Please input a number" : "",
-    staffReq: !validateNum(event.staffReq) ? "Please input a number" : "",
-  }
-}
+// export function validateEvent(event) {
+//   return {
+//     eventName: !validateRequired(event.eventName) ? 'Event Name is Required': '',
+//     eventType: !validateRequired(event.eventType) ? 'Event Type is Required': '',
+//     eventDate: !validateRequired(event.eventDate) ? 'Event Date is Required': '',
+//     numPax: !validateNum(event.numPax) ? 'Please input a number' : '',
+//     staffReq: !validateNum(event.staffReq) ? 'Please input a number' : '',
+//   };
+// }
