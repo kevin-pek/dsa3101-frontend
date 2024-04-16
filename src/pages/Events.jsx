@@ -14,7 +14,7 @@ import {
   Box,
   Space,
 } from "@mantine/core"
-import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
+import { IconTrash, IconEdit, IconPlus, IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 import {
   useBookings,
@@ -22,6 +22,7 @@ import {
   useAddBooking,
   useUpdateBooking,
 } from "../hooks/use-events"
+import { ESession } from "../types/constants"
 
 export function Events() {
   // State and custon hooks for managing events
@@ -58,7 +59,7 @@ export function Events() {
         header: "Event Session",
         editVariant: "select",
         mantineEditSelectProps: ({ cell, row }) => ({
-          data: ["Morning", "Night", "Fullday"],
+          data: Object.values(ESession),
           required: true,
         }),
       },
