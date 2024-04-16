@@ -14,9 +14,16 @@ interface SwapEmployeeModalProps {
 export const SwapEmployeeModal = ({ onSubmit, schedule }: SwapEmployeeModalProps) => {
   const { employees } = useEmployees()
   const updateSchedule = useLocalSchedule((state) => state.updateItem)
-  const employeeData = useMemo<ComboboxItem[]>(() => employees.map((e) => ({ label: e.name, value: e.id.toString() })), [employees])
-  const [searchVal, setSearchVal] = useState(employees.find(e => e.id === schedule.employeeId)?.name)
-  const [emp, setEmp] = useState<ComboboxItem>(employeeData.find(e => parseInt(e.value) === schedule.employeeId))
+  const employeeData = useMemo<ComboboxItem[]>(
+    () => employees.map((e) => ({ label: e.name, value: e.id.toString() })),
+    [employees],
+  )
+  const [searchVal, setSearchVal] = useState(
+    employees.find((e) => e.id === schedule.employeeId)?.name,
+  )
+  const [emp, setEmp] = useState<ComboboxItem>(
+    employeeData.find((e) => parseInt(e.value) === schedule.employeeId),
+  )
   const [employeeError, setEmployeeError] = useState("")
   const [dow, setDow] = useState<DoW>(schedule.day)
   const [dowError, setDowError] = useState("")

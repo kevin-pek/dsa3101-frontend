@@ -3,7 +3,7 @@ import { Shift } from "../types/schedule"
 
 // Converts 'HH:MM:SS' string to index in half hour intervals
 export function convertTimeToIndex(timeStr: string): number {
-  const [hoursStr, minutesStr] = timeStr.split(':')
+  const [hoursStr, minutesStr] = timeStr.split(":")
   const hours = parseInt(hoursStr)
   const minutes = parseInt(minutesStr)
   return hours * 2 + (minutes === 30 ? 1 : 0)
@@ -16,8 +16,8 @@ export function convertIndexToTime(index: number): string {
   }
   let hour = Math.floor(index / 2)
   const minutes = (index % 2) * 30
-  const hourStr = hour.toString().padStart(2, '0')
-  const minutesStr = minutes.toString().padStart(2, '0')
+  const hourStr = hour.toString().padStart(2, "0")
+  const minutesStr = minutes.toString().padStart(2, "0")
   return `${hourStr}:${minutesStr}:00`
 }
 
@@ -85,19 +85,20 @@ export const stringToTimeString = (str: string) => {
   if (period === "pm") {
     hour += 12
   }
-  return `${hour.toString().padStart(2, '0')}:${isHalfHour ? "30" : "00"}:00`
+  return `${hour.toString().padStart(2, "0")}:${isHalfHour ? "30" : "00"}:00`
 }
 
+// convert HH:MM:SS string to readable form
 export const timeStringToString = (time: string) => {
   // Extract hours and minutes from the time string
-  const [hours, minutes] = time.split(':').map(Number)
+  const [hours, minutes] = time.split(":").map(Number)
   // Determine if the time is AM or PM
-  const period = hours >= 12 ? 'pm' : 'am'
+  const period = hours >= 12 ? "pm" : "am"
   // Convert hour from 24-hour to 12-hour format
   let hour = hours % 12
   if (hour === 0) hour = 12 // If hour is 0, it means it's 12 AM
   // If minutes are 00, we don't need to include them in the final output
-  const minutePart = minutes === 30 ? ':30' : ''
+  const minutePart = minutes === 30 ? ":30" : ""
   // Construct the final string
   return `${hour}${minutePart}${period}`
 }
@@ -119,6 +120,14 @@ export const getPastFourteenDays = () => {
   fourteenDaysAgo.setDate(today.getDate() - 13)
 
   return [fourteenDaysAgo, today]
+}
+
+export const getSevenDaysAfter = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set time to midnight to normalize the date
+  const sevenDaysAfter = new Date(today)
+  sevenDaysAfter.setDate(today.getDate() + 7)
+  return sevenDaysAfter
 }
 
 export const getSevenDaysBeforeAndAfter = () => {

@@ -32,7 +32,7 @@ import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
 import "@mantine/nprogress/styles.css"
 import "mantine-react-table/styles.css"
-import '@mantine/dates/styles.css'
+import "@mantine/dates/styles.css"
 
 function InnerApp() {
   const auth = useAuth()
@@ -180,7 +180,8 @@ function App() {
                 setTimeout(() => revalidate({ retryCount }), backoff)
               },
               onSuccess: (data, key) => {
-                const label = key === "/schedule" ? "Schedule" : key === "/employee" ? "Employee" : "Event"
+                const label =
+                  key === "/schedule" ? "Schedule" : key === "/employee" ? "Employee" : "Event"
                 notifications.show({
                   id: key,
                   color: "teal",

@@ -11,7 +11,7 @@ export enum DoW {
 export enum ESession {
   Morning = "Morning",
   Night = "Night",
-  Fullday = "Fullday"
+  Fullday = "Fullday",
 }
 
 export enum EType {

@@ -1,4 +1,4 @@
-import { timeStringToString } from './../utils/time';
+import { timeStringToString } from "./../utils/time"
 import useSWR, { mutate } from "swr"
 import { deleteRequest, fetcher, postRequest, putRequest } from "../api"
 import { Schedule, ScheduleParameters } from "../types/schedule"

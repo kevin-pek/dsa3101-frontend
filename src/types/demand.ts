@@ -4,7 +4,7 @@ export interface Demand {
   date: string
   time: string
   day: DoW
-  predicted: number
+  predicted?: number
   actual?: number
 }
 

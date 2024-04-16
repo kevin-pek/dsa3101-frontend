@@ -30,11 +30,7 @@ import { IconArrowBackUp, IconCheck, IconPlus, IconShare2 } from "@tabler/icons-
 import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AddScheduleModal } from "../components/AddScheduleModal"
-import {
-  useDeleteSchedule,
-  useLocalSchedule,
-  useUpdateSchedule,
-} from "../hooks/use-schedules"
+import { useDeleteSchedule, useLocalSchedule, useUpdateSchedule } from "../hooks/use-schedules"
 import { getStartOfWeek, getEndOfWeek } from "@mantine/dates"
 import { compareDates } from "../utils/time"
 import { isObjectEqual } from "../utils/object"
@@ -165,8 +161,7 @@ export function Planner() {
     parent.style.position = "absolute"
     parent.style.left = "-9999px"
     parent.style.top = "-9999px"
-    parent.style.backgroundColor =
-      colorScheme === "light" ? "white" : "var(--mantine-color-dark-7)"
+    parent.style.backgroundColor = colorScheme === "light" ? "white" : "var(--mantine-color-dark-7)"
     document.body.appendChild(parent)
     const container = document.createElement("div")
     const ncols = 3 + hours.length * 2

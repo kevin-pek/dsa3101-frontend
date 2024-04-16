@@ -1,6 +1,9 @@
 import axios from "axios"
-import faker from "faker";
+import faker from "faker"
 import { ActualDemand, PredictedDemand } from "../types/demand"
+import { getPastTwelveMonths, getSevenDaysBeforeAndAfter } from "../utils/time"
+import dayjs from "dayjs"
+import { DoW } from "../types/constants"
 
 const BASE_URL = "http://localhost:5001"
 
@@ -33,6 +36,10 @@ export const handleError = (error: unknown) => {
 
 export const fetcher = async (url: string) => {
   try {
+    const time = getPastTwelveMonths()
+    if (url === "/get_past_demand") return generateActualDemand(time)
+    if (url === "/get_demand_forecast")
+      return generatePredictedDemand([time[0], getSevenDaysBeforeAndAfter()[1]])
     const response = await apiClient.get(url)
     return response.data
   } catch (error) {
@@ -67,34 +74,66 @@ export const deleteRequest = async (url: string, id: number) => {
   }
 }
 
-export function generatePredictedDemand (dateRange: [Date, Date], numRecords: number): PredictedDemand[] {
-  const [startDate, endDate] = dateRange;
-  const predictedDemand : PredictedDemand[] = [];
-
-  for (let i = 0; i < numRecords; i++) {
-    const randomDate = faker.date.between(startDate, endDate).toISOString().slice(0,10);
-    const time = faker.time.recent();
-    const day = faker.date.day();
-    const customers = faker.datatype.number({min: 1, max: 1000});
-
-    predictedDemand.push({date : randomDate, time, day, customers});
-  }
-
-  return predictedDemand;
+function generateWorkingHoursTimeString(hour) {
+  const minutes = faker.datatype.number({ min: 0, max: 59 }).toString().padStart(2, "0")
+  const seconds = faker.datatype.number({ min: 0, max: 59 }).toString().padStart(2, "0")
+  return `${hour.toString().padStart(2, "0")}:${minutes}:${seconds}`
 }
 
-export function generateActualDemand (dateRange: [Date, Date], numRecords: number): ActualDemand[] {
-  const [startDate, endDate] = dateRange;
-  const actualDemand : ActualDemand[] = [];
+export function generatePredictedDemand(dateRange: [Date, Date]): PredictedDemand[] {
+  const [startDate, endDate] = dateRange
+  const startDay = dayjs(startDate)
+  const endDay = dayjs(endDate)
+  const differenceInDays = endDay.diff(startDay, "day")
 
-  for (let i = 0; i < numRecords; i++) {
-    const randomDate = faker.date.between(startDate, endDate).toISOString().slice(0,10);
-    const time = faker.time.recent();
-    const day = faker.date.day();
-    const customers = faker.datatype.number({min: 1, max: 1000});
+  const demand: PredictedDemand[] = []
 
-    actualDemand.push({date : randomDate, time, day, customers});
+  for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
+    const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
+
+    // Generate data for each hour within the working hours (10:00 to 21:00)
+    for (let hour = 10; hour <= 21; hour++) {
+      const time = generateWorkingHoursTimeString(hour)
+      const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
+      const customers = faker.datatype.number({ min: 10, max: 100 })
+
+      demand.push({
+        date: currentDay,
+        time,
+        day: dayOfWeek as DoW,
+        customers,
+      })
+    }
   }
 
-  return actualDemand;
+  return demand
+}
+
+export function generateActualDemand(dateRange: [Date, Date]): ActualDemand[] {
+  const [startDate, endDate] = dateRange
+  const startDay = dayjs(startDate)
+  const endDay = dayjs(endDate)
+  const differenceInDays = endDay.diff(startDay, "day")
+
+  const actualDemand: ActualDemand[] = []
+
+  for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
+    const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
+
+    // Generate data for each hour within the working hours (10:00 to 21:00)
+    for (let hour = 10; hour <= 21; hour++) {
+      const time = generateWorkingHoursTimeString(hour)
+      const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
+      const customers = faker.datatype.number({ min: 10, max: 100 })
+
+      actualDemand.push({
+        date: currentDay,
+        time,
+        day: dayOfWeek as DoW,
+        customers,
+      })
+    }
+  }
+
+  return actualDemand
 }
