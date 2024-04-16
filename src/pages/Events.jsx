@@ -21,6 +21,7 @@ import {
   useAddBooking,
   useUpdateBooking,
 } from "../hooks/use-events"
+import { notifications } from "@mantine/notifications"
 
 export function Events() {
   // State and custon hooks for managing events
