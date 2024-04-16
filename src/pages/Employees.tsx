@@ -27,16 +27,6 @@ import {
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
 
-/**
- * @typedef {import('../types/employee').Employee} Employee
- * @typedef {import('../types/employee').Role} Role
- * @typedef {import('../types/schedule').Shift} Shift
- */
-
-/**
- * @type {import('mantine-react-table').MRT_ColumnDef<Employee>[]}
- */
-
 export function Employees() {
   // State and custom hooks for managing employees
   const { employees } = useEmployees()
@@ -190,9 +180,25 @@ export function Employees() {
     }
   }
 
+  // if shifts for any day of week are empty replaces them with Shift.None
+  // default secondary role is service role
+  function autofillShifts(employee) {
+    return {
+      ...employee,
+      secondaryRole: employee.secondaryRole || Role.Service,
+      mon: employee.mon || Shift.None,
+      tues: employee.tues || Shift.None,
+      wed: employee.wed || Shift.None,
+      thurs: employee.thurs || Shift.None,
+      fri: employee.fri || Shift.None,
+      sat: employee.sat || Shift.None,
+      sun: employee.sun || Shift.None
+    }
+  }
+
   // Handler for adding a new employee
   const handleAddEmployee = async ({ values, exitCreatingMode }) => {
-    let errors = {}
+    let errors: Record<string, string> = {}
 
     // Add employee validation
     if (!values.name) {
@@ -216,8 +222,7 @@ export function Employees() {
     }
 
     // If validation passes, add the employee
-    await addEmployee(values)
-
+    await addEmployee(autofillShifts(values))
     notifications.show({
       color: "teal",
       title: "Success",
@@ -234,7 +239,7 @@ export function Employees() {
   // Handler for updating employee
   const handleUpdateEmployee = async ({ row, values, table }) => {
     const updatedEmployee = { ...values, id: row.original.id }
-    let errors = {}
+    let errors: Record<string, string> = {}
 
     // Add employee validation
     if (!values.name) {

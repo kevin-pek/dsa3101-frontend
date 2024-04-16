@@ -24,7 +24,7 @@ export const useUpdateEmployee = () => {
 
 export const useAddEmployee = () => {
   return (data: Employee) =>
-    mutate("/employee", async () => await postRequest("/employee", data), false)
+    mutate("/employee", async () => await postRequest("/employee", data))
 }
 
 export const useUploadEmployee = () => {

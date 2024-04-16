@@ -107,8 +107,8 @@ export function Dashboard() {
   }, [mergedDemand])
 
   const empByType = useMemo(() => {
-    if (isEmployeesLoading) return []
-    return employees?.reduce(
+    if (isEmployeesLoading || !employees) return {}
+    return employees.reduce(
       (acc, curr) => {
         if (!acc[curr.employmentType]) acc[curr.employmentType] = 1
         else acc[curr.employmentType] += 1
@@ -118,8 +118,8 @@ export function Dashboard() {
     )
   }, [employees])
   const empByRole = useMemo(() => {
-    if (isEmployeesLoading) return []
-    return employees?.reduce(
+    if (isEmployeesLoading || !employees) return {}
+    return employees.reduce(
       (acc, curr) => {
         if (!acc[curr.role]) acc[curr.role] = 1
         else acc[curr.role] += 1
