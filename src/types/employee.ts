@@ -6,6 +6,12 @@ export enum Role {
   Kitchen = "Kitchen",
 }
 
+export enum dayType {
+  Weekday = "Weekday",
+  Weekend = "Weekend",
+  PH = "PH",
+}
+
 export interface Employee {
   id: number
   email: string
@@ -24,4 +30,10 @@ export interface Employee {
   fri: Shift
   sat: Shift
   sun: Shift
+}
+
+export interface Wage {
+  day: dayType,
+  role: Role,
+  wage: number,
 }
