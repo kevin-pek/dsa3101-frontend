@@ -78,7 +78,10 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
     [role],
   )
 
-  const employeeData = useMemo<ComboboxItem[]>(() => employees.map((e) => ({ label: e.name, value: e.id.toString() })), [employees])
+  const employeeData = useMemo<ComboboxItem[]>(
+    () => employees.map((e) => ({ label: e.name, value: e.id.toString() })),
+    [employees],
+  )
 
   return (
     <Stack miw="16em">
@@ -117,7 +120,9 @@ export const AddScheduleModal = ({ onSubmit }: AddScheduleModalProps) => {
         required
         label="Shift"
         placeholder="Select shift..."
-        data={Object.values(Shift).filter(s => s !== Shift.None).map(addShiftTimes)}
+        data={Object.values(Shift)
+          .filter((s) => s !== Shift.None)
+          .map(addShiftTimes)}
         value={shift}
         onChange={(val) => setShift(val as Shift)}
         comboboxProps={{ withinPortal: false }}

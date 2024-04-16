@@ -12,10 +12,10 @@ import {
   Stack,
   Modal,
   Box,
-  Space
+  Space,
 } from "@mantine/core"
 import { Dropzone } from "@mantine/dropzone"
-import { IconPlus, IconTrash, IconUpload, IconEdit } from "@tabler/icons-react"
+import { IconPlus, IconTrash, IconUpload, IconEdit, IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 import {
   useEmployees,
@@ -26,16 +26,6 @@ import {
 } from "../hooks/use-employees"
 import { Role } from "../types/employee"
 import { Shift } from "../types/schedule"
-
-/**
- * @typedef {import('../types/employee').Employee} Employee
- * @typedef {import('../types/employee').Role} Role
- * @typedef {import('../types/schedule').Shift} Shift
- */
-
-/**
- * @type {import('mantine-react-table').MRT_ColumnDef<Employee>[]}
- */
 
 export function Employees() {
   // State and custom hooks for managing employees
@@ -190,9 +180,25 @@ export function Employees() {
     }
   }
 
+  // if shifts for any day of week are empty replaces them with Shift.None
+  // default secondary role is service role
+  function autofillShifts(employee) {
+    return {
+      ...employee,
+      secondaryRole: employee.secondaryRole || Role.Service,
+      mon: employee.mon || Shift.None,
+      tues: employee.tues || Shift.None,
+      wed: employee.wed || Shift.None,
+      thurs: employee.thurs || Shift.None,
+      fri: employee.fri || Shift.None,
+      sat: employee.sat || Shift.None,
+      sun: employee.sun || Shift.None
+    }
+  }
+
   // Handler for adding a new employee
   const handleAddEmployee = async ({ values, exitCreatingMode }) => {
-    let errors = {}
+    let errors: Record<string, string> = {}
 
     // Add employee validation
     if (!values.name) {
@@ -216,7 +222,16 @@ export function Employees() {
     }
 
     // If validation passes, add the employee
-    await addEmployee(values)
+    await addEmployee(autofillShifts(values))
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee added successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setValidationErrors({}) // Clear any existing errors
     exitCreatingMode()
   }
@@ -224,7 +239,7 @@ export function Employees() {
   // Handler for updating employee
   const handleUpdateEmployee = async ({ row, values, table }) => {
     const updatedEmployee = { ...values, id: row.original.id }
-    let errors = {}
+    let errors: Record<string, string> = {}
 
     // Add employee validation
     if (!values.name) {
@@ -250,6 +265,15 @@ export function Employees() {
     // If validation passes, update the employee
     await updateEmployee(updatedEmployee)
     setValidationErrors({})
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee updated successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     table.setEditingRow(null)
   }
 
@@ -271,6 +295,15 @@ export function Employees() {
     }
 
     setDeleteModalOpen(false)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Employee deleted successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setEmployeeToDelete(null)
   }
 

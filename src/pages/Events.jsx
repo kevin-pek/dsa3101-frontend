@@ -16,6 +16,7 @@ import {
 } from "@mantine/core"
 import { IconTrash, IconEdit, IconPlus } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
+import { IconTrash, IconEdit, IconPlus, IconCheck } from "@tabler/icons-react"
 import {
   useBookings,
   useDeleteBooking,
@@ -145,6 +146,15 @@ export function Events() {
     }
     // If validation passes, update the employee
     await updateBooking(updatedBooking)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event updated successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setValidationErrors({})
     table.setEditingRow(null)
   }
@@ -166,6 +176,15 @@ export function Events() {
     }
 
     setDeleteModalOpen(false)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event deleted successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setBookingToDelete(null)
   }
 
@@ -197,6 +216,15 @@ export function Events() {
     }
 
     await addBooking(values)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Event added successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
     setValidationErrors({})
     exitCreatingMode()
   }

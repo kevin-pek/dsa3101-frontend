@@ -14,9 +14,11 @@ import { DateTimePicker } from "@mantine/dates"
 import { useAddActualDemand } from "../../hooks/use-demand"
 import { DoW } from "../../types/constants"
 import dayjs from "dayjs"
+import { IconCheck } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 
 // use this array since the getDay() function starts from Sunday
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 function InputDemandForm() {
   const addDemand = useAddActualDemand()
@@ -31,22 +33,30 @@ function InputDemandForm() {
     handlers.set(count - 10)
   }
 
-
-
   const handleSubmit = async () => {
     const demand = {
       actual: count,
       date: dayjs(date).format("YYYY-MM-DD"),
       day: days[date.getDay()] as DoW,
-      time: date.toLocaleTimeString()
+      time: date.toLocaleTimeString(),
     }
     await addDemand(demand)
+    notifications.show({
+      color: "teal",
+      title: "Success",
+      message: `Demand data uploaded successfully.`,
+      icon: <IconCheck />,
+      loading: false,
+      autoClose: 2000,
+      withCloseButton: true,
+    })
+    handlers.reset()
   }
 
   return (
     <Stack>
       <Title order={5}>Input Actual Customer Count:</Title>
-      <DateTimePicker value={date} onChange={setDate} label="Date:" />
+      <DateTimePicker value={date} onChange={setDate} label="Date & Time:" />
       <Grid>
         <Grid.Col span={8}>
           <NumberInput
@@ -58,10 +68,10 @@ function InputDemandForm() {
         </Grid.Col>
         <Grid.Col span={4} style={{ alignContent: "flex-end" }}>
           <ActionIconGroup>
-            <ActionIcon p="md" variant="default" onClick={incrementByTen}>
+            <ActionIcon p="md" px="lg" variant="default" onClick={incrementByTen}>
               +10
             </ActionIcon>
-            <ActionIcon p="md" variant="default" onClick={decrementByTen}>
+            <ActionIcon p="md" px="lg" variant="default" onClick={decrementByTen}>
               -10
             </ActionIcon>
           </ActionIconGroup>

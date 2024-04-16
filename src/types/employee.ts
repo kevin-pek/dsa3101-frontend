@@ -2,7 +2,7 @@ import { Shift } from "./schedule"
 
 export enum Role {
   Manager = "Manager",
-  Server = "Server",
+  Service = "Service",
   Kitchen = "Kitchen",
 }
 

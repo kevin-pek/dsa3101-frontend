@@ -10,5 +10,6 @@ export const useDemand = () => {
 }
 
 export const useAddActualDemand = () => {
-  return (data: Omit<Demand, 'predicted'>) => mutate("/demand", async () => await postRequest("/demand", data), false)
+  return (data: Omit<Demand, "predicted">) =>
+    mutate("/demand", async () => await postRequest("/demand", data), false)
 }

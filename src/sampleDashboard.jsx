@@ -221,5 +221,5 @@ export const demand = [
   { date: "18 Apr", predicted: 3757 },
   { date: "19 Apr", predicted: 9451 },
   { date: "20 Apr", predicted: 5029 },
-  { date: "21 Apr", predicted: 8932 }
+  { date: "21 Apr", predicted: 8932 },
 ]

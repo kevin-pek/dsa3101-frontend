@@ -23,7 +23,7 @@ export const useUpdateBooking = () => {
 }
 
 export const useAddBooking = () => {
-  return (data: Event) => mutate("/event", async () => await postRequest("/event", data), false)
+  return (data: Event) => mutate("/event", async () => await postRequest("/event", data))
 }
 
 // const validateRequired = (event) => !!event.length;
@@ -40,4 +40,3 @@ export const useAddBooking = () => {
 //     staffReq: !validateNum(event.staffReq) ? 'Please input a number' : '',
 //   };
 // }
-
