@@ -251,16 +251,13 @@ export function Dashboard() {
     let curr = start
     let prev = 0
     let next = 0
-    console.log(actualDemand)
     while (curr.isBefore(end) || curr.isSame(end, "day")) {
       const dateStr = curr.format("YYYY-MM-DD")
       if (curr.isBefore(mid)) prev += actualDemand?.find(d => d.date === dateStr)?.customers || 0
       else next += actualDemand?.find(d => d.date === dateStr)?.customers || 0
       curr = curr.add(1, "day")
     }
-    const diff = prev === 0 ? [0, next] : [parseFloat(((next - prev) / prev).toFixed(2)), next]
-    console.log(diff)
-    return diff
+    return prev === 0 ? [0, next] : [parseFloat(((next - prev) / prev).toFixed(2)), next]
   }, [actualDemand])
   const DemandDiffIcon = demandDiff[0] > 0 ? IconArrowUpRight : IconArrowDownRight
   const costDiff = 10
