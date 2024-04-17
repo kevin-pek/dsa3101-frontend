@@ -1,11 +1,11 @@
 import axios from "axios"
 import faker from "faker"
 import { ActualDemand, PredictedDemand } from "../types/demand"
-import { Wage, Role, dayType } from "../types/employee"
+import { Wage, Role } from "../types/employee"
 import { getPastTwelveMonths, getSevenDaysBeforeAndAfter } from "../utils/time"
 import dayjs from "dayjs"
 import { DoW } from "../types/constants"
-import { useMemo } from 'react'
+import { DateInterval } from "../pages/Dashboard"
 
 const BASE_URL = "http://localhost:5001"
 
@@ -140,53 +140,27 @@ export function generateActualDemand(dateRange: [Date, Date]): ActualDemand[] {
   return actualDemand
 }
 
-function generateWage(employeeCount: number, isPartTime: boolean, startDate: Date, endDate: Date): Wage[] {
-  return useMemo(() => {
-    const wages: Wage[] = [];
-    const roles = Object.values(Role);
-    const days = Object.values(dayType);
-    const wageMap: Record<Role, number> = {
-      [Role.Manager]: 0,
-      [Role.Service]: 0,
-      [Role.Kitchen]: 0,
-    };
-
-    // Generate a map of roles to wages for full-time employees
-    if (!isPartTime) {
-      roles.forEach((role) => {
-        wageMap[role] = faker.datatype.number({ min: 1500, max: 3000 }); //generate random wage for each role
-      });
+export function generateWage(dateRange: [Date, Date], view: DateInterval, isByType: boolean): Wage[] {
+  const [startDate, endDate] = dateRange
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
+  const step = view === DateInterval.Daily ? "day" : "month"
+  let curr = start
+  const wages: any[] = []
+  const max = view === DateInterval.Daily ? 1000 : 30000
+  const min = view === DateInterval.Daily ? 500 : 15000
+  while (curr.isBefore(end) || curr.isSame(end, step)) {
+    const dateStr = curr.format(view === DateInterval.Daily ? "D MMM" : "MMM YY")
+    const wage = isByType ? {
+      [Role.Manager]: Math.floor(Math.random() * (max - min + 1) + min),
+      [Role.Service]: Math.floor(Math.random() * (max - min + 1) + min),
+      [Role.Kitchen]: Math.floor(Math.random() * (max - min + 1) + min),
+    } : {
+      ["Part Time"]: Math.floor(Math.random() * (max - min + 1) + min),
+      ["Full Time"]: Math.floor(Math.random() * (max - min + 1) + min),
     }
-
-    // Generate wages for each month within the date range
-    let currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-      // Generate wages for each employee
-      for (let i = 0; i < employeeCount; i++) {
-        const roleIndex = Math.floor(Math.random() * roles.length); 
-        const dayIndex = Math.floor(Math.random() * days.length); 
-
-        const role = roles[roleIndex]; //assign a random role
-        const day = days[dayIndex]; //assign a random day
-
-        let wage: number;
-
-        if (isPartTime) {
-          wage = 0; // Part-time staff will have wage 0 under 'Employees' table
-        } else {
-          // Full-time employees under the same role have the same wage
-          wage = wageMap[role];
-        }
-
-        wages.push({ day, role, wage });
-      }
-
-      // Move to the next month
-      currentDate.setMonth(currentDate.getMonth() + 1);
-    }
-
-    return wages;
-  }, [employeeCount, isPartTime, startDate, endDate]);
+    wages.push({ date: dateStr, ...wage })
+    curr = curr.add(1, step)
+  }
+  return wages
 }
-
-export default generateWage;

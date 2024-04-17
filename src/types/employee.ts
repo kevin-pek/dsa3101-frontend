@@ -33,7 +33,7 @@ export interface Employee {
 }
 
 export interface Wage {
-  day: dayType,
+  date: string,
   role: Role,
   wage: number,
 }

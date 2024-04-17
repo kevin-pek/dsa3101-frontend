@@ -29,13 +29,13 @@ import {
 import { useMediaQuery } from "@mantine/hooks"
 import { IconArrowDownRight, IconArrowUpRight, IconCoin, IconUsers } from "@tabler/icons-react"
 import useSWR from "swr"
-import { fetcher } from "../api/index"
+import { fetcher, generateWage } from "../api/index"
 import { ActualDemand, Demand, PredictedDemand } from "../types/demand"
-import { Employee, Role } from "./Employees.jsx"
+import { Employee, Role } from "../types/employee"
 import dayjs from "dayjs"
 import { Event } from "../types/event"
 
-enum DateInterval {
+export enum DateInterval {
   Daily = "Daily",
   Monthly = "Monthly",
 }
@@ -296,7 +296,7 @@ export function Dashboard() {
     return prev === 0 ? [0, next] : [parseFloat(((next - prev) / prev).toFixed(2)), next]
   }, [actualDemand])
   const DemandDiffIcon = demandDiff[0] > 0 ? IconArrowUpRight : IconArrowDownRight
-  const costDiff = 10
+  const costDiff = 367.00
   const CostDiffIcon = costDiff > 0 ? IconArrowUpRight : IconArrowDownRight
 
   useEffect(() => {
@@ -305,6 +305,13 @@ export function Dashboard() {
     // @ts-ignore
     else if (view === DateInterval.Daily) setTimeRange([getPastFourteenDays()[0], getSevenDaysAfter()])
   }, [view])
+
+  const [byType, setByType] = useState("Role")
+  const hiringExpenditure = useMemo(() => {
+    if (!timeRange) return []
+    if (!timeRange[1] || !timeRange[0]) return []
+    return generateWage([timeRange[0], new Date(Math.min(new Date().getTime(), timeRange[1].getTime()))], view, byType === "Role")
+  }, [timeRange, view, byType])
 
   return (
     <Container fluid p="md">
@@ -413,9 +420,9 @@ export function Dashboard() {
                 <IconCoin size="1.4rem" stroke={1.5} />
               </Group>
               <Group align="flex-end" gap="xs" mt={25}>
-                <Text size="lg">{costDiff}</Text>
+                <Text size="lg">$10,040.67</Text>
                 <Text c={costDiff > 0 ? "teal" : "red"} fz="sm" fw={500}>
-                  <span>{costDiff}%</span>
+                  <span>3.0%</span>
                   <CostDiffIcon size="1rem" stroke={1.5} />
                 </Text>
               </Group>
@@ -462,15 +469,30 @@ export function Dashboard() {
 
         <Grid.Col span={isMobile ? 12 : 6} order={3}>
           <Paper withBorder p="md" h="100%">
-            <Title order={4} mb="md" p="md">
-              Total Manpower Expenditure:
-            </Title>
+            <Group justify="space-between">
+              <Title order={4} mb="md" p="md">
+                Total Manpower Expenditure:
+              </Title>
+              <Select
+                value={byType}
+                onChange={setByType}
+                data={["Role", "Employment Type"]}
+                label="Group by"
+              />
+            </Group>
             {/* TODO: Add expenditure breakdown by role filter */}
             <LineChart
               h={300}
               data={hiringExpenditure}
-              dataKey="month"
-              series={[{ name: "Total", color: "rgb(47, 173, 102)" }]}
+              dataKey="date"
+              series={byType === "Role" ? [
+                { name: Role.Kitchen, color: "green.6" },
+                { name: Role.Manager, color: "blue.6" },
+                { name: Role.Service, color: "orange.6" },
+              ] : [
+                { name: "Part Time", color: "green.6" },
+                { name: "Full Time", color: "orange.6" },
+              ]}
               curveType="linear"
               tickLine="xy"
               connectNulls={false}
