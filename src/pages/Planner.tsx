@@ -69,7 +69,7 @@ export function Planner() {
   const currWeekSchedule = useMemo(() => {
     return (
       schedules
-        ?.filter((s) => compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0)
+        // ?.filter((s) => compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0)
         ?.sort((a, b) => a.id - b.id) ?? []
     )
   }, [schedules])

@@ -9,7 +9,7 @@
   width: 1px; /* Adjust the thickness of the tick mark here */
 }
 
-.Server .range-slider__range {
+.Service .range-slider__range {
   background-color: var(--mantine-color-green-light);
   color: var(--mantine-color-green-light-color);
   border: 1px solid var(--mantine-color-green-outline);
