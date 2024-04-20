@@ -55,7 +55,7 @@ function InnerApp() {
         <AppShellHeader>
           <Group justify="space-between" px="md" h="100%">
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Title order={2}>Staff Scheduler</Title>
+            <img src="../shiftly_header.svg" height="50" />
             <ActionIcon variant="subtle" onClick={() => toggleColorScheme()}>
               {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
             </ActionIcon>
