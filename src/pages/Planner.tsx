@@ -156,7 +156,7 @@ export function Planner() {
       closeGenErr()
     } catch (err) {
       // TODO: Standardise error format for triggering output
-      if (err.msg === "Infeasible Problemn") {
+      if (err.msg === "Infeasible Problem") {
         openGenErr()
       }
     }

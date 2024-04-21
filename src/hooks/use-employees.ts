@@ -23,14 +23,13 @@ export const useUpdateEmployee = () => {
 }
 
 export const useAddEmployee = () => {
-  return (data: Employee) =>
-    mutate("/employee", async () => await postRequest("/employee", data))
+  return (data: Employee) => mutate("/employee", async () => await postRequest("/employee", data))
 }
 
 export const useUploadEmployee = () => {
   return async (data: File) => {
     // Create a new FileReader instance
-    const reader = new FileReader();
+    const reader = new FileReader()
 
     // Define a promise to read the file as text
     const readFileAsText = () => {
@@ -38,59 +37,49 @@ export const useUploadEmployee = () => {
         reader.onload = (event) => {
           if (event.target) {
             // Resolve with the text content of the file
-            resolve(event.target.result as string);
+            resolve(event.target.result as string)
           } else {
             // Reject if reading the file fails
-            reject(new Error("Failed to read file"));
+            reject(new Error("Failed to read file"))
           }
-        };
-
+        }
         // Start reading the file as text
-        reader.readAsText(data[0]);
-      });
-    };
+        reader.readAsText(data[0])
+      })
+    }
 
     try {
       // Wait for the file to be read as text
-      const fileContent = await readFileAsText();
-
+      const fileContent = await readFileAsText()
       // Parse CSV data into array of dictionaries
-      const csvData: Record<string, string>[] = [];
-
+      const csvData: Record<string, string>[] = []
       // Split file content into rows
-      const csvRows = fileContent.split("\n");
-
+      const csvRows = fileContent.split("\n")
       // Extract headers (first row)
-      const headers = csvRows[0].split(",").map((header) => header.trim());
+      const headers = csvRows[0].split(",").map((header) => header.trim())
 
       // Parse each row (starting from index 1)
       for (let i = 1; i < csvRows.length; i++) {
-        const rowValues = csvRows[i].split(",");
+        const rowValues = csvRows[i].split(",")
         if (rowValues.length !== headers.length) {
-          continue; // Skip rows with incorrect number of values
+          continue // Skip rows with incorrect number of values
         }
-
         // Create dictionary object for the row
-        const rowObject: Record<string, string> = {};
+        const rowObject: Record<string, string> = {}
         headers.forEach((header, index) => {
-          rowObject[header] = rowValues[index].trim();
-        });
-
+          rowObject[header] = rowValues[index].trim()
+        })
         // Add row object to csvData array
-        csvData.push(rowObject);
+        csvData.push(rowObject)
       }
+      // csvData as an array of dictionaries (objects)
+      console.log("CSV Data:", csvData)
 
-      // Now you have csvData as an array of dictionaries (objects)
-      console.log("CSV Data:", csvData);
-
-      // Example: Perform mutation using the parsed CSV data
-      mutate("/employees", async () => {
-        // Use csvData to make POST request
-        await postRequest("/employees", csvData);
-      }, false);
+      await postRequest('/employees', csvData);
+      mutate('/employee')
     } catch (error) {
       console.error("Error reading file:", error);
       // Handle error reading file
     }
-  };
-};
+  }
+}

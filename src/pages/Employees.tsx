@@ -192,7 +192,7 @@ export function Employees() {
       thurs: employee.thurs || Shift.None,
       fri: employee.fri || Shift.None,
       sat: employee.sat || Shift.None,
-      sun: employee.sun || Shift.None
+      sun: employee.sun || Shift.None,
     }
   }
 
@@ -310,7 +310,13 @@ export function Employees() {
   // Handle CSV upload
   const handleUpload = async (selectedFile) => {
     await uploadEmployee(selectedFile)
+    // If successful, update the file state and show success notification
     setFile(selectedFile)
+    notifications.show({
+      title: "Success",
+      message: "CSV uploaded successfully.",
+      color: "teal",
+    })
   }
 
   // Table configuration with MantineReactTable
