@@ -6,6 +6,8 @@ To deploy this application along with the database and backend, see our [deploym
 
 For a guide on how our frontend application works, please check out our [user guide](https://docs.google.com/document/d/1UIK-Pzp5kED8erwhT2WhK-t0zv-lOWuc3SqK3n4nTaQ/edit?usp=sharing)!
 
+For more information on our project, please check out our project [wiki](https://github.com/kevin-pek/dsa3101-deployment/wiki). For a list of common issues you can also check out the [help](https://github.com/kevin-pek/dsa3101-deployment/wiki/Help) section!
+
 ## Getting Started
 
 To install the dependencies for the app, run the command:
@@ -29,6 +31,7 @@ To login to the application, enter the login details `manager` and `pword123`.
 Here's a list of the important files in this project directory.
 
 ```plaintext
+├── docs                      # additional files for documentation and readme
 ├── public                    # folder for accessible media files
 ├── server                    # express server used for serving static files during deployment
 │   ├── index.js              # entrypoint for express server
@@ -39,25 +42,30 @@ Here's a list of the important files in this project directory.
 │   │   └── index.ts          # axios client, api error handler and generic fetcher functions
 │   ├── assets                # contains all static files like images and icons used in the app
 │   ├── components
-│   │   ├── schedule          # folder for components used for displaying schedules
+│   │   ├── dashboard         # components used within the dashboard page
+│   │   ├── schedule          # folder for components used to construct schedule planner
 │   │   ├── Navbar.jsx        # navigation sidebar with responsive design
 │   │   ├── RequireAuth.jsx   # component to protect routes for authorized users only
+│   │   ├── AddScheduleModal.tsx   # modal displayed when user clicks add schedule
+│   │   ├── SwapEmployeeModal.tsx  # modal displayed when user clicks to swap a schedule
 │   │   └── ...
 │   ├── hooks
 │   │   ├── use-schedules.ts  # hooks for schedule related operations with backend
+│   │   ├── use-demand.ts     # hooks for demand related operations with backend
 │   │   ├── use-employees.ts  # hooks for employee related operations with backend
 │   │   ├── use-events.ts     # hooks for events related operations with backend
 │   │   └── use-auth.tsx      # useAuth hook for authentication logic
 │   ├── types                 # Typescript definitions for data passed between frontend/backend
 │   │   ├── booking.ts
 │   │   ├── employee.ts
+│   │   ├── demand.ts
 │   │   ├── schedule.ts
 │   │   └── constants.ts      # Constants used in the project, days of week and working hours
 │   ├── pages                 # Components that correspond to a single page in the app
-│   │   ├── Dashboard.jsx     # Dashboard for displaying employee statistics and demand forecasts
+│   │   ├── Dashboard.tsx     # Dashboard for displaying employee statistics and demand forecasts
 │   │   ├── Events.jsx        # Page for handling upcoming events
-│   │   ├── Employees.jsx     # Page for managing employee information and availability
-│   │   ├── Planner.jsx       # Page for shift planning
+│   │   ├── Employees.tsx     # Page for managing employee information and availability
+│   │   ├── Planner.tsx       # Page for shift planning
 │   │   └── Login.jsx         # Page for user login
 │   └── main.jsx              # entrypoint for React application
 ├── index.html                # React app is rendered to this HTML document
