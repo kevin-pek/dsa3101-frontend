@@ -1,5 +1,11 @@
 # Frontend
 
+This is the frontend repo for DSA3101 Manpower Optimisation for MFLG, built using Vite, React and Mantine UI.
+
+To deploy this application along with the database and backend, see our [deployment repo](https://github.com/kevin-pek/dsa3101-deployment).
+
+For a guide on how our frontend application works, please check out our [user guide](https://docs.google.com/document/d/1UIK-Pzp5kED8erwhT2WhK-t0zv-lOWuc3SqK3n4nTaQ/edit?usp=sharing)!
+
 ## Getting Started
 
 To install the dependencies for the app, run the command:
