@@ -30,10 +30,11 @@ import { useMediaQuery } from "@mantine/hooks"
 import { IconArrowDownRight, IconArrowUpRight, IconCoin, IconUsers } from "@tabler/icons-react"
 import useSWR from "swr"
 import { fetcher, generateWage } from "../api/index"
-import { ActualDemand, Demand, PredictedDemand } from "../types/demand"
+import { Demand } from "../types/demand"
 import { Employee, Role } from "../types/employee"
 import dayjs from "dayjs"
 import { Event } from "../types/event"
+import { usePastDemand, usePredictedDemand } from "../hooks/use-demand.js"
 
 export enum DateInterval {
   Daily = "Daily",
@@ -63,14 +64,19 @@ function formatDate(date) {
 }
 
 export function Dashboard() {
-  const { data: actualDemand, isLoading: isDemandLoading } = useSWR<ActualDemand[]>(
-    "/get_past_demand",
-    fetcher,
-  )
-  const { data: predictedDemand, isLoading: isForecastLoading } = useSWR<PredictedDemand[]>(
-    "/get_demand_forecast",
-    fetcher,
-  )
+  // const { data: actualDemand, isLoading: isDemandLoading } = useSWR<ActualDemand[]>(
+  //   "/get_past_demand",
+  //   fetcher,
+  // )
+  // const { data: predictedDemand, isLoading: isForecastLoading } = useSWR<PredictedDemand[]>(
+  //   "/get_demand_forecast",
+  //   fetcher,
+  // )
+
+//  const { demand } = useDemand()
+  const {demand: actualDemand, isLoading: isDemandLoading} = usePastDemand()
+  const {demand: predictedDemand, isLoading: isForecastLoading} = usePredictedDemand()
+
   const { data: employees, isLoading: isEmployeesLoading } = useSWR<Employee[]>(
     "/employee",
     fetcher,

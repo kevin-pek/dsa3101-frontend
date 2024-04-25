@@ -39,9 +39,9 @@ export const handleError = (error: unknown) => {
 export const fetcher = async (url: string) => {
   try {
     const time = getPastTwelveMonths()
-    if (url === "/get_past_demand") return generateActualDemand(time)
-    if (url === "/get_demand_forecast")
-      return generatePredictedDemand([time[0], getSevenDaysBeforeAndAfter()[1]])
+    // if (url === "/get_past_demand") return generateActualDemand(time)
+    // if (url === "/get_demand_forecast")
+    //   return generatePredictedDemand([time[0], getSevenDaysBeforeAndAfter()[1]])
     const response = await apiClient.get(url)
     return response.data
   } catch (error) {
@@ -82,63 +82,63 @@ function generateWorkingHoursTimeString(hour) {
   return `${hour.toString().padStart(2, "0")}:${minutes}:${seconds}`
 }
 
-export function generatePredictedDemand(dateRange: [Date, Date]): PredictedDemand[] {
-  const [startDate, endDate] = dateRange
-  const startDay = dayjs(startDate)
-  const endDay = dayjs(endDate)
-  const differenceInDays = endDay.diff(startDay, "day")
+// export function generatePredictedDemand(dateRange: [Date, Date]): PredictedDemand[] {
+//   const [startDate, endDate] = dateRange
+//   const startDay = dayjs(startDate)
+//   const endDay = dayjs(endDate)
+//   const differenceInDays = endDay.diff(startDay, "day")
 
-  const demand: PredictedDemand[] = []
+//   const demand: PredictedDemand[] = []
 
-  for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
-    const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
+//   for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
+//     const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
 
-    // Generate data for each hour within the working hours (10:00 to 21:00)
-    for (let hour = 10; hour <= 21; hour++) {
-      const time = generateWorkingHoursTimeString(hour)
-      const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
-      const customers = faker.datatype.number({ min: 10, max: 100 })
+//     // Generate data for each hour within the working hours (10:00 to 21:00)
+//     for (let hour = 10; hour <= 21; hour++) {
+//       const time = generateWorkingHoursTimeString(hour)
+//       const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
+//       const customers = faker.datatype.number({ min: 10, max: 100 })
 
-      demand.push({
-        date: currentDay,
-        time,
-        day: dayOfWeek as DoW,
-        customers,
-      })
-    }
-  }
+//       demand.push({
+//         date: currentDay,
+//         time,
+//         day: dayOfWeek as DoW,
+//         customers,
+//       })
+//     }
+//   }
 
-  return demand
-}
+//   return demand
+// }
 
-export function generateActualDemand(dateRange: [Date, Date]): ActualDemand[] {
-  const [startDate, endDate] = dateRange
-  const startDay = dayjs(startDate)
-  const endDay = dayjs(endDate)
-  const differenceInDays = endDay.diff(startDay, "day")
+// export function generateActualDemand(dateRange: [Date, Date]): ActualDemand[] {
+//   const [startDate, endDate] = dateRange
+//   const startDay = dayjs(startDate)
+//   const endDay = dayjs(endDate)
+//   const differenceInDays = endDay.diff(startDay, "day")
 
-  const actualDemand: ActualDemand[] = []
+//   const actualDemand: ActualDemand[] = []
 
-  for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
-    const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
+//   for (let dayIndex = 0; dayIndex <= differenceInDays; dayIndex++) {
+//     const currentDay = startDay.add(dayIndex, "days").format("YYYY-MM-DD")
 
-    // Generate data for each hour within the working hours (10:00 to 21:00)
-    for (let hour = 10; hour <= 21; hour++) {
-      const time = generateWorkingHoursTimeString(hour)
-      const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
-      const customers = faker.datatype.number({ min: 10, max: 100 })
+//     // Generate data for each hour within the working hours (10:00 to 21:00)
+//     for (let hour = 10; hour <= 21; hour++) {
+//       const time = generateWorkingHoursTimeString(hour)
+//       const dayOfWeek = dayjs(`${currentDay}T${time}`).format("dddd") // Get day of the week
+//       const customers = faker.datatype.number({ min: 10, max: 100 })
 
-      actualDemand.push({
-        date: currentDay,
-        time,
-        day: dayOfWeek as DoW,
-        customers,
-      })
-    }
-  }
+//       actualDemand.push({
+//         date: currentDay,
+//         time,
+//         day: dayOfWeek as DoW,
+//         customers,
+//       })
+//     }
+//   }
 
-  return actualDemand
-}
+//   return actualDemand
+// }
 
 export function generateWage(dateRange: [Date, Date], view: DateInterval, isByType: boolean): Wage[] {
   const [startDate, endDate] = dateRange
