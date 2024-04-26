@@ -42,7 +42,8 @@ function InputDemandForm() {
       time: date.toLocaleTimeString(),
     }
     await addDemand(demand)
-    mutate("/demand")
+    mutate("/get_demand_forecast")
+    mutate("/get_past_demand")
     notifications.show({
       color: "teal",
       title: "Success",
