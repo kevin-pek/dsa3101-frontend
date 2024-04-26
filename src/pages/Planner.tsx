@@ -42,6 +42,7 @@ import html2canvas from "html2canvas"
 import { hours } from "../types/constants"
 import { fetcher } from "../api"
 import { notifications } from "@mantine/notifications"
+import dayjs from "dayjs"
 
 export function Planner() {
   const { data: schedules, isLoading } = useSWR<Schedule[]>("/schedule", fetcher)
@@ -67,9 +68,10 @@ export function Planner() {
 
   // filters list of all schedules to those in current week, sorted by id
   const currWeekSchedule = useMemo(() => {
+    const weekStartDay = dayjs(weekStart)
     return (
       schedules
-        ?.filter((s) => compareDates(s.week, weekStart) >= 0 && compareDates(s.week, weekEnd) <= 0)
+        ?.filter((s) => dayjs(s.week).isSame(weekStartDay, 'week'))
         ?.sort((a, b) => a.id - b.id) ?? []
     )
   }, [schedules])

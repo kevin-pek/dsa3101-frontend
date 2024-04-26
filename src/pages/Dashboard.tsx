@@ -413,6 +413,7 @@ export function Dashboard() {
               h={300}
               data={hourlyDemand}
               dataKey="hour"
+              yAxisProps={{ allowDecimals: false }}
               series={[{ name: "predicted", label: "Walk-in Traffic", color: "orange.6" }]}
             />
           </Paper>
@@ -516,6 +517,7 @@ export function Dashboard() {
               h={300}
               data={upcomingEventData}
               dataKey="date"
+              yAxisProps={{ allowDecimals: false }}
               series={[{ name: "count", label: "Events", color: "blue.6" }]}
               tickLine="xy"
               withLegend
