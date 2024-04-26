@@ -81,12 +81,12 @@ export function Dashboard() {
     const map = new Map<string, Demand>()
     predictedDemand.forEach((d) => {
       const date = new Date(d.date)
-      const key = `${dayjs(date).format("D MMM")} ${d.time}`
+      const key = `${dayjs(date).format("YYYY-MM-DD")} ${d.time}`
       map.set(key, { date: d.date, day: d.day, time: d.time, predicted: d.customers })
     })
     actualDemand.forEach((d) => {
       const date = new Date(d.date)
-      const key = `${dayjs(date).format("D MMM")} ${d.time}`
+      const key = `${dayjs(date).format("YYYY-MM-DD")} ${d.time}`
       const demand = map.get(key)
       if (demand)
         map.set(key, { ...demand, date: d.date, day: d.day, time: d.time, actual: d.customers })
@@ -148,56 +148,28 @@ export function Dashboard() {
   }, [mergedDemand, timeRange])
   // calculate data to display on demand charts
   const demand = useMemo(() => {
-    if (view === DateInterval.Daily) {
-      const data = filteredDemand?.reduce((acc, curr) => {
-        const dateStr = dayjs(curr.date).format("D MMM")
-        const entry = acc.get(curr.date)
-        if (entry) {
-          if (!entry.actual && curr.actual) {
-            entry.actual = 0
-            entry.actual += curr.actual || 0
-          }
-          if (!entry.predicted && curr.predicted) {
-            entry.predicted = 0
-            entry.predicted += curr.predicted || 0
-          }
-        } else {
-          acc.set(curr.date, { date: dateStr, actual: curr.actual, predicted: curr.predicted })
+    const dateFormat = view === DateInterval.Daily ? "D MMM" : "MMM YYYY"
+    const data = filteredDemand?.reduce((acc, curr) => {
+      const dateStr = dayjs(curr.date).format(dateFormat)
+      const entry = acc.get(dateStr)
+      if (entry) {
+        if (!entry.actual && curr.actual) {
+          entry.actual = 0
+          entry.actual += curr.actual || 0
         }
-        return acc
-      }, new Map<string, Omit<Demand, "time" | "day">>())
-      if (!data) return []
-      return Array.from(data)
-        .sort((a, b) => dayjs(a[0], "D MMM").isBefore(dayjs(b[0], "D MMM")) ? -1 : 1)
-        .map((v) => v[1])
-    } else if (view === DateInterval.Monthly) {
-      const data = filteredDemand?.reduce((acc, curr) => {
-        const dateStr = dayjs(curr.date).format("MMM YY")
-        const month = curr.date.slice(0, 7)
-        const entry = acc.get(month)
-        if (entry) {
-          if (!entry.actual && curr.actual) {
-            entry.actual = 0
-            entry.actual += curr.actual || 0
-          }
-          if (!entry.predicted && curr.predicted) {
-            entry.predicted = 0
-            entry.predicted += curr.predicted || 0
-          }
-        } else {
-          acc.set(curr.date, {
-            date: dateStr,
-            actual: curr.actual || 0,
-            predicted: curr.predicted || 0,
-          })
+        if (!entry.predicted && curr.predicted) {
+          entry.predicted = 0
+          entry.predicted += curr.predicted || 0
         }
-        return acc
-      }, new Map<string, Omit<Demand, "time" | "day">>())
-      if (!data) return []
-      return Array.from(data)
-        .sort((a, b) => dayjs(a[0], "MMM YY").isBefore(dayjs(b[0], "MMM YY")) ? -1 : 1)
-        .map((v) => v[1])
-    }
+      } else {
+        acc.set(dateStr, { date: dateStr, actual: curr.actual, predicted: curr.predicted })
+      }
+      return acc
+    }, new Map<string, Omit<Demand, "time" | "day">>())
+    if (!data) return []
+    return Array.from(data)
+      .sort((a, b) => dayjs(a[0], dateFormat).isBefore(dayjs(b[0], dateFormat)) ? -1 : 1)
+      .map((v) => v[1])
   }, [filteredDemand])
 
   // event data filtered into the chosen time range by the user
@@ -214,46 +186,27 @@ export function Dashboard() {
   // filtered event data that is aggregated into daily basis
   const groupedEvents = useMemo(() => {
     let data: Map<string, { date: string; numPax: number; staffReq: number; count: number }>
-    if (view === DateInterval.Daily) {
-      data = filteredEvents?.reduce((acc, event) => {
-        const dateStr = dayjs(event.eventDate).format("D MMM")
-        const entry = acc.get(dateStr)
-        if (entry) {
-          entry.numPax += event.numPax
-          entry.staffReq += event.staffReq
-          entry.count += 1 // Count the number of events
-        } else {
-          acc.set(dateStr, {
-            date: dateStr,
-            numPax: event.numPax,
-            staffReq: event.staffReq,
-            count: 1,
-          })
-        }
-        return acc
-      }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
-    } else if (view === DateInterval.Monthly) {
-      data = filteredEvents?.reduce((acc, event) => {
-        const dateStr = dayjs(event.eventDate).format("MMM YY")
-        const entry = acc.get(dateStr)
-        if (entry) {
-          entry.numPax += event.numPax
-          entry.staffReq += event.staffReq
-          entry.count += 1 // Count the number of events
-        } else {
-          acc.set(dateStr, {
-            date: dateStr,
-            numPax: event.numPax,
-            staffReq: event.staffReq,
-            count: 1,
-          })
-        }
-        return acc
-      }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
-    }
+    const dateFormat = view === DateInterval.Daily ? "D MMM" : "MMM YY"
+    data = filteredEvents?.reduce((acc, event) => {
+      const dateStr = dayjs(event.eventDate).format(dateFormat)
+      const entry = acc.get(dateStr)
+      if (entry) {
+        entry.numPax += event.numPax
+        entry.staffReq += event.staffReq
+        entry.count += 1 // Count the number of events
+      } else {
+        acc.set(dateStr, {
+          date: dateStr,
+          numPax: event.numPax,
+          staffReq: event.staffReq,
+          count: 1,
+        })
+      }
+      return acc
+    }, new Map<string, { date: string; numPax: number; staffReq: number; count: number }>())
     if (!data) return []
     return Array.from(data)
-      .sort((a, b) => a[0].localeCompare(b[0]))
+      .sort((a, b) => dayjs(a[0], dateFormat).isBefore(dayjs(b[0], dateFormat)) ? -1 : 1)
       .map((v) => v[1])
   }, [filteredEvents])
   // data for bar chart showing number of events
