@@ -16,6 +16,7 @@ import { DoW } from "../../types/constants"
 import dayjs from "dayjs"
 import { IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
+import { mutate } from "swr"
 
 // use this array since the getDay() function starts from Sunday
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -35,12 +36,13 @@ function InputDemandForm() {
 
   const handleSubmit = async () => {
     const demand = {
-      actual: count,
+      customers: count,
       date: dayjs(date).format("YYYY-MM-DD"),
       day: days[date.getDay()] as DoW,
       time: date.toLocaleTimeString(),
     }
     await addDemand(demand)
+    mutate("/demand")
     notifications.show({
       color: "teal",
       title: "Success",
