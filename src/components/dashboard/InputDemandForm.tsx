@@ -35,7 +35,7 @@ function InputDemandForm() {
 
   const handleSubmit = async () => {
     const demand = {
-      actual: count,
+      customers: count,
       date: dayjs(date).format("YYYY-MM-DD"),
       day: days[date.getDay()] as DoW,
       time: date.toLocaleTimeString(),

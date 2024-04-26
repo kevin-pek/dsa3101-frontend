@@ -14,7 +14,6 @@ import {
   ListItem,
   LoadingOverlay,
 } from "@mantine/core"
-import { hiringExpenditure } from "../sampleDashboard.jsx"
 import InputDemandForm from "../components/dashboard/InputDemandForm"
 import { useState } from "react"
 import "@mantine/charts/styles.css"
@@ -30,11 +29,10 @@ import { useMediaQuery } from "@mantine/hooks"
 import { IconArrowDownRight, IconArrowUpRight, IconCoin, IconUsers } from "@tabler/icons-react"
 import useSWR from "swr"
 import { fetcher, generateWage } from "../api/index"
-import { Demand } from "../types/demand"
+import { ActualDemand, Demand, PredictedDemand } from "../types/demand"
 import { Employee, Role } from "../types/employee"
 import dayjs from "dayjs"
 import { Event } from "../types/event"
-import { usePastDemand, usePredictedDemand } from "../hooks/use-demand.js"
 
 export enum DateInterval {
   Daily = "Daily",
@@ -64,19 +62,14 @@ function formatDate(date) {
 }
 
 export function Dashboard() {
-  // const { data: actualDemand, isLoading: isDemandLoading } = useSWR<ActualDemand[]>(
-  //   "/get_past_demand",
-  //   fetcher,
-  // )
-  // const { data: predictedDemand, isLoading: isForecastLoading } = useSWR<PredictedDemand[]>(
-  //   "/get_demand_forecast",
-  //   fetcher,
-  // )
-
-//  const { demand } = useDemand()
-  const {demand: actualDemand, isLoading: isDemandLoading} = usePastDemand()
-  const {demand: predictedDemand, isLoading: isForecastLoading} = usePredictedDemand()
-
+  const { data: actualDemand, isLoading: isDemandLoading } = useSWR<ActualDemand[]>(
+    "/get_past_demand",
+    fetcher,
+  )
+  const { data: predictedDemand, isLoading: isForecastLoading } = useSWR<PredictedDemand[]>(
+    "/get_demand_forecast",
+    fetcher,
+  )
   const { data: employees, isLoading: isEmployeesLoading } = useSWR<Employee[]>(
     "/employee",
     fetcher,
@@ -103,11 +96,11 @@ export function Dashboard() {
   }, [actualDemand, predictedDemand])
 
   const hourlyDemand = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10)
-    const todayDemand = mergedDemand.filter((d) => d.date === today)
+    const today = dayjs()
+    const todayDemand = mergedDemand
+      .filter((d) => today.isSame(dayjs(d.date), 'day'))
     return todayDemand.reduce((acc, curr) => {
-      if (curr.predicted)
-        acc.push({ hour: timeStringToString(curr.time.slice(0, 5)), predicted: curr.predicted })
+      acc.push({ hour: timeStringToString(curr.time.slice(0, 5)), predicted: curr.predicted ?? 0 })
       return acc
     }, [])
   }, [mergedDemand])
@@ -175,7 +168,7 @@ export function Dashboard() {
       }, new Map<string, Omit<Demand, "time" | "day">>())
       if (!data) return []
       return Array.from(data)
-        .sort((a, b) => a[0].localeCompare(b[0]))
+        .sort((a, b) => dayjs(a[0], "D MMM").isBefore(dayjs(b[0], "D MMM")) ? -1 : 1)
         .map((v) => v[1])
     } else if (view === DateInterval.Monthly) {
       const data = filteredDemand?.reduce((acc, curr) => {
@@ -192,7 +185,7 @@ export function Dashboard() {
             entry.predicted += curr.predicted || 0
           }
         } else {
-          acc.set(month, {
+          acc.set(curr.date, {
             date: dateStr,
             actual: curr.actual || 0,
             predicted: curr.predicted || 0,
@@ -202,7 +195,7 @@ export function Dashboard() {
       }, new Map<string, Omit<Demand, "time" | "day">>())
       if (!data) return []
       return Array.from(data)
-        .sort((a, b) => a[0].localeCompare(b[0]))
+        .sort((a, b) => dayjs(a[0], "MMM YY").isBefore(dayjs(b[0], "MMM YY")) ? -1 : 1)
         .map((v) => v[1])
     }
   }, [filteredDemand])
