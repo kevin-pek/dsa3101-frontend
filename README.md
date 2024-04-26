@@ -4,7 +4,7 @@ This is the frontend repo for DSA3101 Manpower Optimisation for MFLG, built usin
 
 To deploy this application along with the database and backend, see our [deployment repo](https://github.com/kevin-pek/dsa3101-deployment).
 
-For a guide on how our frontend application works, please check out our [user guide](https://docs.google.com/document/d/1UIK-Pzp5kED8erwhT2WhK-t0zv-lOWuc3SqK3n4nTaQ/edit?usp=sharing)!
+For a guide on how to use our frontend application, please check out our [user guide](https://docs.google.com/document/d/1UIK-Pzp5kED8erwhT2WhK-t0zv-lOWuc3SqK3n4nTaQ/edit?usp=sharing)!
 
 For more information on our project, please check out our project [wiki](https://github.com/kevin-pek/dsa3101-deployment/wiki). For a list of common issues you can also check out the [help](https://github.com/kevin-pek/dsa3101-deployment/wiki/Help) section!
 
@@ -28,7 +28,7 @@ To login to the application, enter the login details `manager` and `pword123`.
 
 ## Project Structure
 
-Here's a list of the important files in this project directory.
+Here's a non-exhaustive list of the files in this project directory, and what they do:
 
 ```plaintext
 ├── docs                      # additional files for documentation and readme
